@@ -1,0 +1,415 @@
+@article{bakkenHYPSO1CubeSatFirst2023,
+  title = {{{HYPSO-1 CubeSat}}: {{First Images}} and {{In-Orbit Characterization}}},
+  shorttitle = {{{HYPSO-1 CubeSat}}},
+  author = {Bakken, Sivert and Henriksen, Marie B. and Birkeland, Roger and Langer, Dennis D. and Oudijk, Adriënne E. and Berg, Simen and Pursley, Yeshi and Garrett, Joseph L. and Gran-Jansen, Fredrik and Honoré-Livermore, Evelyn and Grøtte, Mariusz E. and Kristiansen, Bjørn A. and Orlandic, Milica and Gader, Paul and Sørensen, Asgeir J. and Sigernes, Fred and Johnsen, Geir and Johansen, Tor A.},
+  date = {2023-01},
+  journaltitle = {Remote Sensing},
+  volume = {15},
+  number = {3},
+  publisher = {Multidisciplinary Digital Publishing Institute},
+  issn = {2072-4292},
+  doi = {10.3390/rs15030755},
+  abstract = {The HYPSO-1 satellite, a 6U CubeSat carrying a hyperspectral imager, was launched on 13 January 2022, with the Goal of imaging ocean color in support of marine research. This article describes the development and current status of the mission and payload operations, including examples of agile planning, captures with low revisit time and time series acquired during a campaign. The in-orbit performance of the hyperspectral instrument is also characterized. The usable spectral range of the instrument is in the range of 430 nm to 800 nm over 120 bands after binning during nominal captures. The spatial resolvability is found empirically to be below 2.2 pixels in terms of Full-Width at Half-Maximum (FWHM) at 565 nm. This measure corresponds to an inherent ground resolvable resolution of 142 m across-track for close to nadir capture. In the across-track direction, there are 1216 pixels available, which gives a swath width of 70 km. However, the 684 center pixels are used for nominal captures. With the nominal pixels used in the across-track direction, the nadir swath-width is 40 km. The spectral resolution in terms of FWHM is estimated to be close to 5 nm at the center wavelength of 600 nm, and the Signal-to-Noise Ratio (SNR) is evaluated to be greater than 300 at 450 nm to 500 nm for Top-of-Atmosphere (ToA) signals. Examples of images from the first months of operations are also shown.},
+  langid = {english},
+  keywords = {CubeSat,earth observation,hyperspectral imaging,imaging spectroscopy,ocean color,push-broom,remote sensing},
+  file = {/Users/aasmundnorsett/Zotero/storage/E5LZPNVW/Bakken et al. - 2023 - HYPSO-1 CubeSat First Images and In-Orbit Characterization.pdf}
+}
+
+@article{barriosHardwareImplementationCCSDS2021,
+  title = {Hardware {{Implementation}} of the {{CCSDS}} 123.0-{{B-2 Near-Lossless Compression Standard Following}} an {{HLS Design Methodology}}},
+  author = {Barrios, Yubal and Sánchez, Antonio and Guerra, Raúl and Sarmiento, Roberto},
+  date = {2021-01},
+  journaltitle = {Remote Sensing},
+  volume = {13},
+  number = {21},
+  pages = {4388},
+  publisher = {Multidisciplinary Digital Publishing Institute},
+  issn = {2072-4292},
+  doi = {10.3390/rs13214388},
+  abstract = {The increment in the use of high-resolution imaging sensors on-board satellites motivates the use of on-board image compression, mainly due to restrictions in terms of both hardware (computational and storage resources) and downlink bandwidth with the ground. This work presents a compression solution based on the CCSDS 123.0-B-2 near-lossless compression standard for multi- and hyperspectral images, which deals with the high amount of data acquired by these next-generation sensors. The proposed approach has been developed following an HLS design methodology, accelerating design time and obtaining good system performance. The compressor is comprised by two main stages, a predictor and a hybrid encoder, designed in Band-Interleaved by Line (BIL) order and optimized to achieve a trade-off between throughput and logic resources utilization. This solution has been mapped on a Xilinx Kintex UltraScale XCKU040 FPGA and targeting AVIRIS images, reaching a throughput of 12.5 MSamples/s and consuming only the 7\% of LUTs and around the 14\% of dedicated memory blocks available in the device. To the best of our knowledge, this is the first fully-compliant hardware implementation of the CCSDS 123.0-B-2 near-lossless compression standard available in the state of the art.},
+  langid = {english},
+  keywords = {CCSDS,compression algorithms,FPGA,hardware implementations,hyperspectral imaging,on-board data processing,space missions},
+  file = {/Users/aasmundnorsett/Zotero/storage/ASLKZNSW/Barrios et al. - 2021 - Hardware Implementation of the CCSDS 123.0-B-2 Near-Lossless Compression Standard Following an HLS D.pdf}
+}
+
+@article{barriosRemovingDataDependencies2024,
+  title = {Removing {{Data Dependencies}} in the {{CCSDS}} 123.0-{{B-2 Predictor Weight Updating}}},
+  author = {Barrios, Yubal and Bartrina-Rapestà, Joan and Hernández-Cabronero, Miguel and Sánchez, Antonio and Blanes, Ian and Serra-Sagrista, Joan and Sarmiento, Roberto},
+  date = {2024},
+  journaltitle = {IEEE Geoscience and Remote Sensing Letters},
+  volume = {21},
+  issn = {1558-0571},
+  doi = {10.1109/LGRS.2024.3362376},
+  abstract = {The Consultative Committee for Space Data Systems (CCSDS) first standardized near-lossless coding capabilities in the CCSDS 123.0-B-2 algorithm. However, this standard does not describe strategies to produce high-throughput hardware implementations, which are not trivial to derive from its definition. At the same time, throughput optimizations without significant compression performance penalties are paramount to enable real-time compression on-board next-generation satellites. This work demonstrates that the weight update stage of the CCSDS 123.0-B-2 predictor can be selectively bypassed to enhance throughput for both lossless and near-lossless modes with minimal impact on compression performance and still produce fully compliant bitstreams. Skipping the weight update implies that those weights must be carefully chosen outside the original CCSDS 123.0-B-2 pipeline. Two strategies are proposed to select effective weight values based on whether a priori information about the current image is exploited or not. Comprehensive experimental results are presented for both proposed strategies and for lossless and near-lossless regimes, using a representative set of hyperspectral images. The coding penalty is, on average, 1\% for lossless and 8\% for near-lossless, depending on the strategy used to set the initial weights. The proposed method obtains a maximum throughput of one processed sample per clock cycle when it is evaluated using high-level synthesis (HLS), consuming 4.6\% of the look-up tables (LUTs) and 31.1\% of the internal memory on a Xilinx Kintex UltraScale space-grade field programmable gate array (FPGA).},
+  keywords = {Compression algorithms,Consultative Committee for Space Data Systems (CCSDSs) 1230-B-2,Encoding,Field programmable gate arrays,Hardware,high throughput,hyperspectral imaging,Image coding,onboard data processing,Sensors,Standards,Throughput},
+  file = {/Users/aasmundnorsett/Zotero/storage/BTULHIT8/Barrios et al. - 2024 - Removing Data Dependencies in the CCSDS 123.0-B-2 Predictor Weight Updating.pdf}
+}
+
+@article{basconesRealTimeFPGAImplementation2022,
+  title = {A {{Real-Time FPGA Implementation}} of the {{CCSDS}} 123.0-{{B-2 Standard}}},
+  author = {Báscones, Daniel and Gonzalez, Carlos and Mozos, Daniel},
+  date = {2022},
+  journaltitle = {IEEE Transactions on Geoscience and Remote Sensing},
+  volume = {60},
+  issn = {1558-0644},
+  doi = {10.1109/TGRS.2022.3160646},
+  abstract = {Hyperspectral images are a useful remote sensing tool that often reaches hundreds of megabytes in size. The CCSDS 123.0-B-2 is a recent algorithm that achieves lossless and near-lossless compression of hyperspectral images by introducing a configurable maximum error over its predecessor CCSDS 123.0-B-1. In this article, a field-programmable gate array (FPGA) implementation of the revised standard that works in real-time is presented. We have developed an extremely pipelined and fast core in VHDL, that is able to process a sample per cycle at over 250 MHz, working eight times faster than in real time for the Airborne Visible-Infrared Imaging Spectrometer-Next Generation (AVIRIS-NG) sensor. New dependencies in the revised standard are avoided by using a novel sample ordering called frame interleaved by diagonal. The predictor stage has been designed to work in this order, and two reorder buffers encapsulate it to be band interleaved by pixel compliant. Predictor data are encoded using a novel FPGA implementation of the CCSDS 123.0-B-2 hybrid coder. The modules are tested and verified on a Virtex-7 VC709 board. For medium (256 bands \textbackslash times4096 frames \textbackslash times512 samples) and large ( 512\textbackslash times 4096\textbackslash times 1024 ) images, the core occupies, respectively, 14\% and 50\% of an XQRKU060 FPGA.},
+  keywords = {CCSDS,compression,Decoding,Field programmable gate arrays,field-programmable gate array (FPGA),hyperspectral,Image coding,Prediction algorithms,Quantization (signal),real time,Real-time systems,Standards},
+  file = {/Users/aasmundnorsett/Zotero/storage/95GIWGYL/Báscones et al. - 2022 - A Real-Time FPGA Implementation of the CCSDS 123.0-B-2 Standard.pdf}
+}
+
+@article{blanesPerformanceImpactParameter2019,
+  title = {Performance {{Impact}} of {{Parameter Tuning}} on the {{CCSDS-123}}.0-{{B-2 Low-Complexity Lossless}} and {{Near-Lossless Multispectral}} and {{Hyperspectral Image Compression Standard}}},
+  author = {Blanes, Ian and Kiely, Aaron and Hernández-Cabronero, Miguel and Serra-Sagristà, Joan},
+  date = {2019-01},
+  journaltitle = {Remote Sensing},
+  volume = {11},
+  number = {11},
+  publisher = {Multidisciplinary Digital Publishing Institute},
+  issn = {2072-4292},
+  doi = {10.3390/rs11111390},
+  abstract = {This article studies the performance impact related to different parameter choices for the new CCSDS-123.0-B-2 Low-Complexity Lossless and Near-Lossless Multispectral and Hyperspectral Image Compression standard. This standard supersedes CCSDS-123.0-B-1 and extends it by incorporating a new near-lossless compression capability, as well as other new features. This article studies the coding performance impact of different choices for the principal parameters of the new extensions, in addition to reviewing related parameter choices for existing features. Experimental results include data from 16 different instruments with varying detector types, image dimensions, number of spectral bands, bit depth, level of noise, level of calibration, and other image characteristics. Guidelines are provided on how to adjust the parameters in relation to their coding performance impact.},
+  langid = {english},
+  keywords = {CCSDS 123.0-B-2,near-lossless hyperspectral image compression,on-board data compression},
+  file = {/Users/aasmundnorsett/Zotero/storage/MZZC5KJ4/Blanes et al. - 2019 - Performance Impact of Parameter Tuning on the CCSDS-123.0-B-2 Low-Complexity Lossless and Near-Lossl.pdf}
+}
+
+@article{blondeau-patissierReviewOceanColor2014,
+  title = {A Review of Ocean Color Remote Sensing Methods and Statistical Techniques for the Detection, Mapping and Analysis of Phytoplankton Blooms in Coastal and Open Oceans},
+  author = {Blondeau-Patissier, David and Gower, James F. R. and Dekker, Arnold G. and Phinn, Stuart R. and Brando, Vittorio E.},
+  date = {2014-04-01},
+  journaltitle = {Progress in Oceanography},
+  shortjournal = {Progress in Oceanography},
+  volume = {123},
+  issn = {0079-6611},
+  doi = {10.1016/j.pocean.2013.12.008},
+  abstract = {The need for more effective environmental monitoring of the open and coastal ocean has recently led to notable advances in satellite ocean color technology and algorithm research. Satellite ocean color sensors’ data are widely used for the detection, mapping and monitoring of phytoplankton blooms because earth observation provides a synoptic view of the ocean, both spatially and temporally. Algal blooms are indicators of marine ecosystem health; thus, their monitoring is a key component of effective management of coastal and oceanic resources. Since the late 1970s, a wide variety of operational ocean color satellite sensors and algorithms have been developed. The comprehensive review presented in this article captures the details of the progress and discusses the advantages and limitations of the algorithms used with the multi-spectral ocean color sensors CZCS, SeaWiFS, MODIS and MERIS. Present challenges include overcoming the severe limitation of these algorithms in coastal waters and refining detection limits in various oceanic and coastal environments. To understand the spatio-temporal patterns of algal blooms and their triggering factors, it is essential to consider the possible effects of environmental parameters, such as water temperature, turbidity, solar radiation and bathymetry. Hence, this review will also discuss the use of statistical techniques and additional datasets derived from ecosystem models or other satellite sensors to characterize further the factors triggering or limiting the development of algal blooms in coastal and open ocean waters.},
+  file = {/Users/aasmundnorsett/Zotero/storage/LE9FED8D/Blondeau-Patissier et al. - 2014 - A review of ocean color remote sensing methods and statistical techniques for the detection, mapping.pdf;/Users/aasmundnorsett/Zotero/storage/S78CATTB/S0079661114000020.html}
+}
+
+@inproceedings{chatziantoniouHighPerformanceRTLImplementation2020,
+  title = {A {{High-Performance RTL Implementation}} of the {{CCSDS-123}}.0-{{B-2 Hybrid Entropy Coder}} on a Space-Grade {{SRAM FPGA}}},
+  booktitle = {{{OBPDC}}},
+  author = {Chatziantoniou, Panagiotis and Kranitis, Nektarios and Tsigkanos, Antonis},
+  date = {2020},
+  abstract = {Nowadays, hyperspectral imaging is recognized as a cornerstone remote sensing technology. The explosive growth in image data volume and instrument data rates, compete with limited on-board storage resources and downlink bandwidth, making hyperspectral image data compression a mission critical on-board processing task. In this context, the Consultative Committee for Space Data Systems (CCSDS) extended the previous Lossless standard to Issue 2 for Near-Lossless Hyperspectral image compression. A key feature of CCSDS-123.0-B-2 is the new Hybrid Entropy Coder, which at low bit rates outperforms the Issue 1 entropy coders. In this contribution, we introduce a high-performance hardware implementation of the CCSDS-123.0-B-2 Hybrid Entropy Coder targeting a Xilinx Kintex Ultrascale XQRKU060 space-grade SRAM FPGA, described in portable VHDL RTL. The proposed architecture processes 1 sample per cycle when the high-entropy encoding method is selected and multiple cycles per sample when low-entropy coding is selected, while deep pipelining enables achieving a high clock frequency. Moreover, the proposed architecture exploits the systolic design pattern to provide modularity and latency insensitivity in a elastic pipeline. To the best of our knowledge, this is the first implementation of the CCSDS-123.0-B-2 Hybrid Entropy Coder on a space-grade SRAM FPGA.},
+  langid = {english},
+  file = {/Users/aasmundnorsett/Zotero/storage/KLYIYALI/Chatziantoniou - A High-Performance RTL Implementation of the CCSDS-123.0-B-2 Hybrid Entropy Coder on a space-grade S.pdf}
+}
+
+@inproceedings{chatziantoniouScalableDataRateNearLossless2022a,
+  title = {Scalable {{Data-Rate Near-Lossless Hyperspectral Image Compression Based}} on {{Parallel Implementation}} of {{CCSDS-123}}.0-{{B-2}}},
+  booktitle = {{{OBPDC}}},
+  author = {Chatziantoniou, Panagiotis and Paschalis, Antonis and Kranitis, Nektarios and Tsigkanos, Antonis and Theodoropoulos, Dimitris},
+  date = {2022},
+  doi = {10.5281/zenodo.7269802},
+  langid = {english},
+  file = {/Users/aasmundnorsett/Zotero/storage/4RXIV4TL/Chatziantoniou - 2022 - Scalable Data-Rate Near-Lossless Hyperspectral Image Compression Based on Parallel Implementation of.pdf}
+}
+
+@article{fjeldtvedtEfficientRealTimeFPGA2018,
+  title = {An {{Efficient Real-Time FPGA Implementation}} of the {{CCSDS-123 Compression Standard}} for {{Hyperspectral Images}}},
+  author = {Fjeldtvedt, Johan and Orlandić, Milica and Johansen, Tor Arne},
+  date = {2018-10},
+  journaltitle = {IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing},
+  volume = {11},
+  number = {10},
+  issn = {2151-1535},
+  doi = {10.1109/JSTARS.2018.2869697},
+  abstract = {Hyperspectral imaging (HSI) can extract information from scenes on the earth surface acquired by airborne or spaceborne sensors. On-board processing of HSI is characterized by large datasets on one side and limited processing time and communication links on the other. The CCSDS-123 algorithm is a compression standard assembled for space-related application that allows compacted data transmission via a transmission link. In this paper, a low-complexity high-throughput field-programmable gate array (FPGA) implementation of CCSDS-123 compression algorithm with band interleaved by pixel ordering is presented. Hardware accelerators implemented in FPGAs are increasingly used for custom tasks due to their efficiency, low power, and reconfigurability. The proposed implementation of CCSDS-123 compression standard has been tested on ZedBoard development board containing a Zynq-7020 FPGA. The results are verified against an existing software implementation. The synthesized design can perform on-the-fly processing of hyperspectral images with maximum operating frequency of 147 MHz. The achieved throughput of 147 Msamples/s (2.35 Gb/s) is higher when compared with the throughput reported in recent state-of-the-art FPGA implementations.},
+  keywords = {CCSDS-123 compression,Entropy,Field programmable gate arrays,field-programmable gate arrays (FPGAs),Hyperspectral imaging,hyperspectral imaging (HSI),Image coding,lossless compression,Real-time systems,space-related applications,Standards,Throughput},
+  file = {/Users/aasmundnorsett/Zotero/storage/TYKLKVSU/Fjeldtvedt et al. - 2018 - An Efficient Real-Time FPGA Implementation of the CCSDS-123 Compression Standard for Hyperspectral I.pdf}
+}
+
+@article{georgeOnboardProcessingHybrid2018a,
+  title = {Onboard {{Processing With Hybrid}} and {{Reconfigurable Computing}} on {{Small Satellites}}},
+  author = {George, Alan D. and Wilson, Christopher M.},
+  date = {2018-03},
+  journaltitle = {Proceedings of the IEEE},
+  volume = {106},
+  number = {3},
+  pages = {458--470},
+  issn = {1558-2256},
+  doi = {10.1109/JPROC.2018.2802438},
+  abstract = {Due to the increasing demands of onboard sensor and autonomous processing, one of the principal needs and challenges for future spacecraft is onboard computing. Space computers must provide high performance and reliability (which are often at odds), using limited resources (power, size, weight, and cost), in an extremely harsh environment (due to radiation, temperature, vacuum, and vibration). As spacecraft shrink in size, while assuming a growing role for science and defense missions, the challenges for space computing become particularly acute. For example, processing capabilities on CubeSats (smaller class of SmallSats) have been extremely limited to date, often featuring microcontrollers with performance and reliability barely sufficient to operate the vehicle let alone support various sensor and autonomous applications. This article surveys the challenges and opportunities of onboard computers for small satellites (SmallSats) and focuses upon new concepts, methods, and technologies that are revolutionizing their capabilities, in terms of two guiding themes: hybrid computing and reconfigurable computing. These innovations are of particular need and value to CubeSats and other Smallsats. With new technologies, such as CHREC Space Processor (CSP), we demonstrate how system designers can exploit hybrid and reconfigurable computing on SmallSats to harness these advantages for a variety of purposes, and we highlight several recent missions by NASA and industry that feature these principles and technologies.},
+  keywords = {Aerospace electronics,Computer architecture,Computers,Fault-tolerant systems,Field programmable gate arrays,field-programmable gate arrays,NASA,radiation effects,reconfigurable architectures,Reliability,satellites,Small satellites,space radiation},
+  file = {/Users/aasmundnorsett/Zotero/storage/8XREZ4G8/George and Wilson - 2018 - Onboard Processing With Hybrid and Reconfigurable Computing on Small Satellites.pdf}
+}
+
+@article{gershoAdaptiveFilteringBinary1984,
+  title = {Adaptive Filtering with Binary Reinforcement},
+  author = {Gersho, A.},
+  date = {1984-03},
+  journaltitle = {IEEE Transactions on Information Theory},
+  volume = {30},
+  number = {2},
+  pages = {191--199},
+  issn = {1557-9654},
+  doi = {10.1109/TIT.1984.1056890},
+  url = {https://ieeexplore.ieee.org/abstract/document/1056890},
+  urldate = {2025-12-05},
+  abstract = {Recently there has been increased interest in high speed adaptive filtering where the usual stochastic gradient or least mean-square (LMS) algorithm is replaced with the simpler algorithm where adaptation is guided only by the polarity of the error signal. In this paper the convergence of this binary reinforcement (BR) algorithm is proved under the usual independence assumption, and the surprising observation is made that, unlike the LMS algorithm, convergence occurs for any positive value of the step-size parameter. While the stochastic gradient algorithm attempts to minimize a mean-square error cost function, the binary reinforcement algorithm in fact attempts to minimize a mean-absolute error cost function. It is proved for the binary reinforcement algorithm that the tap weight vector converges in distribution to a random vector that is suitably concentrated about the optimal value based on a least mean-absolute error cost function. For a sufficiently small step size, the expected cost of the asymptotic weight vector can be made as close as desired to thc minimum cost attain,ed by the optimum weight vector.},
+  keywords = {Adaptive filters,Convergence,Cost function,Filtering algorithms,Filtering theory,Information filters,Noise,Prediction algorithms,Stochastic processes,Vectors},
+  file = {/Users/aasmundnorsett/Zotero/storage/MJZ3VV4R/Gersho - 1984 - Adaptive filtering with binary reinforcement.pdf}
+}
+
+@article{grotteOceanColorHyperspectral2022,
+  title = {Ocean {{Color Hyperspectral Remote Sensing With High Resolution}} and {{Low Latency}}—{{The HYPSO-1 CubeSat Mission}}},
+  author = {Grøtte, Mariusz E. and Birkeland, Roger and Honoré-Livermore, Evelyn and Bakken, Sivert and Garrett, Joseph L. and Prentice, Elizabeth F. and Sigernes, Fred and Orlandić, Milica and Gravdahl, J. Tommy and Johansen, Tor A.},
+  date = {2022},
+  journaltitle = {IEEE Transactions on Geoscience and Remote Sensing},
+  volume = {60},
+  issn = {1558-0644},
+  doi = {10.1109/TGRS.2021.3080175},
+  abstract = {Sporadic ocean color events with characteristic spectra, in particular algal blooms, call for quick delivery of high-resolution remote sensing data for further analysis. Motivated by this, we present the mission design for HYPerspectral Smallsat for Ocean observation (HYPSO-1), a 6U CubeSat at 500 km orbital altitude hosting a custom-built pushbroom hyperspectral imager with wavelengths 387–801 nm at 3.33 nm bandpass and a swath width of 70 km. The imager’s expected signal-to-noise ratio is characterized for typical open ocean water-leaving radiance which can be flexibly increased by binning pixels. Using geometric principles, the satellite shall execute a slew maneuver during a scan to induce greater overlap in the pixels with a goal to enable better than 100 m spatial resolution. Since high-dimensional hyperspectral data need to be transmitted over limited space-to-ground communications, we have designed a modular FPGA-based onboard image processing architecture that significantly reduces the data size without losing important spatial-spectral information. We justify the concept with a simulated scenario where HYPSO-1 first collects numerous hyperspectral images of a 40 km by 40 km coastal area in Norway and aims to immediately transfer these to nearby ground stations. Using CCSDS123 lossless compression, it takes about one orbital revolution to obtain the complete data product when considering overhead in satellite bus communications and less than 10 min without the overhead. It is shown that even better latency can be achieved with more advanced onboard processing algorithms.},
+  keywords = {Hyperspectral imaging,HYPerspectral Smallsat for Ocean observation (HYPSO-1),Image color analysis,ocean color,onboard processing,Orbits,Sea measurements,Signal to noise ratio,space optics,Space vehicles,Spatial resolution},
+  file = {/Users/aasmundnorsett/Zotero/storage/2LFCKF5Y/Grøtte et al. - 2022 - Ocean Color Hyperspectral Remote Sensing With High Resolution and Low Latency—The HYPSO-1 CubeSat Mi.pdf}
+}
+
+@article{hernandez-cabroneroCCSDS1230B2LowComplexity2021,
+  title = {The {{CCSDS}} 123.0-{{B-2}} “{{Low-Complexity Lossless}} and {{Near-Lossless Multispectral}} and {{Hyperspectral Image Compression}}” {{Standard}}: {{A}} Comprehensive Review},
+  shorttitle = {The {{CCSDS}} 123.0-{{B-2}} “{{Low-Complexity Lossless}} and {{Near-Lossless Multispectral}} and {{Hyperspectral Image Compression}}” {{Standard}}},
+  author = {Hernández-Cabronero, Miguel and Kiely, Aaron B. and Klimesh, Matthew and Blanes, Ian and Ligo, Jonathan and Magli, Enrico and Serra-Sagristà, Joan},
+  date = {2021-12},
+  journaltitle = {IEEE Geoscience and Remote Sensing Magazine},
+  volume = {9},
+  number = {4},
+  issn = {2168-6831},
+  doi = {10.1109/MGRS.2020.3048443},
+  abstract = {The Consultative Committee for Space Data Systems (CCSDS) published the CCSDS 123.0-B-2, “Low-Complexity Lossless and Near-Lossless Multispectral and Hyperspectral Image Compression” standard. This standard extends the previous issue, CCSDS 123.0-B-1, which supported only lossless compression, while maintaining backward compatibility. The main novelty of the new issue is support for near-lossless compression, i.e., lossy compression with user-defined absolute and/or relative error limits in the reconstructed images. This new feature is achieved via closed-loop quantization of prediction errors. Two further additions arise from the new near-lossless support: first, the calculation of predicted sample values using sample representatives that may not be equal to the reconstructed sample values, and, second, a new hybrid entropy coder designed to provide enhanced compression performance for low-entropy data, prevalent when nonlossless compression is used. These new features enable significantly smaller compressed data volumes than those achievable with CCSDS 123.0-B-1 while controlling the quality of the decompressed images. As a result, larger amounts of valuable information can be retrieved given a set of bandwidth and energy consumption constraints.},
+  keywords = {Compressors,Field programmable gate arrays,Hardware,Image coding,Quantization (signal),Throughput,Tutorials},
+  file = {/Users/aasmundnorsett/Zotero/storage/MRLDTNCC/Hernández-Cabronero et al. - 2021 - The CCSDS 123.0-B-2 “Low-Complexity Lossless and Near-Lossless Multispectral and Hyperspectral Image.pdf}
+}
+
+@article{ientilucciAtmosphericCompensationHyperspectral2019,
+  title = {Atmospheric {{Compensation}} of {{Hyperspectral Data}}: {{An Overview}} and {{Review}} of {{In-Scene}} and {{Physics-Based Approaches}}},
+  shorttitle = {Atmospheric {{Compensation}} of {{Hyperspectral Data}}},
+  author = {Ientilucci, Emmett J. and Adler-Golden, Steven},
+  date = {2019-06},
+  journaltitle = {IEEE Geoscience and Remote Sensing Magazine},
+  volume = {7},
+  number = {2},
+  issn = {2168-6831},
+  doi = {10.1109/MGRS.2019.2904706},
+  abstract = {In this tutorial overview, we examine atmospheric compensation of hyperspectral data in the visible and near-infrared (VNIR)-short-wave infrared (SWIR) region.},
+  keywords = {Absorption,Aerosols,Atmospheric modeling,Atmospheric waves,Reflectivity,Scattering},
+  file = {/Users/aasmundnorsett/Zotero/storage/4BYA57ZV/Ientilucci and Adler-Golden - 2019 - Atmospheric Compensation of Hyperspectral Data An Overview and Review of In-Scene and Physics-Based.pdf}
+}
+
+@article{jiaRemovalFeedbackLoop2025,
+  title = {Removal of the {{Feedback Loop}} in {{CCSDS}} 123.0-{{B-2}} during {{Hardware Implementation}}},
+  author = {Jia, Liang and Wang, Qi and Zhang, Lei and Song, Chengpeng and Zhang, Peng},
+  date = {2025},
+  journaltitle = {IEEE Geoscience and Remote Sensing Letters},
+  shortjournal = {IEEE Geosci. Remote Sensing Lett.},
+  issn = {1545-598X, 1558-0571},
+  doi = {10.1109/LGRS.2025.3601194},
+  abstract = {The Consultative Committee for Space Data Systems (CCSDS) proposed the CCSDS 123.0-B-2 standard for compressing large volumes of data acquired by multispectral and hyperspectral sensors. However, data dependencies in the CCSDS 123.0-B-2 predictor lead to feedback loops during the weight update process. This poses challenges for fully pipelined hardware implementation of the predictor and severely limits the achievable data throughput. Therefore, it is critical to improve throughput while keeping the degradation in compression performance within an acceptable range. This work demonstrates that by appropriately reducing the frequency of weight updates, the data dependencies in the predictor can be mitigated, thus shortening the critical path in hardware implementation and eliminating feedback loops. Experimental results show that, under the BIL (Band Interleaved by Line) data format, the proposed method achieves a throughput of 348.4 MSamples/s using only 3,995 LUTs.},
+  langid = {english},
+  file = {/Users/aasmundnorsett/Zotero/storage/G62CBN2R/Jia et al. - 2025 - Removal of the Feedback Loop in CCSDS 123.0-B-2 during Hardware Implementation.pdf}
+}
+
+@inproceedings{keymeulenHighPerformanceSpace2018,
+  title = {High {{Performance Space Computing}} with {{System-on-Chip Instrument Avionics}} for {{Space-based Next Generation Imaging Spectrometers}} ({{NGIS}})},
+  booktitle = {2018 {{NASA}}/{{ESA Conference}} on {{Adaptive Hardware}} and {{Systems}} ({{AHS}})},
+  author = {Keymeulen, Didier and Shin, Simon and Riddley, Jason and Klimesh, Matthew and Kiely, Aaron and Liggett, Elliott and Sullivan, Peter and Bernas, Michael and Ghossemi, Hamid and Flesch, Greg and Cheng, Michael and Dolinar, Sam and Dolman, David and Roth, Kevin and Holyoake, Chris and Crocker, Ken and Smith, Adam},
+  date = {2018-08},
+  issn = {2471-769X},
+  doi = {10.1109/AHS.2018.8541473},
+  abstract = {The emergent technology of system-on-chip (SoC) devices promises lighter, smaller, cheaper, and more capable and reliable space electronic systems that could help to unveil some of the most treasured secrets in our universe. This technology is an improvement over the technology that is currently used in space applications, which lags behind state-of-the-art commercial-off-the-shelf (COTS) equipment by several generations. SoC technology integrates all computational power required by next-generation space exploration science instruments onto a single chip. This presentation will describe a Xilinx Zynqbased data acquisition, cloud-screening and compression computing system that has been developed at the Jet Propulsion Laboratory (JPL) foJJPL's Next Generation Imaging Spectrometers (NGIS). The Xilinx Zynq-based Alpha Data hardware assembly fits into a 120mm by 190m by 40mm assembly and uses 9 watts at peak performance. The computing element is a Xilinx Zynq Z7045Q which includes a Kintex-7 FPGA (equivalent to 3 RAD Virtex5 FPGAs in terms of logic cell resources) and dual-core ARM Cortex-A9 Processors (equivalent to 10 RAD750 Power PCs in term of processing capability).},
+  eventtitle = {2018 {{NASA}}/{{ESA Conference}} on {{Adaptive Hardware}} and {{Systems}} ({{AHS}})},
+  keywords = {Aerospace electronics,Field programmable gate arrays,Hardware,Hyperspectral imaging,Image coding,Instruments,Software},
+  file = {/Users/aasmundnorsett/Zotero/storage/FNWYWZIS/Keymeulen et al. - 2018 - High Performance Space Computing with System-on-Chip Instrument Avionics for Space-based Next Genera.pdf}
+}
+
+@inproceedings{lamoureuxOverviewLowPowerTechniques2008a,
+  title = {An {{Overview}} of {{Low-Power Techniques}} for {{Field-Programmable Gate Arrays}}},
+  booktitle = {2008 {{NASA}}/{{ESA Conference}} on {{Adaptive Hardware}} and {{Systems}}},
+  author = {Lamoureux, Julien and Luk, Wayne},
+  date = {2008-06},
+  doi = {10.1109/AHS.2008.71},
+  abstract = {This paper provides an overview of low-power techniques for field-programmable gate arrays (FPGAs). It covers system-level design techniques and device-level design techniques that have targeted current commercial devices. It also describes current research on circuit-level and architecture-level design techniques. Recent studies on power modelling and on low-power computer-aided design (CAD) are also reported. Finally, it proposes future work that would enable the use of FPGA technology in applications where power and energy consumption is critical, such as mobile devices.},
+  eventtitle = {2008 {{NASA}}/{{ESA Conference}} on {{Adaptive Hardware}} and {{Systems}}},
+  keywords = {Clocks,Design automation,Field programmable gate arrays,FPGA,low-power,Power demand,Routing,Solid modeling,Switches},
+  file = {/Users/aasmundnorsett/Zotero/storage/4QRSEFKM/Lamoureux and Luk - 2008 - An Overview of Low-Power Techniques for Field-Programmable Gate Arrays.pdf}
+}
+
+@article{LosslessMultispectralHyperspectral2022,
+  title = {Lossless {{Multispectral}} and {{Hyperspectral Image Compression}}},
+  date = {2022},
+  langid = {english},
+  file = {/Users/aasmundnorsett/Zotero/storage/BMRRDZWW/2022 - Lossless Multispectral and Hyperspectral Image Compression.pdf}
+}
+
+@article{orlandicParallelFPGAImplementation2019,
+  title = {A {{Parallel FPGA Implementation}} of the {{CCSDS-123 Compression Algorithm}}},
+  author = {Orlandic, Milica and Fjeldtvedt, Johan Austlid and Johansen, Tor Arne},
+  date = {2019},
+  journaltitle = {11},
+  publisher = {MDPI},
+  issn = {2072-4292},
+  doi = {10.3390/rs11060673},
+  abstract = {Satellite onboard processing for hyperspectral imaging applications is characterized by large data sets, limited processing resources and limited bandwidth of communication links. The CCSDS-123 algorithm is a specialized compression standard assembled for space-related applications. In this paper, a parallel FPGA implementation of CCSDS-123 compression algorithm is presented. The proposed design can compress any number of samples in parallel allowed by resource and I/O bandwidth constraints. The CCSDS-123 processing core has been placed on Zynq-7035 SoC and verified against the existing reference software. The estimated power use scales approximately linearly with the number of samples processed in parallel. Finally, the proposed implementation outperforms the state-of-the-art implementations in terms of both throughput and power.},
+  langid = {english},
+  annotation = {Accepted: 2019-04-24T07:24:44Z},
+  file = {/Users/aasmundnorsett/Zotero/storage/H3KMPSE4/Orlandic et al. - 2019 - A Parallel FPGA Implementation of the CCSDS-123 Compression Algorithm.pdf}
+}
+
+@article{parenteSpecialIssueHyperspectral2019,
+  title = {A {{Special Issue}} on {{Hyperspectral Imaging}} [{{From}} the {{Guest Editors}}]},
+  author = {Parente, Mario and Kerekes, John and Heylen, Rob},
+  date = {2019-06},
+  journaltitle = {IEEE Geoscience and Remote Sensing Magazine},
+  volume = {7},
+  number = {2},
+  issn = {2168-6831},
+  doi = {10.1109/MGRS.2019.2912617},
+  abstract = {Hyperspectral imaging (HSI) for geoscience remote sensing and Earth observation has been around since the mid-1980s. For many years, it was the purview of research laboratories and proof-of-concept satellite missions. Hundreds of research articles have been published exploring algorithms for analysis and demonstrating applications across many Earth observational fields of interest. Most have focused on a relatively small group of publicly available data sets due to the high cost of sensor operation and collection of ground reference data necessary for algorithm and product evaluation. More recently, as the cost of focal planes and sensor technology has decreased, together with the emergence of inexpensive unmanned aerial vehicle (UAV) systems and Cube- Sats/smallSats in space access, the availability of hyperspectral imagery is poised to grow dramatically. Several airborne and spaceborne systems have been deployed or are being planned. Commercial remote sensing and image processing software systems provide more support and extended functionality for such data, while the practical use of hyperspectral data in both commercial and scientific applications has increased. The community now has access to relatively low-cost UAV systems and data and will soon see more routine availability of space-based HSI data. This special issue of IEEE Geoscience and Remote Sensing Magazine on HSI was put together based on the recognition that the field is on the cusp of expanded data availability. While formerly the domain of a relatively small group of specialists, it is anticipated HSI data will soon become available to a wider range of scientists and data users. This special issue was compiled to bring together a comprehensive look at the characteristics, phenomenology, algorithms, and applications as a resource for practitioners and students who wish to gain familiarity with the field.},
+  keywords = {Atmospheric modeling,Hyperspectral imaging,Special issues and sections,Unmanned aerial vehicles},
+  file = {/Users/aasmundnorsett/Zotero/storage/H3KVMIP3/Parente et al. - 2019 - A Special Issue on Hyperspectral Imaging [From the Guest Editors].pdf}
+}
+
+@article{rahmanLosslessImageCompression2019,
+  title = {Lossless {{Image Compression Techniques}}: {{A State-of-the-Art Survey}}},
+  shorttitle = {Lossless {{Image Compression Techniques}}},
+  author = {Rahman, Md Atiqur and Hamada, Mohamed},
+  date = {2019-10},
+  journaltitle = {Symmetry},
+  volume = {11},
+  number = {10},
+  pages = {1274},
+  publisher = {Multidisciplinary Digital Publishing Institute},
+  issn = {2073-8994},
+  doi = {10.3390/sym11101274},
+  url = {https://www.mdpi.com/2073-8994/11/10/1274},
+  urldate = {2025-12-04},
+  abstract = {Modern daily life activities result in a huge amount of data, which creates a big challenge for storing and communicating them. As an example, hospitals produce a huge amount of data on a daily basis, which makes a big challenge to store it in a limited storage or to communicate them through the restricted bandwidth over the Internet. Therefore, there is an increasing demand for more research in data compression and communication theory to deal with such challenges. Such research responds to the requirements of data transmission at high speed over networks. In this paper, we focus on deep analysis of the most common techniques in image compression. We present a detailed analysis of run-length, entropy and dictionary based lossless image compression algorithms with a common numeric example for a clear comparison. Following that, the state-of-the-art techniques are discussed based on some bench-marked images. Finally, we use standard metrics such as average code length (ACL), compression ratio (CR), pick signal-to-noise ratio (PSNR), efficiency, encoding time (ET) and decoding time (DT) in order to measure the performance of the state-of-the-art techniques.},
+  langid = {english},
+  keywords = {arithmetic coding,average code length,compression ratio,Huffman,lossless and lossy compression,LZW,PSNR and efficiency,run-length,Shannon–Fano},
+  file = {/Users/aasmundnorsett/Zotero/storage/HA5JCPS6/Rahman and Hamada - 2019 - Lossless Image Compression Techniques A State-of-the-Art Survey.pdf}
+}
+
+@inproceedings{rosHighLevelSynthesisSingle2021,
+  title = {High-{{Level Synthesis}} of a {{Single}}/{{Multi-Band Optical}} and {{SAR Image Compression}} and {{Encryption Hardware Accelerator}}},
+  booktitle = {2021 {{IEEE International Geoscience}} and {{Remote Sensing Symposium IGARSS}}},
+  author = {Ros, Paolo Motto and Caon, Michele and Bianchi, Tiziano and Martina, Maurizio and Magli, Enrico},
+  date = {2021-07},
+  issn = {2153-7003},
+  doi = {10.1109/IGARSS47720.2021.9553765},
+  abstract = {Transmitting images from earth observation satellites to ground is a major challenge, and a compression/encryption stage is actually mandatory. Development of hardware accelerators is highly recommended, both to relieve the software from such demanding task, and to improve performance, aiming at quasi-real-time data processing. To this end, we discuss the design, development, deployment and test of a FPGA-based accelerator, featuring a lossless and lossy (near-lossless) compression, including the data encryption too. Its architecture is well suited for different image types, including single- and multi-band optical and SAR images and can be fully run-time configurable. Measured performance showed a throughput of 10 Msamples/s, in agreement with related state-of-the-art works, focused on lossless compression only.},
+  eventtitle = {2021 {{IEEE International Geoscience}} and {{Remote Sensing Symposium IGARSS}}},
+  keywords = {CCSDS-123,Earth observation,FPGA,Hardware accelerator,High-level synthesis,Image coding,Loss measurement,lossy compression,Optical and SAR imaging,Optical imaging,Optical losses,Radar polarimetry,Software,Throughput},
+  file = {/Users/aasmundnorsett/Zotero/storage/3UNY5B2G/Ros et al. - 2021 - High-Level Synthesis of a SingleMulti-Band Optical and SAR Image Compression and Encryption Hardwar.pdf}
+}
+
+@book{salomonDataCompressionComplete2004,
+  title = {Data Compression the Complete Reference},
+  author = {Salomon, David},
+  date = {2004},
+  edition = {3rd ed},
+  publisher = {Springer},
+  location = {New York},
+  isbn = {978-0-387-40697-8 978-0-387-21832-8},
+  langid = {english},
+  file = {/Users/aasmundnorsett/Zotero/storage/CKD54L8U/Salomon - 2004 - Data compression the complete reference.pdf}
+}
+
+@article{sanchezReducingDataDependencies2022,
+  title = {Reducing {{Data Dependencies}} in the {{Feedback Loop}} of the {{CCSDS}} 123.0-{{B-2 Predictor}}},
+  author = {Sánchez, Antonio and Blanes, Ian and Barrios, Yubal and Hernández-Cabronero, Miguel and Bartrina-Rapesta, Joan and Serra-Sagristà, Joan and Sarmiento, Roberto},
+  date = {2022},
+  journaltitle = {IEEE Geoscience and Remote Sensing Letters},
+  volume = {19},
+  issn = {1558-0571},
+  doi = {10.1109/LGRS.2022.3213975},
+  abstract = {On-board multi- and hyperspectral instruments acquire large volumes of data that need to be processed with the limited computational and storage resources. In this context, the Consultative Committee for Space Data Systems (CCSDS) 123.0-B-2 standard emerges as an interesting option to compress multi- and hyperspectral images on-board satellites, supporting both lossless and near-lossless compression with low complexity and reduced power consumption. Nonetheless, the inclusion of a feedback loop in the CCSDS 123.0-B-2 predictor to support near-lossless compression introduces significant data dependencies that hinder real-time processing, particularly due to the presence of a quantization stage within this loop. This work provides an analysis of the aforementioned data dependencies and proposes two strategies aiming at maximizing throughput in hardware implementations and thus enabling real-time processing. In particular, through an elaborate mathematical derivation, the quantization stage is removed completely from the feedback loop. This reduces the critical path, which allows for shorter initiation intervals in a pipelined hardware implementation and higher throughput. This is achieved without any impact on the compression performance, which is identical to the one obtained by the original data flow of the predictor.},
+  keywords = {Compression algorithms,Consultative Committee for Space Data Systems (CCSDS) 1230-B-2,Feedback loop,Hardware,hyperspectral imaging,Image coding,onboard data processing,Optimization,Quantization (signal),Standards,Throughput},
+  file = {/Users/aasmundnorsett/Zotero/storage/ZNNVJN7K/Sánchez et al. - 2022 - Reducing Data Dependencies in the Feedback Loop of the CCSDS 123.0-B-2 Predictor.pdf}
+}
+
+@article{sarpeshkarUniversalPrinciplesUltra2012,
+  title = {Universal {{Principles}} for {{Ultra Low Power}} and {{Energy Efficient Design}}},
+  author = {Sarpeshkar, Rahul},
+  date = {2012-04},
+  journaltitle = {IEEE Transactions on Circuits and Systems II: Express Briefs},
+  volume = {59},
+  number = {4},
+  issn = {1558-3791},
+  doi = {10.1109/TCSII.2012.2188451},
+  abstract = {Information is represented by the states of physical devices. It costs energy to transform or maintain the states of these physical devices. Thus, energy and information are deeply linked. This deep link allows the articulation of ten information-based principles for ultra low power design that apply to biology or electronics, to analog or digital systems, and to electrical or nonelectrical systems, at small or large scales. In this tutorial brief, we review these key principles along with examples of how they have been applied in practical electronic systems.},
+  keywords = {Computer architecture,Design principles,Encoding,energy efficient,information,low power,Low-power electronics,Noise,Power demand,Robustness,Topology}
+}
+
+@report{theconsultativecommitteeforspacedatasystemsLowComplexityLosslessNearLossless2019,
+  type = {Recommended Standard},
+  title = {Low-{{Complexity Lossless}} and {{Near-Lossless Multispectral}} and {{Hyperspectral Image Compression}}},
+  author = {{The Consultative Committee for Space Data Systems}},
+  date = {2019},
+  number = {CCSDS 123.0-B-2},
+  institution = {CCSDS},
+  langid = {english},
+  file = {/Users/aasmundnorsett/Zotero/storage/K4GNHX4K/2019 - Low-Complexity Lossless and Near-Lossless Multispectral and Hyperspectral Image Compression.pdf}
+}
+
+@article{tsigkanosHighPerformanceCOTSFPGA2020,
+  title = {High-{{Performance COTS FPGA SoC}} for {{Parallel Hyperspectral Image Compression With CCSDS-123}}.0-{{B-1}}},
+  author = {Tsigkanos, Antonis and Kranitis, Nektarios and Theodoropoulos, Dimitris and Paschalis, Antonios},
+  date = {2020-11},
+  journaltitle = {IEEE Transactions on Very Large Scale Integration (VLSI) Systems},
+  volume = {28},
+  number = {11},
+  issn = {1557-9999},
+  doi = {10.1109/TVLSI.2020.3020164},
+  abstract = {Nowadays, hyperspectral imaging is recognized as a cornerstone remote sensing technology. Next generation, high-speed airborne, and space-borne imagers have increased resolution, resulting in an explosive growth in data volume and instrument data rate in the range of gigapixel per second. This competes with limited on-board resources and bandwidth, making hyperspectral image compression a mission critical on-board processing task. At the same time, the “new space” trend is emerging, where launch costs decrease, and agile approaches are exploited building smallsats using commercial-off-the-shelf (COTS) parts. In this contribution, we introduce a high-performance parallel implementation of the CCSDS-123.0-B-1 hyperspectral compression algorithm targeting SRAM field-programmable gate array (FPGA) technology. The architecture exploits image segmentation to provide the robustness to data corruption and enables scalable throughput performance by leveraging segment-level parallelism. Furthermore, we exploit the capabilities of a COTS FPGA system-on-chip (SoC) device to optimize size, weight, power, and cost (SWaP-C). The architecture partitions a hyperspectral cube stored in a DRAM framebuffer into segments, compressing them in parallel using a flexible software scheduler hosted in the SoC CPU and several compressor accelerator cores in the FPGA fabric. A 5-core implementation demonstrated on a Zynq-7045 FPGA achieves a throughput performance of 1387 Msamples/s [22.2 Gb/s at 16 bits per pixel per band (bpppb)] and outperforms previous implementations in equivalent FPGA technology, allowing seamless integration with next-generation hyperspectral sensors.},
+  keywords = {Consultative Committee for Space Data Systems (CCSDS),Field programmable gate arrays,field-programmable gate array (FPGA),hyperspectral compression,Hyperspectral imaging,Image coding,Image segmentation,on-board data processing,Performance evaluation,Sensors,system-on-chip (SoC)},
+  file = {/Users/aasmundnorsett/Zotero/storage/Q3QEHG5F/Tsigkanos et al. - 2020 - High-Performance COTS FPGA SoC for Parallel Hyperspectral Image Compression With CCSDS-123.0-B-1.pdf}
+}
+
+@article{vorhaugDevelopmentIntegrationCCSDS2024,
+  title = {Development and {{Integration}} of {{CCSDS}} 123.0-{{B-2 FPGA Accelerator}} for {{HYPSO-1}}},
+  author = {Vorhaug, Daniel and Boyle, Samuel and Orlandic, Milica},
+  date = {2024},
+  doi = {10.5281/zenodo.13889114},
+  abstract = {The HYPerspectral imaging small Satellite for Ocean observation (HYPSO) mission uses hyperspectral images to monitor the environment by collecting images of up to hundreds of bands in the electromagnetic spectrum. This mission relies on the use of reconfigurable hardware for acceleration of onboard compression of hyperspectral images. This combats a challenge associated with small satellites as their constrained receive and transfer bandwidths and storage capabilities paired with hyperspectral images introduce limitations in their efficiency. Onboard compression is key in maximising satellite operational capacity by minimising time spent communicating and increasing the number of images that can be stored. The HYPSO-1 satellite currently uses a hyperspectral image compressor; CCSDS 123.0-B-1 standard on a Field-Programmable Gate Array (FPGA) accelerator to compress its hyperspectral images. With the development of a near-lossless CCSDS 123.0-B-2 compliant encoder accelerator, this work has provided state-of-the-art compression speeds for implementations on smaller off-the-shelf FPGAs such as the ZYNQ-7000 series. This work describes the B-2 accelerator, the testing procedure in which upon successful RTL simulations the accelerator was tested on an on-ground HYPSO-1 system model and then passed integration tests in orbit on HYPSO-1, replacing B-1 as the defacto onboard standard in use.},
+  langid = {english},
+  file = {/Users/aasmundnorsett/Zotero/storage/9XLTFXI6/Vorhaug et al. - Development and Integration of CCSDS 123.0-B-2 FPGA Accelerator for HYPSO-.pdf}
+}
+
+@inproceedings{vorhaugHighLevelCCSDS1230B22024,
+  title = {High-{{Level CCSDS}} 123.0-{{B-2 Hyperspectral Image Compressor Verification Model}}},
+  booktitle = {2024 14th {{Workshop}} on {{Hyperspectral Imaging}} and {{Signal Processing}}: {{Evolution}} in {{Remote Sensing}} ({{WHISPERS}})},
+  author = {Vorhaug, Daniel and Boyle, Samuel and Orlandić, Milica},
+  date = {2024-12},
+  issn = {2158-6276},
+  doi = {10.1109/WHISPERS65427.2024.10876459},
+  abstract = {Satellite hyperspectral imaging is a powerful tool in global environmental monitoring and a major challenge associated with HyperSpectral Images (HSIs) is their large size. Compression is of key importance in the storage and transmission of HSIs through the reduction of physical image size. The Consultative Committee for Space Data Systems (CCSDS) 123.0-B-2 is the newest issue of the hyperspectral image compression standard supporting lossless and near-lossless compression. In this work a high-level implementation of CCSDS 123.0-B-2 is developed and verified. This high-level model provides outputs between stages of the compression process and is intended to be suitable for supporting the development of hardware accelerators or different software implementations through the availability of these intermediate results of functionalities in the standard. This facilitates implementations that adopt the full or partial standard. This is then verified for different encoder types and all configurable compression settings for two test sets. Furthermore, this framework has been successfully applied in work since by the authors through the verification of a CCSDS B-2 accelerator on FPGA, demonstrating its robustness and applicability.},
+  eventtitle = {2024 14th {{Workshop}} on {{Hyperspectral Imaging}} and {{Signal Processing}}: {{Evolution}} in {{Remote Sensing}} ({{WHISPERS}})},
+  keywords = {CCSDS-123 compression,hyperspectral imaging,Hyperspectral imaging,Image coding,remote sensing,Robustness,Satellites,Sensors,Signal processing,Software,Standards,Symbols,Throughput,verification model},
+  file = {/Users/aasmundnorsett/Zotero/storage/TYVMMLVJ/Vorhaug et al. - 2024 - High-Level CCSDS 123.0-B-2 Hyperspectral Image Compressor Verification Model.pdf}
+}
+
+@thesis{vorhaugHyperspectralImageCompression2024,
+  type = {mathesis},
+  title = {Hyperspectral {{Image Compression Accelerator On FPGA Using CCSDS}} 123.0-{{B-2}}},
+  author = {Vorhaug, Daniel},
+  date = {2024},
+  institution = {NTNU},
+  abstract = {Hyperspektral fotografering med satellitter er et sentralt verktøy innen global overvåking av miljøet. Disse satellittene kan ta bilder med data om hundrevis av lysbølgelengder, og størrelsen på disse bildene kan fylle lagringsplassen på satellitten og nedlastingskapasiteten fra den. Datakomprimering kan redusere den nødvendige lagringsplassen og gjøre det mulig å laste ned flere bilder.  HYPSO-1 satellitten bruker en hyperspektral bildekomprimerer etter CCSDS 123.0-B-1 standarden på en Field Programmable Gate Array (FPGA) for å komprimere sine hyperspektrale bilder. En nyere versjon av standarden, CCSDS 123.0-B-2, introduserer komprimering med begrenset tap og en ny koder, som kan gi mer effektiv komprimering. Denne versjonen introduserer også dataavhengigheter som kan begrense datastrømkapasiteten til komprimerere på FPGA. Denne masteroppgaven utforsker en av de mindre dokumenterte tilnærmingene for å implementere en komprimerer med høy datastrømkapasitet til tross for disse dataavhengighetene.   En CCSDS 123.0-B-2 komprimerer er implementert for FPGA. Implementasjonen er verifisert ved å simulere kompresjon og sammenligne resultatene mot en verifisert modell. Et testsett på 2000 tilfeldig genererte bilder og kompresjonskonfigurasjoner er blant verifikasjonstestene. Komprimereren har blitt brukt til å komprimere bilder på HYPSO-1 satellitten i verdensrommet, og komprimeringskorrektheten er verifisert. Den kan komprimere et HYPSO-1 bilde på 1,2 sekunder.  Implementasjonen har en datastrømkapasitet på 110 millioner punktprøver i sekundet, eller 1.76 Gb/s, på en Kintex XCKU040 FPGA. Dette dokumenterer grensene for denne dataavhengighetstilnærmingen. Sammenlignet med andre tilnærminger gir den en avveining av lavere datastrømkapasitet men lavere bruk av FPGA ressurser. Den har 39\% av datastrømkapasiteten til en lignende implementasjon, men bruker bare 39\% så mange LUT, 17\% FF, 13\% DSP og 37\% BRAM. Dette er den laveste ressursbruken blant implementasjoner med lignende egenskaper og er relevant for systemer med mindre eller tettpakkede FPGAer, som HYPSO-1.  Dette er den første publiserte implementasjonen som bruker denne dataavhengighetstilnærmingen som implementerer en hel kompressor og som er testet på maskinvare. Datastrømkapasiteten er forskjellig fra resultatet til en implementasjon med samme tilnærming som ble evaluert med High-Level Synthesis (HLS).},
+  langid = {english},
+  annotation = {Accepted: 2024-10-15T17:20:54Z},
+  file = {/Users/aasmundnorsett/Zotero/storage/Q8WCPWG2/Vorhaug - 2024 - Hyperspectral Image Compression Accelerator On FPGA Using CCSDS 123.0-B-2.pdf}
+}
+
+@incollection{WOLF2023453,
+  title = {Chapter 10 - Embedded Multiprocessors},
+  booktitle = {Computers as Components (Fifth Edition)},
+  author = {Wolf, Marilyn},
+  editor = {Wolf, Marilyn},
+  date = {2023},
+  series = {The Morgan Kaufmann Series in Computer Architecture and Design},
+  edition = {Fifth Edition},
+  pages = {453--484},
+  publisher = {Morgan Kaufmann},
+  issn = {15459888},
+  doi = {10.1016/B978-0-323-85128-2.00010-4}
+}

@@ -1,0 +1,45 @@
+\documentclass[british,titlepage]{ntnuthesis}
+
+\title{Delayed Weight Updates for High Throughput Hardware Accelerator of the CCSDS-123.0-B-2 Algorithm}
+\shorttitle{Hyperspectral Image Compression}
+\author{Aasmund Gabestad Nørsett}
+\shortauthor{Nørsett}
+\date{12/06/2026}
+
+\predate{\centering}
+\postdate{\vfill\hfill\emph{Supervised by Milica Orlandic and Samuel Boyle}\hfill}
+
+\addbibresource{zotero.bib}
+
+\input{glossary.tex} % add glossary and acronym lists before document
+
+\begin{document}
+
+\input{chapters/0a-abstract.tex}
+% \input{chapters/0b-sammendrag.tex}
+\input{chapters/0c-ai-declaration.tex}
+
+\tableofcontents
+
+% \chapter*{\acronymname}           % Create an unnumbered chapter for the acronyms
+% \printglossary[type=\acronymtype] % Print acronyms
+
+% \chapter*{\glossaryname}          % Create an unnumbered chapter for the glossary
+% \printglossary                    % Print glossary
+
+\input{chapters/1-introduction}
+\input{chapters/2-background.tex}
+\input{chapters/3-state-of-the-art.tex}
+\input{chapters/previous-work.tex}
+\input{chapters/4-implementation.tex}
+\input{chapters/5-results.tex}
+\input{chapters/6-discussion.tex}
+\input{chapters/7-conclusions.tex}
+
+\chapter*{\bibname}
+\printbibliography[heading=none]
+
+% \appendix
+% \input{appendices/a-appendix.tex}
+
+\end{document}
