@@ -1,19 +1,56 @@
-\documentclass[british,titlepage]{ntnuthesis}
+\documentclass[british]{ntnuthesis}
 
-\title{Delayed Weight Updates for High Throughput Hardware Accelerator of the CCSDS-123.0-B-2 Algorithm}
-\shorttitle{Hyperspectral Image Compression}
-\author{Aasmund Gabestad Nørsett}
+\shorttitle{Delayed Weight Updates}
 \shortauthor{Nørsett}
-\date{12/06/2026}
-
-\predate{\centering}
-\postdate{\vfill\hfill\emph{Supervised by Milica Orlandic and Samuel Boyle}\hfill}
 
 \addbibresource{zotero.bib}
-
 \input{glossary.tex} % add glossary and acronym lists before document
 
 \begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Title page matching NTNU official layout (titlepage.pdf).
+% NOTE: Add figures/ntnu_basic.png to your figures/ folder.
+%       Copy it from your previous Masteroppgave.zip.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{titlepage}
+	\sffamily % use Source Sans Pro throughout the title page
+
+	\vspace*{1.5cm}
+
+	% Author name: Large, gray, light weight (default)
+	\noindent {\Large \textcolor{gray}{Aasmund Gabestad Nørsett}}
+
+	\vspace{0.8cm}
+
+	% Title: huge, regular weight (fontseries m = medium/regular, between light and bold)
+	\noindent {\fontseries{sb}\selectfont\huge Delayed Weight Updates for High Throughput Hardware Accelerator of the CCSDS-123.0-B-2 Compression Algorithm \par}
+
+	\vfill % pushes everything below to the bottom
+
+	% Thesis metadata block
+	\noindent \large
+	Master's thesis in Electronics System Design and Innovation \\
+	Supervisor: Milica Orlandic \\
+	Co-supervisor: Samuel Boyle \\
+	June 2026
+
+	\vspace{0.6cm}
+
+	% University info
+	\noindent \large
+	Norwegian University of Science and Technology \\
+	Faculty of Information Technology and Electrical Engineering \\
+	Department of Electronic Systems
+
+	\vspace{0.8cm}
+
+	% NTNU logo - add figures/ntnu_basic.png to your project
+	\noindent \includegraphics[width=0.28\textwidth]{figures/ntnu_basic.png}
+
+\end{titlepage}
+\restoregeometry
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \input{chapters/0a-abstract.tex}
 % \input{chapters/0b-sammendrag.tex}
