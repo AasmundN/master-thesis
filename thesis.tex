@@ -15,6 +15,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{titlepage}
 	\sffamily % use Source Sans Pro throughout the title page
+	\thispagestyle{empty}
 
 	\vspace*{1.5cm}
 
@@ -52,8 +53,17 @@
 \restoregeometry
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\newpage
+\thispagestyle{empty}
+\null
+\newpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\setcounter{page}{1}
+
 \input{chapters/0a-abstract.tex}
-% \input{chapters/0b-sammendrag.tex}
+\input{chapters/0b-sammendrag.tex}
 \input{chapters/0c-ai-declaration.tex}
 
 \tableofcontents
