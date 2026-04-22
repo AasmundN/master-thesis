@@ -1,2 +1,53 @@
 \chapter{State-of-the-Art}
 \label{sec:state-of-the-art}
+
+\begin{table}[ht]
+	\caption{The number of processed samples interleaving $z-1$ and $t-1$ dependencies, including the novel FID ordering in addition to the standard orderings.}
+	\label{tab:orderings-fid}
+	\begin{center}
+		\begin{tabular}{l l l l l l}
+			\hline
+			      & \textbf{BSQ}    & \textbf{BIP} & \textbf{BIL} & \textbf{FID} \\
+			\hline
+			$z-1$ & $N_x \cdot N_y$ & $1$          & $N_x$        & $N_z - 1$    \\
+			$t-1$ & $1$             & $N_z$        & $1$          & $N_z$        \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=1\textwidth]{figures/fid.png}
+	\end{center}
+	\caption{}
+	\label{fig:fid}
+\end{figure}
+
+\begin{equation}
+	\text{sgn}^+\bigl[e_z(t)\bigr] =
+	\begin{cases}
+		-1,                                            & \text{if }\lvert s_z(t) - \hat{s}_z(t) \rvert \le m_z(t)\ \text{and }\tilde{s}_z(t)\text{ is odd},  \\[6pt]
+		1,                                             & \text{if }\lvert s_z(t) - \hat{s}_z(t) \rvert \le m_z(t)\ \text{and }\tilde{s}_z(t)\text{ is even}, \\[6pt]
+		\text{sgn}^+\bigl[s_z(t) - \hat{s}_z(t)\bigr], & \text{otherwise}.
+	\end{cases}
+	\label{eq:math-opt}
+\end{equation}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{figures/delayed-weight-updates.png}
+	\end{center}
+	\caption{}
+	\label{fig:delayed-weight-updates}
+\end{figure}
+
+\begin{equation}
+	\omega^{(i)}_{z, \text{unclipped}}(t+1)=
+	\begin{cases}
+		\omega^{(i)}_z(t),                                                                                                                   & x \le 2,          \\[6pt]
+		\omega^{(i)}_z(t-3) + \omega^{(i)}_{z, \text{offset}}(t-3),                                                                          & x = 3,            \\[6pt]
+		\left\lfloor \dfrac{1}{2}\left(\omega^{(i)}_z(t-3) + \omega^{(i)}_{z, \text{offset}}(t-3) + \omega^{(i)}_z(t) \right) \right\rfloor, & \text{otherwise}.
+	\end{cases}
+	\label{eq:weight-update-reduced}
+\end{equation}

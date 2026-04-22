@@ -1,2 +1,29 @@
 \chapter{Results}
 \label{sec:results}
+
+\begin{table}
+	\caption{}
+	\label{tab:performance-results}
+	\begin{center}
+		\begin{tabular}{lrrrrrr}
+			\hline
+			\textbf{FPGA}          & \textbf{LUT} & \textbf{FF} & \textbf{DSP} & \textbf{BRAM} & \textbf{Power} & \textbf{Frequency} \\
+			\hline
+			Zynq-7030              & 5958         & 3425        & 4            & 83.5          & 152 mW         & 90.9 MHz           \\
+			\hline
+			Zynq ZU7EV             & 6331         & 3442        & 4            & 79.5          & 273 mW         & 200 MHz            \\
+			\hline
+			Zynq ZU7EV (predictor) & 2969         & 2185        & 4            & 65.5          & 467 mW         & 312.5 MHz          \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.6\textwidth]{results/old-config/zynq-7030-97MHz-floorplan.png}
+	\end{center}
+	\caption{}
+	\label{fig:floorplan}
+\end{figure}
+

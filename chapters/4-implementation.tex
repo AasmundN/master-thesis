@@ -1,2 +1,60 @@
 \chapter{Implementation and Verification}
 \label{sec:implementation}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.85\textwidth]{figures/new-stage3.png}
+	\end{center}
+	\caption{}
+	\label{fig:new-stage3}
+\end{figure}
+
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[angle=90, height=1\textheight]{figures/new-pipeline.png}
+	\end{center}
+	\caption{}
+	\label{fig:new-pipeline}
+\end{figure}
+
+\begin{table}[ht]
+	\centering
+	\caption{Selected predictor and hybrid encoder parameters. Values are selected based on the work by \citeauthor{blanesPerformanceImpactParameter2019}, and are the same as those used by \citeauthor{vorhaugHyperspectralImageCompression2024} \cite{blanesPerformanceImpactParameter2019, vorhaugHyperspectralImageCompression2024}. Table recreated from \cite{vorhaugHyperspectralImageCompression2024}.}
+	\label{tab:parameters}
+	\begin{tabular}{lcl}
+		\toprule
+		\textbf{Name}                    & \textbf{Symbol}              & \textbf{Configuration} \\
+		\midrule
+		Sample type                      &                              & Unsigned               \\
+		Dynamic range                    & $D$                          & 16                     \\
+		Sample encoding order            &                              & BIL                    \\
+		Entropy coder type               &                              & Hybrid coder           \\
+		Quantizer method                 &                              & Absolute               \\
+		Number of prediction bands       & $P$                          & 3                      \\
+		Register size                    & $R$                          & 64                     \\
+		Local sum type                   &                              & Narrow column-oriented \\
+		Prediction mode                  &                              & Reduced                \\
+		Weight component resolution      & $\Omega$                     & 19                     \\
+		Weight initialization method     &                              & Default                \\
+		Weight update initial parameter  & $\nu_{\min}$                 & $-1$                   \\
+		Weight update final parameter    & $\nu_{\max}$                 & $4$                    \\
+		Weight update change interval    & $t_{\text{inc}}$             & $2^6$                  \\
+		Weight update exponent offsets   & $\zeta_z^{(i)}, \zeta_z^{*}$ & $0$                    \\
+		Periodic error limit update      &                              & Disabled               \\
+		Band-varying absolute limits     &                              & Disabled               \\
+		Absolute error limit             & $a_z$                        & \emph{Varied}          \\
+		Band-varying relative limits     &                              & Disabled               \\
+		Relative error limit             & $r_z$                        & $0$                    \\
+		Sample representative resolution & $\Theta$                     & $3$                    \\
+		Sample representative offset     & $\psi_z$                     & $7$                    \\
+		Band-varying offset              &                              & Disabled               \\
+		Sample representative damping    & $\theta_z$                   & $3$                    \\
+		Band-varying damping             &                              & Disabled               \\
+		Unary length limit               & $U_{\max}$                   & $18$                   \\
+		Rescaling counter size           & $\gamma^{*}$                 & $6$                    \\
+		Initial count exponent           & $\gamma_0$                   & $1$                    \\
+		Accumulator initialization value & $\tilde{\Sigma}_z(0)$        & $4 \cdot 2^{\gamma_0}$ \\
+		\bottomrule
+	\end{tabular}
+\end{table}
