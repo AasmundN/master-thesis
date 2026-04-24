@@ -1,9 +1,105 @@
 \chapter{Results}
 \label{sec:results}
 
-\begin{table}
+\begin{table}[ht]
+	\caption{Compression performance, execution time of predictor in parenthesis (TODO: find better way of displaying than in parenthesis)}
+	\label{tab:performance-results-hlm-compress}
+	\begin{center}
+		\begin{tabular}{lrrrlrr}
+			\hline
+			\textbf{Image} & \textbf{Predictor} & \textbf{Samples} & \multicolumn{2}{r}{\textbf{Time (s)}} & \textbf{Throughput (MS/s)} & \textbf{Memory (MB)}         \\
+			\hline
+			Hypso 2        & C++                & 78361920         & 821                                   & (293)                      & 0.095                & 32415 \\
+			\hline
+			Aviris         & C++                & 77643776         & 1166                                  & (290)                      & 0.066                & 32091 \\
+			\hline
+			Landsat        & C++                & 6291456          & 103                                   & (22)                       & 0.061                & 2669  \\
+			\hline
+			Hypso 2        & Python             & 78361920         & 2818                                  & (2169)                     & 0.027                & 38996 \\
+			\hline
+			Aviris         & Python             & 77643776         &                                       & (2060)                     &                      &       \\
+			\hline
+			Landsat        & Python             & 6291456          & 263                                   & (161)                      & 0.024                & 3204  \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[ht]
+	\caption{Decompression}
+	\label{tab:performance-results-hlm-decompress}
+	\begin{center}
+		\begin{tabular}{lrrrr}
+			\hline
+			\textbf{Image} & \textbf{Samples} & \textbf{Time (s)} & \textbf{Throughput (MS/s)} & \textbf{Memory (MB)} \\
+			\hline
+			Hypso 2        & 78361920         & 1093              & 0.072                      & 32414                \\
+			\hline
+			Aviris         & 77643776         & 1834              & 0.042                      & 32091                \\
+			\hline
+			Landsat        & 6291456          & 149               & 0.042                      & 2667                 \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[ht]
+	\caption{Delayed weight updates, relative 16 and absolute 4}
+	\label{tab:performance-results-hlm-dw}
+	\begin{center}
+		\begin{tabular}{lrrrr}
+			\hline
+			\textbf{Image} & \textbf{Delayed} & \textbf{Ordinary} & \textbf{Decrease} \\
+			\hline
+			Hypso 2        & 2.47             & 2.49              & $-0.80\%$         \\
+			\hline
+			Aviris         & 4.31             & 4.41              & $-2.23\%$         \\
+			\hline
+			Landsat        & 4.82             & 5.21              & $-7.49\%$         \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[ht]
+	\caption{Reductions in compression performance for coastline image for this work and the work by \citeauthor{jiaRemovalFeedbackLoop2025}.}
+	\label{tab:cr-compared}
+	\begin{center}
+		\begin{tabular}{c c c}
+			\hline
+			PAE & Coastline, \citeauthor{jiaRemovalFeedbackLoop2025} & Coastline, this work \\
+			\hline
+			0   & $-1.53\%$                                          & $-1.54\%$            \\ % 2.03         -> 2.02
+			1   & $-2.88\%$                                          & $-2.07\%$            \\ % 2.55 (226dB) -> 2.53
+			3   & $-3.86\%$                                          & $-2.36\%$            \\ % 3.17 (208dB) -> 3.15
+			7   & $-4.30\%$                                          & $-3.22\%$            \\ % 4.07 (193dB) -> 4.03
+			15  & $-1.23\%$                                          & $-4.46\%$            \\ % 5.45 (178dB) -> 5.39
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[angle=90, width=0.8\textwidth]{results/lacrau/lacrau-dec.png}
+	\end{center}
+	\caption{Decoded Hypso 2 image}
+	\label{fig:lacrau-dec}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=0.28\textheight,valign=t]{results/aviris/aviris_decoded.jpg}
+		\includegraphics[height=0.28\textheight,valign=t]{results/landsat/landsat_decoded.jpg}
+	\end{center}
+	\caption{Decoded Aviris and Landsat images.}
+	\label{fig:landsat}
+\end{figure}
+
+
+\begin{table}[ht]
 	\caption{}
-	\label{tab:performance-results}
+	\label{tab:performance-results-hw}
 	\begin{center}
 		\begin{tabular}{lrrrrrr}
 			\hline
@@ -13,17 +109,10 @@
 			\hline
 			Zynq ZU7EV             & 6331         & 3442        & 4            & 79.5          & 273 mW         & 200 MHz            \\
 			\hline
+			Zynq-7030 (predictor)  & 2841         & 2212        & 4            & 69.5          & 263 mW         & 125 MHz            \\
+			\hline
 			Zynq ZU7EV (predictor) & 2969         & 2185        & 4            & 65.5          & 467 mW         & 312.5 MHz          \\
 			\hline
 		\end{tabular}
 	\end{center}
 \end{table}
-
-\begin{figure}[ht]
-	\begin{center}
-		\includegraphics[width=0.6\textwidth]{results/old-config/zynq-7030-97MHz-floorplan.png}
-	\end{center}
-	\caption{}
-	\label{fig:floorplan}
-\end{figure}
-

@@ -20,6 +20,7 @@ thesis.alg
 thesis.glg
 thesis.gls
 out
+results
 *.log
 *~
 .DS_Store

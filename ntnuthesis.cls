@@ -153,6 +153,7 @@
 \RequirePackage{geometry}                   % page layout
 \RequirePackage{enumitem}                   % customising list appearance
 \RequirePackage{graphicx}                   % including figures
+\RequirePackage[export]{adjustbox}
 \RequirePackage{amsmath}                    % advanced math typesetting
 \RequirePackage{titling}
 \RequirePackage[                            % subfigures with captions within figures
