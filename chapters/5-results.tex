@@ -55,15 +55,33 @@
 	\caption{Reductions in compression performance for coastline image for this work and the work by \citeauthor{jiaRemovalFeedbackLoop2025}.}
 	\label{tab:cr-compared}
 	\begin{center}
-		\begin{tabular}{c c c}
+		\begin{tabular}{ccc}
 			\hline
 			PAE & Coastline, \citeauthor{jiaRemovalFeedbackLoop2025} & Coastline, this work \\
 			\hline
-			0   & $-1.53\%$                                          & $-1.54\%$            \\ % 2.03         -> 2.02
-			1   & $-2.88\%$                                          & $-2.07\%$            \\ % 2.55 (226dB) -> 2.53
-			3   & $-3.86\%$                                          & $-2.36\%$            \\ % 3.17 (208dB) -> 3.15
-			7   & $-4.30\%$                                          & $-3.22\%$            \\ % 4.07 (193dB) -> 4.03
-			15  & $-1.23\%$                                          & $-4.46\%$            \\ % 5.45 (178dB) -> 5.39
+			0   & $-1.53\%$                                          & $-0.50\%$            \\ % 2.03            -> 2.02
+			1   & $-2.88\%$                                          & $-0.78\%$            \\ % 2.55 (225.86dB) -> 2.53 (225.86dB)
+			3   & $-3.86\%$                                          & $-0.63\%$            \\ % 3.17 (207.95dB) -> 3.15 (207.94dB)
+			7   & $-4.30\%$                                          & $-0.98\%$            \\ % 4.07 (192.54dB) -> 4.03 (192.54dB)
+			15  & $-1.23\%$                                          & $-1.10\%$            \\ % 5.45 (178.10dB) -> 5.39 (178.10dB)
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[ht]
+	\caption{PSNR of decompressed images with delayed weight updates. Difference compared to without delayed updates are degligable, exact same when rounded to two decimals.}
+	\label{tab:cr-compared}
+	\begin{center}
+		\begin{tabular}{ccc}
+			\hline
+			PAE & CR   & PSNR (dB) \\
+			\hline
+			0   & 2.02 & N/A       \\ % 2.03            -> 2.02
+			1   & 2.53 & 225.86    \\ % 2.55 (225.86dB) -> 2.53 (225.86dB)
+			3   & 3.15 & 207.94    \\ % 3.17 (207.95dB) -> 3.15 (207.94dB)
+			7   & 4.03 & 192.54    \\ % 4.07 (192.54dB) -> 4.03 (192.54dB)
+			15  & 5.39 & 178.10    \\ % 5.45 (178.10dB) -> 5.39 (178.10dB)
 			\hline
 		\end{tabular}
 	\end{center}
@@ -86,6 +104,13 @@
 	\label{fig:landsat}
 \end{figure}
 
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.7\textwidth]{figures/relative-psnr-coastline.png}
+	\end{center}
+	\caption{}
+	\label{fig:relative-psnr-coastline}
+\end{figure}
 
 \begin{table}[ht]
 	\caption{}
