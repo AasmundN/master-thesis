@@ -156,6 +156,7 @@
 \RequirePackage[export]{adjustbox}
 \RequirePackage{amsmath}                    % advanced math typesetting
 \RequirePackage{titling}
+\RequirePackage{microtype}
 \RequirePackage[                            % subfigures with captions within figures
 	font=small,                             % and customisation of captions
 	labelfont=bf,

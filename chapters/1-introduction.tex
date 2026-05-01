@@ -1,1 +1,13 @@
 \chapter{Introduction}
+
+With the development of small satellite technologies such as cube satellites (cubesats), with lower costs and shorter development times, the availability of remote sensing data has increased. Hereunder, hyperspectral and multispectral imagers provide data that is vital for ocean monitoring, geological research and observation of other natural processes \cite{bakkenHYPSO1CubeSatFirst2023, ientilucciAtmosphericCompensationHyperspectral2019}.
+
+As part of the \acrfull{hypso} project at the \acrfull{NTNU}, two 6U cubesats, HYPSO-1 and HYPSO-2, were launched in 2022 and 2024 respectively. These carry hyperspectral imagers capable of sensing wavelengths ranging from 430 nm to 800 nm over 120 spectral bands. Their primary purpose is to monitor algal blooms in the ocean, which can give indications as to the health of marine environments \cite{grotteOceanColorHyperspectral2022}. This is made possible by the reflection of characteristic wavelengths from chlorophyll, detectable by the on-board hyperspectral imagers.
+
+A nominal \acrshort{hypso} image has a size of roughly 150 MB. This presents a challenge due to limited on-board resources for storing large amounts of data, and low downlink speeds. As an example, HYPSO-1 is restricted to 75 MB of downlinked data per orbital revolution \cite{grotteOceanColorHyperspectral2022}. This prompts the need for on-board image compression to increase the scientific output and value of the mission.
+
+Small satellites operate under strict limitations on on-board resources such as processor time and power budgets. This, combined with the complexity of image compression algorithms, makes the use of custom hardware accelerators ideal. For their implementation, \acrfull{FPGA} are the perfect choice, providing great flexibility and speed at a low cost.
+
+This thesis explores the use of a novel weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025} for the CCSDS-123.0-B-2 compression algorithm. The purpose is to increase the throughput of the accelerator implemented by \cite{vorhaugDevelopmentIntegrationCCSDS2024} for use on-board the \acrshort{hypso} missions. This should not come at significant degradation in compression performance or hardware resource utilization. Additionally, an open-source decompressor has been implemented in order to verify the results of the proposed change in the algorithm.
+
+The rest of the paper is organized as follows...

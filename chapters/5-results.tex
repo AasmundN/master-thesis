@@ -1,6 +1,8 @@
 \chapter{Results}
 \label{sec:results}
 
+\section{Verification Model}
+
 \begin{table}[ht]
 	\caption{Compression performance, execution time of predictor in parenthesis (TODO: find better way of displaying than in parenthesis)}
 	\label{tab:performance-results-hlm-compress}
@@ -34,6 +36,8 @@
 		\end{tabular}
 	\end{center}
 \end{table}
+
+\section{Compression Performance}
 
 \begin{table}[ht]
 	\caption{Delayed weight updates, relative 16 and absolute 4}
@@ -71,7 +75,7 @@
 
 \begin{table}[ht]
 	\caption{PSNR of decompressed images with delayed weight updates. Difference compared to without delayed updates are degligable, exact same when rounded to two decimals.}
-	\label{tab:cr-compared}
+	\label{tab:psnr-compared}
 	\begin{center}
 		\begin{tabular}{ccc}
 			\hline
@@ -106,11 +110,13 @@
 
 \begin{figure}[ht]
 	\begin{center}
-		\includegraphics[width=0.7\textwidth]{figures/relative-psnr-coastline.png}
+		\includegraphics[width=0.65\textwidth]{figures/relative-psnr-coastline.png}
 	\end{center}
 	\caption{}
 	\label{fig:relative-psnr-coastline}
 \end{figure}
+
+\section{RTL Results}
 
 \begin{table}[ht]
 	\caption{}
@@ -128,3 +134,5 @@
 		\end{tabular}
 	\end{center}
 \end{table}
+
+\section{Hardware Testing}
