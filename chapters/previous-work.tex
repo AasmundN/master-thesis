@@ -5,7 +5,7 @@
 	\begin{center}
 		\includegraphics[width=1\textwidth]{figures/vorhaug-block.png}
 	\end{center}
-	\caption{}
+	\caption{Block diagram of \citeauthor{vorhaugHyperspectralImageCompression2024}. For easy integration into HYPSO, a reorder buffer reorders samples from \acrshort{BIP} to \acrshort{BIL}.}
 	\label{fig:vorhaug-block}
 \end{figure}
 
@@ -13,7 +13,7 @@
 	\begin{center}
 		\includegraphics[width=1\textwidth]{figures/vorhaug-pipeline.png}
 	\end{center}
-	\caption{}
+	\caption{Full pipeline of \citeauthor{vorhaugHyperspectralImageCompression2024}. The indivisible weight update calculation in stage 3 restricts the throughput.}
 	\label{fig:vorhaug-pipeline}
 \end{figure}
 
@@ -21,6 +21,6 @@
 	\begin{center}
 		\includegraphics[width=0.8\textwidth]{figures/vorhaug-weights-hw.png}
 	\end{center}
-	\caption{}
+	\caption{Weight update stage of \citeauthor{vorhaugHyperspectralImageCompression2024} following the mathematical optimization approach proposed by \citeauthor{sanchezReducingDataDependencies2022}. Weight updates are calculated speculatively while the sign of the prediction error resolves.}
 	\label{fig:vorhaug-weights-hw}
 \end{figure}

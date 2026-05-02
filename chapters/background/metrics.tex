@@ -1,0 +1,23 @@
+\section{Coding Performance and Decompressed Image Quality}
+
+\begin{equation}
+	\mathrm{CR} = \frac{N_x \cdot N_y \cdot N_z \cdot D}{\text{compressed data size (bits)}}.
+	\label{eq:cr}
+\end{equation}
+
+\begin{equation}
+	\mathrm{PSNR}_z = 10 \cdot \text{log}_{10} \left( \frac{\mathrm{MAX}^2_I}{\mathrm{MSE_z}} \right),
+	\label{eq:PSNRz}
+\end{equation}
+
+\begin{equation}
+	\mathrm{MSE_z} = \frac{1}{N_x N_y}
+	\sum_{i=0}^{N_x-1} \sum_{j=0}^{N_y-1} \bigl[I_z(i,j) - K_z(i,j)\bigr]^2.
+	\label{eq:MSE}
+\end{equation}
+
+\begin{equation}
+	\mathrm{PSNR}_{HSI} = \frac{1}{N_z} \sum_{z=0}^{N_z-1} \mathrm{PSNR}_z.
+	\label{eq:PSNR}
+\end{equation}
+

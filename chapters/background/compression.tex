@@ -1,0 +1,242 @@
+\section{Hyperspectral Image Compression}
+
+The \acrfull{CCSDS} is a multi-institutional working group developing algorithms and standards for increased cooperation amongst space actors. A portion of their work has been concerned with the effective encoding of hyperspectral and multispectral images. Standard CCSDS 123.0-B-1, hereby referred to as issue 1, describes a lossless compression algorithm tailored for high throughput \acrshort{FPGA} implementations. Issue 1 has been implemented and used successfully by several missions, the \acrshort{hypso} project being one of them \cite{fjeldtvedtEfficientRealTimeFPGA2018, bakkenHYPSO1CubeSatFirst2023}. In 2019, Issue 1 was followed by standard CCSDS 123.0-B-2, referred to as Issue 2. The following sections are based on the description of issue 2 presented in \fullcite{theconsultativecommitteeforspacedatasystemsLowComplexityLosslessNearLossless2019}.
+
+Issue 1 formalizes the \acrfull{FL} algorithm presented by \citeauthor{KlimeshFL}, which uses an adaptive filtering prediction technique to achieve lossless compression at low computational complexity suitable for space applications \cite{KlimeshFL, LosslessMultispectralHyperspectral2022}. To meet the needs of limited satellite downlink capabilities, lossy compression techniques have seen increasing use \cite{LosslessMultispectralHyperspectral2022}. For this reason, issue 2 introduces a new near-lossless feature based on the \acrfull{FLEX} algorithm presented by \citeauthor{KeymeulenFLEX} \cite{KeymeulenFLEX}. Near-lossless compression, as opposed to lossy compression, provides the user with fine-tuned control over the per-pixel loss through tunable error limit parameters.
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.7\textwidth]{figures/DPCM.png}
+	\end{center}
+	\caption{Layout of a differential pulse code modulator. The prediction loop, with optional quantization, reduces the entropy in the data passed to the encoder.}
+	\label{fig:DPCM}
+\end{figure}
+
+The issue 1 and issue 2 compressors use a form of \acrfull{DPCM}, presented in \autoref{fig:DPCM}. A feedback loop, with optional quantization, predicts the value of the current input sample based on previously processed samples. The difference between the sample and the prediction, called the prediction residual, is encoded in the final bitstream. This exploits the correlation between neighbouring samples inherent in image data to reduce the entropy of the data passed to the encoder, allowing a more efficient encoding. Samples are processed in a single pass using simple operations. This reduces memory requirements and makes the algorithm suitable for hardware implementations. For the rest of this document, the prediction feedback loop will be referred to as the predictor.
+
+Predictor outputs are passed to an entropy encoder which losslessly encodes prediction residuals in the final bitstream. Entropy encoders, which will be covered in greater detail later in this document, encode samples with a varying number of bits based on the frequency of their occurrence in the image. A novel feature of issue 2 is the inclusion of a hybrid encoder, in addition to the sample adaptive and block adaptive encoders of issue 1. This performs better at the low encoding bitrates achievable in the near-lossless mode. After encoding, a header containing image metadata and compressor configuration parameters is prepended to the compressed bitstream (image body). This is required by the decompressor in order to correctly reconstruct the original image.
+
+The predictor uses an adaptive linear filter method based on the work presented by \citeauthor{gershoAdaptiveFilteringBinary1984} \cite{gershoAdaptiveFilteringBinary1984, LosslessMultispectralHyperspectral2022}. Observed quantities $x_k$, analogous to the quantized prediction residuals of \autoref{fig:DPCM}, which are statistically dependant on the process $d_k$, analogous to the image samples, produce estimates $z_k$ of the desired samples $d_k$. A linear preprocessor $\phi$ takes previously observed quantities $x_k$ and transforms them to a vector $\mathbf{u}_k$ given by
+
+\begin{equation}
+	\mathbf{u}_k = \Phi(x_k, x_{k-1}, \ldots).
+	\label{eq:preprocessor}
+\end{equation}
+
+The elements of $\mathbf{u}_k$ are weighted by a vector $\mathbf{c}_k$ to produce the prediction $z_k$ as
+
+\begin{equation}
+	z_k = \mathbf{c}_k \cdot \mathbf{u}_k.
+	\label{eq:predicted-value}
+\end{equation}
+
+The weight vector is adapted (updated) in increments $\Delta\mathbf{c}_k$ based on observed error residuals $z_k - d_k$ of previous predictions.
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{figures/hsi.png}
+	\end{center}
+	\caption{Layout of a hyperspectral image. Samples of the same $z$ coordinates belong to the same frequency band, whereas samples of the same $y$ coordinate are denoted as frames. Samples within the same frame of a band are denoted as lines.}
+	\label{fig:hsi}
+\end{figure}
+
+\autoref{fig:hsi} shows the layout of a hyperspectral image. The sizes of the dimensions $x$, $y$, and $z$ are denoted $N_x$, $N_y$, and $N_z$. Samples of the same $z$ coordinate correspond to frequency bands, while samples of the same $y$ coordinate are denoted as part of the same frame. In a bushbroom images, like the one on-board the HYPSO-1 mission, images are captured one frame at a time \cite{grotteOceanColorHyperspectral2022}. As the satellite moves, subsequent frames are concatenated to form the final image. The camera frame rate controls the time, and thus physical space, between captured frames. Samples within the same frame of a band are referred to as lines, and samples of the same $x$ and $y$ coordinate belong to a pixel.
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.3\textwidth]{figures/BIL.png}
+	\end{center}
+	\caption{\acrshort{BIL} processing order. Lines, L1 to L3, within the first frame are processed before proceeding to the next frame.}
+	\label{fig:BIL}
+\end{figure}
+
+In order to correctly reproduce the original image, the sample processing order of the compressor and decompressor must be the same. The standard recognizes two main categories of processor orders: \acrfull{BSQ} and \acrfull{BI}. \acrshort{BSQ} ordering processes samples in coordinate order (x, y, z), meaning all samples of one band are processed before proceeding to the next. \acrshort{BI} ordering processes samples frame by frame. The frame interleaving depth $M$ dictates the processing order within the frame. The standard defines two special cases: \acrfull{BIL} and \acrfull{BIP}, with interleaving depths equal to $1$ and $N_z$ respectively. \acrshort{BIL} processes samples within a frame line by line in coordinate order (x, z, y), as presented by \autoref{BIL}. \acrshort{BIP} processes samples in the order (z, x, y).
+
+The following sections give a brief technical overview of the predictor and encoder stages of the issue 2 algorithm. Symbols are mentioned in text, and are the same as those used in the issue 2 standard unless otherwise is specified. As a quick reference, and for the readers convenience, all symbols are listed in \autoref{tab:compressor-symbols}. For a detailed review of the standard please see \fullcite{theconsultativecommitteeforspacedatasystemsLowComplexityLosslessNearLossless2019}.
+
+\begin{table}[ht]
+	\caption{Issue 2 compressor symbol table.}
+	\label{tab:compressor-symbols}
+	\begin{center}
+		\begin{tabular}[c]{l|l}
+			\hline
+			\multicolumn{1}{l|}{\textbf{Symbol}} &
+			\multicolumn{1}{l}{\textbf{Name}}                                                      \\
+			\hline
+			$s_z(t)$                             & Image sample                                    \\
+			$\sigma_z(t)$                        & Local sum                                       \\
+			$\mathbf{U}_z(t)$                    & Local difference vector                         \\
+			${d}_z(t)$                           & Central local difference                        \\
+			$\hat{d}_z(t)$                       & Predicted central local difference              \\
+			$\breve{s}_z(t)$                     & High-resolution predicted sample                \\
+			$\tilde{s}_z(t)$                     & Double-resolution predicted sample              \\
+			$\hat{s}_z(t)$                       & Predicted sample                                \\
+			$\Delta_z(t)$                        & Prediction residual                             \\
+			$m_z(t)$                             & Maximum error                                   \\
+			$q_z(t)$                             & Signed quantizer index                          \\
+			$s^{'}_z(t)$                         & Clipped quantizer bin center                    \\
+			$s^{''}_z(t)$                        & Sample representative                           \\
+			$\theta_z(t)$                        & Predicted sample and sample endpoint difference \\
+			$\delta_z(t)$                        & Mapped quantizer index                          \\
+			$e_z(t)$                             & Double-resolution prediction error              \\
+			$\mathbf{W}_z(t)$                    & Weight vector                                   \\
+			$\tilde{\Sigma}_z(t)$                & High-resolution accumulator                     \\
+			$\Gamma(t)$                          & Counter                                         \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\subsection{Predictor}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.9\textwidth]{figures/predictor-block.png}
+	\end{center}
+	\caption{Block diagram of the predictor stage of issue 2. The quantization and sample representative steps, marked in red, are new inclusions compared to Issue 1.}
+	\label{fig:predictor-block}
+\end{figure}
+
+\autoref{fig:predictor-block} shows a block diagram of the issue predictor stage with new features as compared to issue 1 marked in red. The quantization step constitutes the lossy part of the algorithm.
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.7\textwidth]{figures/prediction-neighborhood.png}
+	\end{center}
+	\caption{A typical prediction neighborhood. Local sums are used to find local differences in $P$ previous bands (prediction bands) which are used to find the predicted sample.}
+	\label{fig:prediction-neighborhood}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.7\textwidth]{figures/local-sums.png}
+	\end{center}
+	\caption{Wide and narrow neighbor-oriented local sum configurations.}
+	\label{fig:local-sums}
+\end{figure}
+
+\begin{equation}
+	\sigma_{z,y,x} =
+	\begin{cases}
+		s''_{z,\,y-1,\,x-1} + 2 s''_{z,\,y-1,\,x} + s''_{z,\,y-1,\,x+1},
+		 & y > 0,\ 0 < x < N_X - 1,
+		\\[6pt]
+		4 s''_{z-1,\,y,\,x-1},
+		 & y = 0,\ x > 0,\ z > 0,
+		\\[6pt]
+		2\!\left( s''_{z,\,y-1,\,x} + s''_{z,\,y-1,\,x+1} \right),
+		 & y > 0,\ x = 0,
+		\\[6pt]
+		2\!\left( s''_{z,\,y-1,\,x-1} + s''_{z,\,y-1,\,x} \right),
+		 & y > 0,\ x = N_X - 1,
+		\\[6pt]
+		4 s_{\text{mid}},
+		 & y = 0,\ x = 0,\ z = 0.
+	\end{cases}
+	\label{eq:}
+\end{equation}
+
+\begin{equation}
+	\mathbf{U}_z(t) =
+	\begin{bmatrix}
+		d_{z-1}(t)     \\
+		d_{z-2}(t)     \\
+		\vdots         \\
+		d_{z-P^*_z}(t) \\
+	\end{bmatrix},
+	\label{eq:local-differences}
+\end{equation}
+
+\begin{equation}
+	P^*_z = \min(z, P),
+	\label{eq:prediction-bands}
+\end{equation}
+
+\begin{equation}
+	\hat{d}_z(t) = \mathbf{W}_z(t) \cdot \mathbf{U}_z(t).
+	\label{eq:predicted-central-local-difference}
+\end{equation}
+
+\begin{equation}
+	\mathbf{W}_z(t)=
+	\begin{bmatrix}
+		\omega_z^{(1)}(t) \\
+		\omega_z^{(2)}(t) \\
+		\vdots            \\
+		\omega_z^{(P^*_z)}(t)
+	\end{bmatrix},
+	\label{eq:weight-vector}
+\end{equation}
+
+\begin{equation}
+	\omega_z^{(1)}(1) = \frac{7}{8} 2^{\Omega}, \qquad
+	\omega_z^{(i)}(1) = \left\lfloor \frac{1}{8}\, \omega_z^{(i-1)}(1) \right\rfloor,
+	\quad i = 2,3,\ldots,P_z^{*},
+	\label{eq:weight-init}
+\end{equation}
+
+\begin{equation}
+	\omega_{\mathrm{min}} = -2^{\Omega+2}, \: \omega_{\mathrm{max}} = -2^{\Omega+2} - 1.
+	\label{eq:weight-min-max}
+\end{equation}
+
+\begin{equation}
+	\omega^{(i)}_{z, \text{offset}}(t) = \left\lfloor \frac{1}{2} \left(2^{-\rho(t)} \cdot d_{z-i}(t) \cdot \text{sgn}^+[e_z(t)] + 1 \right) \right\rfloor,
+	\label{eq:weight-offset}
+\end{equation}
+
+\begin{equation}
+	e_z(t) = 2s'_z(t) - \tilde{s}_z(t).
+	\label{eq:double-resolution-prediction-error}
+\end{equation}
+
+\begin{equation}
+	\rho(t) = \operatorname{clip}\!\left(
+	\nu_{\min} +
+	\left\lfloor \frac{t - N_x}{t_{\mathrm{inc}}} \right\rfloor,
+	\{ \nu_{\min}, \nu_{\max} \}
+	\right)
+	+ D - \Omega,
+	\label{eq:weight-update-scaling-exponent}
+\end{equation}
+
+\begin{equation}
+	\omega^{(i)}_z(t + 1) = \text{clip} \left( \omega^{(i)}_z(t) + \omega^{(i)}_{z, \text{offset}}(t), \{ \omega_{min}, \omega_{max} \} \right),
+	\label{eq:weight-update}
+\end{equation}
+
+\subsubsection{Decompression}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.9\textwidth]{figures/predictor-block-decompress.png}
+	\end{center}
+	\caption{Block diagram of the predictor stage of the decompressor. The prediction model is identical to that of the compressor, except for the prediction residual and reconstructed sample during near-lossless mode, marked in red.}
+	\label{fig:predictor-block-decompress}
+\end{figure}
+
+\subsection{Header}
+
+\subsection{Entropy Encoder}
+
+\subsubsection{Hybrid Encoder}
+
+\begin{equation}
+	\tilde{\Sigma}_z(t) =
+	\begin{cases}
+		\tilde{\Sigma}_z(t-1) + 4\delta_z(t),                                           & \Gamma(t-1) < 2^{\gamma^*} - 1, \\
+		\left\lfloor \dfrac{\tilde{\Sigma}_z(t-1) + 4\delta_z(t) + 1}{2} \right\rfloor, & \Gamma(t-1) = 2^{\gamma^*} - 1,
+	\end{cases}
+	\label{eq:accumulator}
+\end{equation}
+
+\begin{equation}
+	\Gamma(t) =
+	\begin{cases}
+		\Gamma(t-1) + 1,                                       & \Gamma(t-1) < 2^{\gamma^*} - 1, \\
+		\left\lfloor \dfrac{\Gamma(t-1) + 1}{2} \right\rfloor, & \Gamma(t-1) = 2^{\gamma^*} - 1,
+	\end{cases}
+	\label{eq:counter}
+\end{equation}
+
+\subsubsection{Decoding}
