@@ -186,6 +186,8 @@ As mentioned, sample representatives are used in place of the sample values in o
 	\label{fig:prediction-neighborhood}
 \end{figure}
 
+Sample representatives of previously processed samples form the prediction neighborhood as shown in \autoref{fig:prediction-neighborhood}. The parameter $P$ controls the number of spectral bands that are included in the prediction calculation, called prediction bands. A weighted sum of spatially adjacent samples to the current sample form the local sum $\sigma_z(t)$. Issue 2 defines two categories of local sum configurations: column-oriented and neighbor-oriented, both of which can be configured as wide and narrow. \autoref{fig:local-sums} shows the wide and narrow configurations for neighbor-oriented local sums. Full details and corner cases of the local sum configurations are not important for this discussion, but as an example, narrow neighbor-oriented local sums are defined as
+
 \begin{figure}[ht]
 	\begin{center}
 		\includegraphics[width=0.7\textwidth]{figures/local-sums.png}
@@ -215,6 +217,8 @@ As mentioned, sample representatives are used in place of the sample values in o
 	\label{eq:local-sum}
 \end{equation}
 
+The (central) local difference $d_z(t)$ is the difference between the local sum and the current sample. Local differences of the prediction bands form the local difference vector $\mathbf{U}_z(t)$, and is analogous to the vector $\mathbf{u}_k$ (\autoref{eq:preprocessor}) of the adaptive linear filter. The vector is defined as
+
 \begin{equation}
 	\mathbf{U}_z(t) =
 	\begin{bmatrix}
@@ -226,17 +230,25 @@ As mentioned, sample representatives are used in place of the sample values in o
 	\label{eq:local-differences}
 \end{equation}
 
+where $P^*_z$ is the number of used prediction bands found by
+
 \begin{equation}
-	P^*_z = \min(z, P),
+	P^*_z = \min(z, P).
 	\label{eq:prediction-bands}
 \end{equation}
 
+Two different prediction modes are defined in the standard: full and reduced. The above definition of the local difference vector is that of the reduced mode. During full prediction mode, three additional local difference values $d^N_z(t)$, $d^W_z(t)$ and $d^{NW}_z(t)$ are added to the vector, named directional local differences. These are calculated as the weighted difference between sample representatives in three directions and the local sum, and add avoidable dependencies on neighbouring sample representatives. For the full definition see the standard.
+
 \subsubsection{Weight Updates}
+
+The predicted central local difference $\hat{d}_z(t)$ is computed as
 
 \begin{equation}
 	\hat{d}_z(t) = \mathbf{W}_z(t) \cdot \mathbf{U}_z(t).
 	\label{eq:predicted-central-local-difference}
 \end{equation}
+
+Here $\mathbf{W}_z(t)$ is the weight vector, which for reduced prediction mode is defined as
 
 \begin{equation}
 	\mathbf{W}_z(t)=
@@ -249,27 +261,39 @@ As mentioned, sample representatives are used in place of the sample values in o
 	\label{eq:weight-vector}
 \end{equation}
 
+where $\omega^{(i)}_z(t)$ is the weight corresponding to the $i$th prediction band. As with the local difference vector, three additional weights are used during full prediction mode.
+
+Weights may be initialized using two dirrent methods: default and custom initiaization. Custom initialization allows the user to the provide per-band initial weight values. This may result in better compression performance when the image sensor characteristics or other image metrics are know. For default initiaization the weights are initialized as
+
 \begin{equation}
 	\omega_z^{(1)}(1) = \frac{7}{8} 2^{\Omega}, \qquad
 	\omega_z^{(i)}(1) = \left\lfloor \frac{1}{8}\, \omega_z^{(i-1)}(1) \right\rfloor,
-	\quad i = 2,3,\ldots,P_z^{*},
+	\quad i = 2,3,\ldots,P_z^{*}.
 	\label{eq:weight-init}
 \end{equation}
+
+Weights are represented as signed integers of $\Omega + 3$ bits, where $\Omega$ is the weight bit resolution. This gives a range of possibles weight values between $\omega_{min}$ and $\omega_{max}$ as
 
 \begin{equation}
 	\omega_{\mathrm{min}} = -2^{\Omega+2}, \: \omega_{\mathrm{max}} = -2^{\Omega+2} - 1.
 	\label{eq:weight-min-max}
 \end{equation}
 
+Weights are updated for every sample based on the performance of the prediction model. Using the notation presented by \citeauthor{jiaRemovalFeedbackLoop2025} in \cite{jiaRemovalFeedbackLoop2025} we define the weight offset as
+
 \begin{equation}
 	\omega^{(i)}_{z, \text{offset}}(t) = \left\lfloor \frac{1}{2} \left(2^{-\rho(t)} \cdot d_{z-i}(t) \cdot \text{sgn}^+[e_z(t)] + 1 \right) \right\rfloor,
 	\label{eq:weight-offset}
 \end{equation}
 
+where the double-resolution prediction error $e_z(t)$ is found using the quantizer bin center and double-resolution predicted sample value as
+
 \begin{equation}
 	e_z(t) = 2s'_z(t) - \tilde{s}_z(t).
 	\label{eq:double-resolution-prediction-error}
 \end{equation}
+
+The user can control how quickly the prediction model adapts to rapid changes in the sample values by use of the weight update scaling exponent, given by
 
 \begin{equation}
 	\rho(t) = \operatorname{clip}\!\left(
