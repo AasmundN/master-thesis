@@ -130,7 +130,7 @@ where the prediction residual is the difference between input samples $s_z(t)$ a
 	\label{fig:quantizer}
 \end{figure}
 
-\autoref{fig:quantizer} shows a uniform quantizer centered at zero. Inputs are mapped to bins with size $\Delta$, also called the step size \cite{woodsDigitalImageCompression2012}. The step size of the issue 2 quantizer is $2 m_z(t) + 1$ and is controlled by the maximum error value $m_z(t)$. This guaranties that the prediction residual can be reconstructed with an error of at most $\pm m_z(t)$. A quantizer index of zero means that the predicted sample was within $m_z(T)$ of the actual sample. Positive and negative quantizer indexes indicate that the prediction overshot and undershot the sample, respectively. The clipped quantizer bin center  $s'_z(t)$ is used for calculation of sample representatives, and is given by
+\autoref{fig:quantizer} shows a uniform quantizer centered at zero. Inputs are mapped to bins with size $\Delta$, also called the step size \cite{woodsDigitalImageCompression2012}. The step size of the issue 2 quantizer is $2 m_z(t) + 1$ and is controlled by the maximum error value $m_z(t)$. This guaranties that the prediction residual can be reconstructed with an error of at most $\pm m_z(t)$. A quantizer index of zero means that the predicted sample was within $m_z(t)$ of the actual sample. Positive and negative quantizer indexes indicate that the prediction overshot or undershot the sample, respectively. The clipped quantizer bin center  $s'_z(t)$ is used for calculation of sample representatives, and is given by
 
 \begin{equation}
 	s'_z(t) = \operatorname{clip}\!\left( \hat{s}_z(t) + q_z(t)\bigl(2m_z(t)+1\bigr),\ \{s_{\min},\, s_{\max}\} \right),
@@ -174,7 +174,7 @@ where the double-resolution predicted sample value $\tilde{s}_z(t)$ is an interm
 
 \subsubsection{Sample representatives}
 
-As mentioned, sample representatives are used in place of the sample values in order to allow the decompressor to reproduce the prediction model. Selecting sample representatives to be equal to quantizer bin center minimizes the per-pixel reconstruction error. However, a different selection may be used to minimize other quality metrics, such as the \acrfull{MSE} (\autoref{sec:metrics}) \cite{LosslessMultispectralHyperspectral2022}. For this reason, the user is provided with a set of parameters which control the selection of the sample representatives in relation to the quantizer bin center.
+As mentioned, sample representatives are used in place of the sample values in order to allow the decompressor to reproduce the prediction model. Selecting sample representatives to be equal to the quantizer bin center minimizes the per-pixel reconstruction error. However, a different selection may be used to minimize other quality metrics, such as the \acrfull{MSE} (\autoref{sec:metrics}) \cite{LosslessMultispectralHyperspectral2022}. For this reason, the user is provided with a set of parameters which control the selection of the sample representatives in relation to the quantizer bin center.
 
 \subsubsection{Local Sums and Differences}
 
@@ -263,7 +263,7 @@ Here $\mathbf{W}_z(t)$ is the weight vector, which for reduced prediction mode i
 
 where $\omega^{(i)}_z(t)$ is the weight corresponding to the $i$th prediction band. As with the local difference vector, three additional weights are used during full prediction mode.
 
-Weights may be initialized using two dirrent methods: default and custom initiaization. Custom initialization allows the user to the provide per-band initial weight values. This may result in better compression performance when the image sensor characteristics or other image metrics are know. For default initiaization the weights are initialized as
+Weights may be initialized using two methods: default and custom initiaization. Custom initialization allows the user to the provide per-band initial weight values. This may result in better compression performance when the image sensor characteristics or other image metrics are know. For default initiaization the weights are initialized as
 
 \begin{equation}
 	\omega_z^{(1)}(1) = \frac{7}{8} 2^{\Omega}, \qquad
@@ -305,12 +305,16 @@ The user can control how quickly the prediction model adapts to rapid changes in
 	\label{eq:weight-update-scaling-exponent}
 \end{equation}
 
+where $\nu_{min}$, $\nu_{max}$, and $t_{inc}$ are user tunable parameters. The final updated weight is calculated as
+
 \begin{equation}
-	\omega^{(i)}_z(t + 1) = \text{clip} \left( \omega^{(i)}_z(t) + \omega^{(i)}_{z, \text{offset}}(t), \{ \omega_{min}, \omega_{max} \} \right),
+	\omega^{(i)}_z(t + 1) = \text{clip} \left( \omega^{(i)}_z(t) + \omega^{(i)}_{z, \text{offset}}(t), \{ \omega_{min}, \omega_{max} \} \right).
 	\label{eq:weight-update}
 \end{equation}
 
 \subsubsection{Prediction Calculation}
+
+The predicted central local difference $\hat{d}_z(t)$ in combination the local sum $\sigma_z(t)$ produces the high-resolution predicted sample value $\breve{s}_z(t)$. From this the double-resolution predicted sample value $\tilde{s}_z(t)$ may be calculated before the final predicted sample value $\hat{s}_z(t)$ is obtained.
 
 \subsubsection{Decompression}
 
@@ -322,7 +326,63 @@ The user can control how quickly the prediction model adapts to rapid changes in
 	\label{fig:predictor-block-decompress}
 \end{figure}
 
-Selection of quantizer bin reconstruction, center or something else...
+\autoref{fig:predictor-block-decompress} shows a block diagram of the predictor stage of the decompressor, which replicates the prediction model of the compressor. Quantizer indexes are reconstructed without loss from the mapped quantizer indexes as
+
+\begin{equation}
+	q_z(t) =
+	\begin{cases}
+		(\theta_z(t) - \delta_z(t)) \, \operatorname{sgn}^+\bigl(\hat{s}_z(t) - s_{\mathrm{mid}}\bigr),
+		 & \delta_z(t) > 2\theta_z(t),    \\[8pt]
+		\left\lfloor \dfrac{\delta_z(t) + 1}{2} \right\rfloor
+		(-1)^{\tilde{s}_z(t) + \delta_z(t)},
+		 & \delta_z(t) \leq 2\theta_z(t),
+	\end{cases}
+	\label{eq:decalc-quantizer-index}
+\end{equation}
+
+where $\hat{s}_z(t)$ and $\theta_z(t)$ are computed using prediction data from previously decoded samples. The range of possible values for the reconstructed sample is now $[s'_z(t) - m_z(t), s'_z(t) + m_z(t)]$ \cite{LosslessMultispectralHyperspectral2022}. When the maximum error $m_z(t)$ is zero, prediction residuals may be reconstructed without loss. For this work the quantizer bin center $s'_z(t)$ is selected for reconstruction of samples. Thus, the dequantization step is given by
+
+\begin{equation}
+	\Delta_z(t) =
+	\begin{cases}
+		q_z(0),                                             & t = 0, \\
+		\operatorname{sgn}(q_z(t)) |q_z(t)| (2 m_z(t) + 1), & t > 0.
+	\end{cases}
+	\label{eq:dequantization}
+\end{equation}
+
+Finally, the reconstructed sample is retrieved from the predicted sample value of dequantized prediction residual as
+
+\begin{equation}
+	s_z(t) = \operatorname{clip}\!\left( \Delta_z(t) + \hat{s}_z(t),\ \{s_{\min},\, s_{\max}\} \right).
+	\label{eq:reconstruced-sample}
+\end{equation}
+
+\subsubsection{Data Dependencies}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=1\textwidth]{figures/dependencies.png}
+	\end{center}
+	\caption{Data dependencies of the issue 2 predictor with $t-1$ and $z-1$ dependencies marked in red and blue respectively.}
+	\label{fig:dependencies}
+\end{figure}
+
+\begin{table}[ht]
+	\caption{Number of samples interleaving $z-1$ and $t-1$ dependencies for the three main processing orders.}
+	\label{tab:orderings}
+	\begin{center}
+		\begin{tabular}{l l l l l}
+			\hline
+			      & \textbf{BSQ}    & \textbf{BIP} & \textbf{BIL} \\
+			\hline
+			$z-1$ & $N_x \cdot N_y$ & $1$          & $N_x$        \\
+			$t-1$ & $1$             & $N_z$        & $1$          \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
 
 \subsection{Header}
 
