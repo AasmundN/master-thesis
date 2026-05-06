@@ -436,7 +436,33 @@ For the wide local sum configurations (\autoref{fig:local-sums}), calculation of
 
 \subsection{Entropy Encoder}
 
-\subsection{Header}
+The mapped quantizer indexes produced by the predictor are passed to an entropy encoder where they are losslessly encoded and appended to the compressed bitstream. Entropy encoders use sample statistics combined with predefined, variable-length codewords to encode samples with high probability with fewer bits than low probability samples. In this way, samples may be encoded user fewer bits than would be required if encoding the samples at face value.
+
+A commonly used form of entropy encoding is \textit{Huffman coding}. When the probabilities $p$ of a finite set of messages are known, the method composes a set of codewords with a minimized average length \cite{woodsDigitalImageCompression2012}. A binary tree is constructed by recursively joining messages of lowest probability, as shown on the left side of \autoref{fig:huffman}, producing the codewords of the accompanying table. As an example, the string of messages (denoted by index) $\{2, 3, 1, 1, 2, 5\}$ may be encoded using the string of codewords $\{10, 110, 0, 0, 10, 1111\}$, giving a bitstream $1011000101111$. Codewords are prefix-free, meaning that no codeword is the prefix of another. This way, an encoded bitstream can be uniquely decoded by traversing from the start of the stream.
+
+\begin{figure}[ht]
+	\centering
+	\begin{minipage}{0.5\textwidth}
+		\centering
+		\includegraphics[width=\linewidth]{figures/huffman.png}
+	\end{minipage}
+	\hspace{0.2cm}
+	\begin{minipage}{0.35\textwidth}
+		\centering
+		\begin{tabular}{r|l}
+			             & \textbf{Codeword} \\
+			\hline
+			$p(1) = .50$ & 0                 \\
+			$p(2) = .30$ & 10                \\
+			$p(3) = .10$ & 110               \\
+			$p(4) = .05$ & 1110              \\
+			$p(5) = .05$ & 1111              \\
+			\hline
+		\end{tabular}
+	\end{minipage}
+	\caption{Huffman encoding tree and associated codeword table. Decoding of the prefix free codes may performed by traversing from the top of the tree until a match is found at one of its branches. Figure recreated from \cite{woodsDigitalImageCompression2012}.}
+	\label{fig:huffman}
+\end{figure}
 
 \subsubsection{Hybrid Encoder}
 
@@ -459,3 +485,5 @@ For the wide local sum configurations (\autoref{fig:local-sums}), calculation of
 \end{equation}
 
 \subsubsection{Decoding}
+
+\subsection{Header}
