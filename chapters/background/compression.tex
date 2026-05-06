@@ -15,7 +15,7 @@ Issue 1 formalizes the \acrfull{FL} algorithm presented by \citeauthor{KlimeshFL
 
 The issue 1 and issue 2 compressors use a form of \acrfull{DPCM}, presented in \autoref{fig:DPCM}. A feedback loop, with optional quantization, predicts the value of the current input sample based on previously processed samples. The difference between the sample and the prediction, called the prediction residual, is encoded in the final bitstream. This exploits the correlation between neighbouring samples inherent in image data to reduce the entropy of the data passed to the encoder, allowing a more efficient encoding. Samples are processed in a single pass using simple operations. This reduces memory requirements and makes the algorithm suitable for hardware implementations. For the rest of this document, the prediction feedback loop will be referred to as the predictor.
 
-Predictor outputs are passed to an entropy encoder which losslessly encodes prediction residuals in the final bitstream. Entropy encoders, which will be covered in greater detail later in this document, encode samples with a varying number of bits based on the frequency of their occurrence in the image. A novel feature of issue 2 is the inclusion of a hybrid encoder, in addition to the sample adaptive and block adaptive encoders of issue 1. This performs better at the low encoding bitrates achievable in the near-lossless mode. After encoding, a header containing image metadata and compressor configuration parameters is prepended to the compressed bitstream (image body). This is required by the decompressor in order to correctly reconstruct the original image.
+Predictor outputs are passed to an entropy coder which losslessly encodes prediction residuals in the final bitstream. Entropy coders, which will be covered in greater detail later in this document, encode samples with a varying number of bits based on the frequency of their occurrence in the image. A novel feature of issue 2 is the inclusion of a hybrid encoder, in addition to the sample-adaptive and block-adaptive encoders of issue 1. This performs better at the low encoding bitrates achievable in the near-lossless mode. After encoding, a header containing image metadata and compressor configuration parameters is prepended to the compressed bitstream (image body). This is required by the decompressor in order to correctly reconstruct the original image.
 
 The predictor uses an adaptive linear filter method based on the work presented by \citeauthor{gershoAdaptiveFilteringBinary1984} \cite{gershoAdaptiveFilteringBinary1984, LosslessMultispectralHyperspectral2022}. Observed quantities $x_k$, analogous to the quantized prediction residuals of \autoref{fig:DPCM}, which are statistically dependant on the process $d_k$, analogous to the image samples, produce estimates $z_k$ of the desired samples $d_k$. A linear preprocessor $\phi$ takes previously observed quantities $x_k$ and transforms them to a vector $\mathbf{u}_k$ given by
 
@@ -105,7 +105,7 @@ The following sections give a brief technical overview of the predictor and enco
 
 \subsubsection{Quantization}
 
-Prediction residuals $\Delta_z(t)$ are quantized by a uniform quantizer producing quantizer indexes $q_z(t)$ given by
+Prediction residuals $\Delta_z(t)$ are quantized by a uniform quantizer producing quantizer indices $q_z(t)$ given by
 
 \begin{equation}
 	q_z(t) =
@@ -131,7 +131,7 @@ where the prediction residual is the difference between input samples $s_z(t)$ a
 	\label{fig:quantizer}
 \end{figure}
 
-\autoref{fig:quantizer} shows a uniform quantizer centered at zero. Inputs are mapped to bins with size $\Delta$, also called the step size \cite{woodsDigitalImageCompression2012}. The step size of the issue 2 quantizer is $2 m_z(t) + 1$ and is controlled by the maximum error value $m_z(t)$. This guaranties that the prediction residual can be reconstructed with an error of at most $\pm m_z(t)$. A quantizer index of zero means that the predicted sample was within $m_z(t)$ of the actual sample. Positive and negative quantizer indexes indicate that the prediction overshot or undershot the sample, respectively. The clipped quantizer bin center  $s'_z(t)$ is used for calculation of sample representatives, and is given by
+\autoref{fig:quantizer} shows a uniform quantizer centered at zero. Inputs are mapped to bins with size $\Delta$, also called the step size \cite{woodsDigitalImageCompression2012}. The step size of the issue 2 quantizer is $2 m_z(t) + 1$ and is controlled by the maximum error value $m_z(t)$. This guaranties that the prediction residual can be reconstructed with an error of at most $\pm m_z(t)$. A quantizer index of zero means that the predicted sample was within $m_z(t)$ of the actual sample. Positive and negative quantizer indices indicate that the prediction overshot or undershot the sample, respectively. The clipped quantizer bin center  $s'_z(t)$ is used for calculation of sample representatives, and is given by
 
 \begin{equation}
 	s'_z(t) = \operatorname{clip}\!\left( \hat{s}_z(t) + q_z(t)\bigl(2m_z(t)+1\bigr),\ \{s_{\min},\, s_{\max}\} \right),
@@ -147,7 +147,7 @@ The user may select an absolute and a relative error limit, $a_z$ and $r_z$ resp
 	\label{eq:maximum-error}
 \end{equation}
 
-Because the codewords used by the entropy encoder to produce the compressed bitstream are only defined for positive integers, the signed quantizer indexes are mapped to positive integer mapped quantizer indexes $\delta_z(t)$. This mapping is reversible and is given by
+Because the codewords used by the entropy coder to produce the compressed bitstream are only defined for positive integers, the signed quantizer indices are mapped to positive integer mapped quantizer indices $\delta_z(t)$. This mapping is reversible and is given by
 
 \begin{equation}
 	\delta_z(t) =
@@ -363,7 +363,7 @@ Finally, the predicted sample value $\hat{s}_z(t)$ is given by
 	\label{fig:predictor-block-decompress}
 \end{figure}
 
-\autoref{fig:predictor-block-decompress} shows a block diagram of the predictor stage of the decompressor, which replicates the prediction model of the compressor. Quantizer indexes are reconstructed without loss from the mapped quantizer indexes as
+\autoref{fig:predictor-block-decompress} shows a block diagram of the predictor stage of the decompressor, which replicates the prediction model of the compressor. Quantizer indices are reconstructed without loss from the mapped quantizer indices as
 
 \begin{equation}
 	q_z(t) =
@@ -397,7 +397,7 @@ Finally, the reconstructed sample is retrieved from the predicted sample value a
 
 \subsubsection{Data Dependencies}
 
-Both the issue 1 and issue 2 algorithms contain backwards data dependencies that make efficient implementations for hardware challenging. Dependencies are split into two groups: spectral and spatial dependencies, referred to as $z-1$ and $t-1$ dependencies. As an example take the calculation of the weight vector, which is present in both versions of the algorithm, and for issue 2 is given by equations \ref{eq:weight-offset} and \ref{eq:weight-update}. This involves a $t-1$ dependency on the weight vector of sample $s_z(t-1)$. Pipelined hardware implementation must wait for such dependency to resolve before proceeding, placing a restriction on the maximum achievable throughput.
+Both the issue 1 and issue 2 algorithms contain backwards data dependencies that make efficient implementations for hardware challenging. Dependencies are split into two groups: spectral and spatial dependencies, referred to as $z-1$ and $t-1$ dependencies. As an example take the calculation of the weight vector, which is present in both versions of the algorithm, and for issue 2 is given by equations \ref{eq:weight-offset} and \ref{eq:weight-update}. This involves a $t-1$ dependency on the weight vector of sample $s_z(t-1)$. Pipelined hardware implementation must wait for such dependencies to resolve before proceeding, placing a restriction on the maximum achievable throughput.
 
 The selection of sample processing order affects the number of processed samples that interleaves data dependant calculations. Thus, careful selection of processing order may alleviate the problem of data dependencies for pipelined hardware implementations. For the three main processing orders, the number of interleaving samples for $z-1$ and $t-1$ dependencies is summarized in \autoref{tab:orderings}, and may be calculated as follows:
 
@@ -434,11 +434,11 @@ The selection of sample processing order affects the number of processed samples
 
 For the wide local sum configurations (\autoref{fig:local-sums}), calculation of local sums $\sigma_z(t)$ form a $t-1$ dependency on sample representatives $s''_z(t)$ (\autoref{eq:local-sum}). Furthermore, directional local differences have a $t-1$ dependence on sample representatives during full prediction mode. The local difference vector $\mathbf{U}_z(t)$ depends on local differences of the prediction bands, forming a $z-1$ dependency. Finally, the double-resolution predicted sample value has a $z-1$ dependency on the sample value from the previous band (\autoref{eq:double-resolution-predicted-sample}).
 
-\subsection{Entropy Encoder}
+\subsection{Entropy Coder}
 
-The mapped quantizer indexes produced by the predictor are passed to an entropy encoder where they are losslessly encoded and appended to the compressed bitstream. Entropy encoders use sample statistics combined with predefined, variable-length codewords to encode samples with high probability with fewer bits than low probability samples. In this way, samples may be encoded user fewer bits than would be required if encoding the samples at face value.
+The mapped quantizer indices produced by the predictor are passed to an entropy coder where they are losslessly encoded and appended to the compressed bitstream. Entropy coders use sample statistics combined with predefined, variable-length codewords to encode samples with high probability with fewer bits than low probability samples. In this way, samples may be encoded using fewer bits than would be required if encoding the samples at face value.
 
-A commonly used form of entropy encoding is \textit{Huffman coding}. When the probabilities $p$ of a finite set of messages are known, the method composes a set of codewords with a minimized average length \cite{woodsDigitalImageCompression2012}. A binary tree is constructed by recursively joining messages of lowest probability, as shown on the left side of \autoref{fig:huffman}, producing the codewords of the accompanying table. As an example, the string of messages (denoted by index) $\{2, 3, 1, 1, 2, 5\}$ may be encoded using the string of codewords $\{10, 110, 0, 0, 10, 1111\}$, giving a bitstream $1011000101111$. Codewords are prefix-free, meaning that no codeword is the prefix of another. This way, an encoded bitstream can be uniquely decoded by traversing from the start of the stream.
+A commonly used form of entropy encoding is \textit{Huffman coding}. When the probabilities $p$ of a finite set of messages are known, the method composes a set of codewords with a minimized average length \cite{woodsDigitalImageCompression2012}. A binary tree is constructed by recursively joining messages of lowest probability, as shown on the left side of \autoref{fig:huffman}, producing the codewords of the accompanying table. As an example, the string of messages (denoted by index) $\{2, 3, 1, 1, 2, 5\}$ may be encoded using the string of codewords $\{10, 110, 0, 0, 10, 1111\}$, giving the bitstream $1011000101111$. Codewords are prefix-free, meaning that no codeword is the prefix of another. This way, an encoded bitstream can be uniquely decoded by traversing from the start of the stream.
 
 \begin{figure}[ht]
 	\centering
@@ -460,9 +460,11 @@ A commonly used form of entropy encoding is \textit{Huffman coding}. When the pr
 			\hline
 		\end{tabular}
 	\end{minipage}
-	\caption{Huffman encoding tree and associated codeword table. Decoding of the prefix free codes may performed by traversing from the top of the tree until a match is found at one of its branches. Figure recreated from \cite{woodsDigitalImageCompression2012}.}
+	\caption{Huffman encoding tree and associated codeword table. Decoding of the prefix free codes may be performed by traversing from the top of the tree until a match is found at one of its branches. Figure recreated from \cite{woodsDigitalImageCompression2012}.}
 	\label{fig:huffman}
 \end{figure}
+
+Issue 1 supports two different entropy coders: the sample-adaptive and block-adaptive encoders. The former uses variable-length codewords, whereas the latter uses a different technique which will not be covered in this work. The minimum length of a variable-length codeword is one bit, meaning that encoding bitrates of less than one bit per sample are unachievable using the sample-adaptive encoder. Due to the low entropy of mapped quantizer indices when using the issue 2 near-lossless mode, a new entropy coder was introduced. This encoder, the \textit{Hybrid encoder}, is able to achieve sub-one bitrates using a combination of the techniques of the sample-adaptive encoder and \acrfull{V2V} codes. The following overview of the Hybrid encoder is based on the work presented by \citeauthor{blanesHYBRIDENTROPYENCODER}, which gives great insight into the development of and inner workings of the encoder \cite{blanesHYBRIDENTROPYENCODER}.
 
 \subsubsection{Hybrid Encoder}
 
