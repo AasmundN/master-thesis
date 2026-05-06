@@ -78,6 +78,7 @@ The following sections give a brief technical overview of the predictor and enco
 			$m_z(t)$                             & Maximum error                                   \\
 			$q_z(t)$                             & Signed quantizer index                          \\
 			$s'_z(t)$                            & Clipped quantizer bin center                    \\
+			$\tilde{s}''_z(t)$                   & Double-resolution sample representative         \\
 			$s''_z(t)$                           & Sample representative                           \\
 			$\theta_z(t)$                        & Predicted sample and sample endpoint difference \\
 			$\delta_z(t)$                        & Mapped quantizer index                          \\
@@ -174,7 +175,7 @@ where the double-resolution predicted sample value $\tilde{s}_z(t)$ is an interm
 
 \subsubsection{Sample representatives}
 
-As mentioned, sample representatives are used in place of the sample values in order to allow the decompressor to reproduce the prediction model. Selecting sample representatives to be equal to the quantizer bin center minimizes the per-pixel reconstruction error. However, a different selection may be used to minimize other quality metrics, such as the \acrfull{MSE} (\autoref{sec:metrics}) \cite{LosslessMultispectralHyperspectral2022}. For this reason, the user is provided with a set of parameters which control the selection of the sample representatives in relation to the quantizer bin center.
+As mentioned, sample representatives are used in place of the sample values in order to allow the decompressor to reproduce the prediction model. Selecting sample representatives to be equal to the quantizer bin center minimizes the per-pixel reconstruction error. However, a different selection may be used to minimize other quality metrics, such as the \acrfull{MSE} (\autoref{sec:metrics}) \cite{LosslessMultispectralHyperspectral2022}. For this reason, the user is provided with a set of parameters which control the selection of the sample representatives in relation to the quantizer bin center. Intermediary values of the sample representative calculation are the double-resolution sample representative $\tilde{s}''_z(t)$ and the quantizer bin center $s'_z(t)$.
 
 \subsubsection{Local Sums and Differences}
 
@@ -314,7 +315,43 @@ where $\nu_{min}$, $\nu_{max}$, and $t_{inc}$ are user tunable parameters. The f
 
 \subsubsection{Prediction Calculation}
 
-The predicted central local difference $\hat{d}_z(t)$ in combination the local sum $\sigma_z(t)$ produces the high-resolution predicted sample value $\breve{s}_z(t)$. From this the double-resolution predicted sample value $\tilde{s}_z(t)$ may be calculated before the final predicted sample value $\hat{s}_z(t)$ is obtained.
+The predicted central local difference $\hat{d}_z(t)$ in combination with the local sum $\sigma_z(t)$ produces the high-resolution predicted sample value $\breve{s}_z(t)$ as
+
+\begin{equation}
+	\breve{s}_z(t) = \operatorname{clip}\!\left(
+	\begin{aligned}
+			 & \operatorname{mod}_R^* \left[
+				\hat{d}_z(t) + 2^{\Omega} \bigl(\sigma_z(t) - 4 s_{\mathrm{mid}}\bigr)
+			\right]                                                  \\
+			 & \quad + 2^{\Omega+2} s_{\mathrm{mid}} + 2^{\Omega+1},
+			\;
+			\left\{
+			2^{\Omega+2} s_{\min},\;
+			2^{\Omega+2} s_{\max} + 2^{\Omega+1}
+			\right\}
+		\end{aligned}
+	\right).
+	\label{eq:high-resolution-predicted-sample}
+\end{equation}
+
+where $R$ is a user tunable parameter and $s_{mid}$ is the middle sample value, dictated by the dynamic range $D$. From this, the double-resolution predicted sample value $\tilde{s}_z(t)$ is obtained as
+
+\begin{equation}
+	\tilde{s}_z(t) =
+	\begin{cases}
+		\left\lfloor \dfrac{\breve{s}_z(t)}{2^{\Omega+1}} \right\rfloor, & t > 0,                                        \\[8pt]
+		2 s_{z-1}(t),                                                    & t = 0,\; P > 0,\; z > 0,                      \\[6pt]
+		2 s_{\mathrm{mid}},                                              & t = 0 \text{ and } (P = 0 \text{ or } z = 0).
+	\end{cases}
+	\label{eq:double-resolution-predicted-sample}
+\end{equation}
+
+Finally, the predicted sample value $\hat{s}_z(t)$ is given by
+
+\begin{equation}
+	\hat{s}_z(t) = \left\lfloor \dfrac{\tilde{s}_z(t)}{2} \right\rfloor.
+	\label{eq:predicted-sample}
+\end{equation}
 
 \subsubsection{Decompression}
 
@@ -351,7 +388,7 @@ where $\hat{s}_z(t)$ and $\theta_z(t)$ are computed using prediction data from p
 	\label{eq:dequantization}
 \end{equation}
 
-Finally, the reconstructed sample is retrieved from the predicted sample value of dequantized prediction residual as
+Finally, the reconstructed sample is retrieved from the predicted sample value and dequantized prediction residual as
 
 \begin{equation}
 	s_z(t) = \operatorname{clip}\!\left( \Delta_z(t) + \hat{s}_z(t),\ \{s_{\min},\, s_{\max}\} \right).
@@ -360,13 +397,15 @@ Finally, the reconstructed sample is retrieved from the predicted sample value o
 
 \subsubsection{Data Dependencies}
 
-\begin{figure}[ht]
-	\begin{center}
-		\includegraphics[width=1\textwidth]{figures/dependencies.png}
-	\end{center}
-	\caption{Data dependencies of the issue 2 predictor with $t-1$ and $z-1$ dependencies marked in red and blue respectively.}
-	\label{fig:dependencies}
-\end{figure}
+Both the issue 1 and issue 2 algorithms contain backwards data dependencies that make efficient implementations for hardware challenging. Dependencies are split into two groups: spectral and spatial dependencies, referred to as $z-1$ and $t-1$ dependencies. As an example take the calculation of the weight vector, which is present in both versions of the algorithm, and for issue 2 is given by equations \ref{eq:weight-offset} and \ref{eq:weight-update}. This involves a $t-1$ dependency on the weight vector of sample $s_z(t-1)$. Pipelined hardware implementation must wait for such dependency to resolve before proceeding, placing a restriction on the maximum achievable throughput.
+
+The selection of sample processing order affects the number of processed samples that interleaves data dependant calculations. Thus, careful selection of processing order may alleviate the problem of data dependencies for pipelined hardware implementations. For the three main processing orders, the number of interleaving samples for $z-1$ and $t-1$ dependencies is summarized in \autoref{tab:orderings}, and may be calculated as follows:
+
+\begin{enumerate}
+	\item \acrshort{BSQ} iterates samples in the order (x, y, z). This means that $N_x \cdot N_y$ samples interleave $z-1$ dependencies as all samples of the first band are processed before moving to the next band. Spatial samples are processed sequentially, leaving a single sample between $t-1$ dependencies.
+	\item \acrshort{BIP} iterates samples in the order (z, x, y), leaving a single sample between $z-1$ dependencies. All samples of the same pixel are processed before moving the next spatial index, giving $N_z$ samples between $t-1$ dependencies.
+	\item \acrshort{BIL} iterates samples in the order (x, z, y). Lines are processed sequentially, leaving $N_x$ interleaved samples for $z-1$ dependencies and a single for $t-1$.
+\end{enumerate}
 
 \begin{table}[ht]
 	\caption{Number of samples interleaving $z-1$ and $t-1$ dependencies for the three main processing orders.}
@@ -383,10 +422,21 @@ Finally, the reconstructed sample is retrieved from the predicted sample value o
 	\end{center}
 \end{table}
 
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=1\textwidth]{figures/dependencies.png}
+	\end{center}
+	\caption{Data dependencies of the issue 2 predictor with $t-1$ and $z-1$ dependencies marked in red and blue respectively. Novel stages as compared to issue 1 are marked with stippled lines.}
+	\label{fig:dependencies}
+\end{figure}
 
-\subsection{Header}
+\autoref{fig:dependencies} gives an overview of the data dependencies present in the issue 2 predictor, with $z-1$ and $t-1$ dependencies marked in blue and red respectively. Novel features compared to issue 1, mainly revolving around the quantization and sample representatives, are marked with stippled lines. In addition to the aforementioned dependency, weight updates form $t-1$ dependencies on the local difference vector $\mathbf{U}_z(t)$ and the double-resolution prediction error $e_z(t)$ (\autoref{eq:weight-offset}). The latter depends on results from both the prediction calculation and sample representative calculation (\autoref{eq:double-resolution-prediction-error}), presenting a particularly long path for the dependency to resolve compared to the shorter path of issue 1.
+
+For the wide local sum configurations (\autoref{fig:local-sums}), calculation of local sums $\sigma_z(t)$ form a $t-1$ dependency on sample representatives $s''_z(t)$ (\autoref{eq:local-sum}). Furthermore, directional local differences have a $t-1$ dependence on sample representatives during full prediction mode. The local difference vector $\mathbf{U}_z(t)$ depends on local differences of the prediction bands, forming a $z-1$ dependency. Finally, the double-resolution predicted sample value has a $z-1$ dependency on the sample value from the previous band (\autoref{eq:double-resolution-predicted-sample}).
 
 \subsection{Entropy Encoder}
+
+\subsection{Header}
 
 \subsubsection{Hybrid Encoder}
 
