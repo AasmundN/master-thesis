@@ -449,7 +449,7 @@ A commonly used form of entropy encoding is \textit{Huffman coding}. When the pr
 	\hspace{0.2cm}
 	\begin{minipage}{0.35\textwidth}
 		\centering
-		\begin{tabular}{r|l}
+		\begin{tabular}{rl}
 			             & \textbf{Codeword} \\
 			\hline
 			$p(1) = .50$ & 0                 \\
@@ -464,9 +464,13 @@ A commonly used form of entropy encoding is \textit{Huffman coding}. When the pr
 	\label{fig:huffman}
 \end{figure}
 
-Issue 1 supports two different entropy coders: the sample-adaptive and block-adaptive encoders. The former uses variable-length codewords, whereas the latter uses a different technique which will not be covered in this work. The minimum length of a variable-length codeword is one bit, meaning that encoding bitrates of less than one bit per sample are unachievable using the sample-adaptive encoder. Due to the low entropy of mapped quantizer indices when using the issue 2 near-lossless mode, a new entropy coder was introduced. This encoder, the \textit{Hybrid encoder}, is able to achieve sub-one bitrates using a combination of the techniques of the sample-adaptive encoder and \acrfull{V2V} codes. The following overview of the Hybrid encoder is based on the work presented by \citeauthor{blanesHYBRIDENTROPYENCODER}, which gives great insight into the development of and inner workings of the encoder \cite{blanesHYBRIDENTROPYENCODER}.
+Issue 1 supports two different entropy coders: the sample-adaptive and block-adaptive encoders. The former uses variable-length codewords, whereas the latter uses a different technique which will not be covered in this work. The minimum length of a variable-length codeword is one bit, meaning that encoding bitrates of less than one bit per sample are unachievable using the sample-adaptive encoder. Due to the low entropy of mapped quantizer indices when using the issue 2 near-lossless mode, a new entropy coder was introduced. This encoder, the \textit{Hybrid encoder}, is able to achieve sub-one bitrates using a combination of the techniques of the sample-adaptive encoder and \acrfull{V2V} codes. The following overview of the hybrid encoder is based on the work presented by \citeauthor{blanesHYBRIDENTROPYENCODER}, which gives great insight into the development of and inner workings of the encoder \cite{blanesHYBRIDENTROPYENCODER}.
 
 \subsubsection{Hybrid Encoder}
+
+Similarly to the sample-adaptive encoder, the hybrid encoder uses adaptive statistics to select between encoding techniques. By adding processed samples to an accumulator while keeping count of the number of processed samples, an estimate of the average sample value may be obtained by dividing the accumulator by the counter. At certain intervals the accumulator and counter are divided by two. This reduces the impact of previously processed samples while preserving the average estimate. Users may change the length of this interval by use of the rescaling counter size $\gamma^*$ parameter.
+
+The high-resolution accumulator $\tilde{\Sigma}_z(t)$ keeps a separate accumulator for each band, whereas the counter $\Gamma(t)$ is shared between bands. They are given by
 
 \begin{equation}
 	\tilde{\Sigma}_z(t) =
@@ -477,15 +481,25 @@ Issue 1 supports two different entropy coders: the sample-adaptive and block-ada
 	\label{eq:accumulator}
 \end{equation}
 
+and
+
 \begin{equation}
 	\Gamma(t) =
 	\begin{cases}
 		\Gamma(t-1) + 1,                                       & \Gamma(t-1) < 2^{\gamma^*} - 1, \\
-		\left\lfloor \dfrac{\Gamma(t-1) + 1}{2} \right\rfloor, & \Gamma(t-1) = 2^{\gamma^*} - 1,
+		\left\lfloor \dfrac{\Gamma(t-1) + 1}{2} \right\rfloor, & \Gamma(t-1) = 2^{\gamma^*} - 1.
 	\end{cases}
 	\label{eq:counter}
 \end{equation}
 
-\subsubsection{Decoding}
+Based on the average estimate $\tilde{\Sigma}_z(t) / \Gamma(t)$, the hybrid encoder chooses between two different types of encodings: high-entropy and low-entropy codes. For $t=0$, the mapped quantizer index is encoded as is using an unsigned integer of $D$ bits. For $t>0$, if $\tilde{\Sigma}_z(t) \cdot 2^{14} \ge T_0 \cdot \Gamma(t)$, a high-entropy code is selected. Otherwise, a low-entropy code is used. Here, $T_0$ is the low-entropy threshold.
+
+Low-entropy codes use a set of $16$ \acrshort{V2V} codes, indexed by the code index $i$. The work by \citeauthor{blanesHYBRIDENTROPYENCODER} shows that the statistical distribution of low-entropy mapped quantizer indices produced during near-lossless mode deviate from the geometric distribution of high-entropy indices. To accommodate this, a set of \acrshort{V2V} where developed, allowing efficient encoding of the low-entropy codes. Each of the $16$ codes has a corresponding codeword table, similar to the Huffman code example of \autoref{fig:huffman}.
+
+By use of the average estimate, and a threshold $T_i$, the low-entropy code index $i$ is selected. When multiple indices of the same index are observed, possibly interleaved by high-entropy codes, they are accumulated (active prefix) until a matching codeword is found and appended to the bitstream. This allows multiple mapped quantizer indices to be encoded by a single codeword. Low-entropy codewords corresponding to multiple samples may appear in the bitstream several samples after the first sample it encodes. For this reason, decoding can no longer proceed in the forward direction. To allow backwards decoding, the \acrshort{V2V} codes are suffix-free, rather than prefix-free. This means that no codeword is the suffix of another.
+
+High-entropy indices are encoded using a set of $29$ \acrfull{GPO2} codes. First described by \citeauthor{golombRunlengthEncodingsCorresp1966} in \cite{golombRunlengthEncodingsCorresp1966}, Golomb codes device a method for producing optimal prefix-free codewords for a set of messages following a geometric distribution. By using parameters which are powers of two, thereby Golomb \textit{power-of-two}, operations required by hardware implementations are simplified at a slight loss in encoding performance. Additionally, the maximum codeword length is limited to $U_{max} + D$ bits, where $U_{max}$ is the unary length limit, to further simplify hardware and cost of encoding outliers. To facilitate the backwards decoding required by low-entropy codes, the \acrshort{GPO2} are reversed to produce suffix-free codes.
+
+In order to retrieve the mapped quantizer indices from the compressed bitstream, the decoder must be able to reproduce the average estimates of the encoder. For this reason, a compressed image tail encodes the final accumulator values and state of the \acrshort{V2V} active prefixes. During encoding, the average estimate is updated before encoding the sample. This allows the decoder to use the current average estimate to select high- or low-entropy decoding before updating the estimate.
 
 \subsection{Header}
