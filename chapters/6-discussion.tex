@@ -1,4 +1,8 @@
 \chapter{Discussion and Further Work}
 \label{sec:discussion}
 
-Work should be done to properly integrate the issue 2 implementation into the HYPSO-2 on-board-processing (OPU) system. This includes writing software for header, and selection of parameters. As of now, HYPSO-2 still uses the outdated issue 1 implementation. Although fast, it cannot achieve compression rates close to those of issue 2. Issue 2 for HYPSO-3!!
+Work should be done to properly integrate the issue 2 implementation into the HYPSO-2 on-board-processing (OPU) system. This includes writing software for header, and selection of parameters. As of now, HYPSO-2 still uses the outdated issue 1 implementation. Although fast, it cannot achieve compression rates close to those of issue 2. Issue 2 for HYPSO-3!! Header software should be written in C, for easy integration with the existing software.
+
+The decrease in compression performance introduced by delayed weight updates cause significantly longer downlink time which is not outweighed by the reduced execution time, by far.
+
+If this is to be used onboard the satellite, we need to write a faster decompressor. Two problems: serialized processing and excessive storing of intermediates. Use buffers to store only the data that is needed, similar to the hardware. Would also speed up the implementation due to simpler memory accesses.

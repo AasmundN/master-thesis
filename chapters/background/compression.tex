@@ -147,6 +147,8 @@ The user may select an absolute and a relative error limit, $a_z$ and $r_z$ resp
 	\label{eq:maximum-error}
 \end{equation}
 
+\textbf{TODO}: periodic error limit updating.
+
 Because the codewords used by the entropy coder to produce the compressed bitstream are only defined for positive integers, the signed quantizer indices are mapped to positive integer mapped quantizer indices $\delta_z(t)$. This mapping is reversible and is given by
 
 \begin{equation}
@@ -502,4 +504,6 @@ High-entropy indices are encoded using a set of $29$ \acrfull{GPO2} codes. First
 
 In order to retrieve the mapped quantizer indices from the compressed bitstream, the decoder must be able to reproduce the average estimates of the encoder. For this reason, a compressed image tail encodes the final accumulator values and state of the \acrshort{V2V} active prefixes. During encoding, the average estimate is updated before encoding the sample. This allows the decoder to use the current average estimate to select high- or low-entropy decoding before updating the estimate.
 
-\subsection{Header}
+\subsection{Header and Optional Files}
+
+Optional tables, error limit table, encoder accumulator initial file, and error limits encoded in bitstream.

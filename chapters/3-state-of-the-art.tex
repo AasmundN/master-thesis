@@ -51,3 +51,24 @@
 	\end{cases}
 	\label{eq:weight-update-reduced}
 \end{equation}
+
+\begin{table}[h]
+	\caption{Throughputs of hardware implementations of the issue 2 algorithm in open literature.}
+	\label{tab:throughput}
+	\centering
+	\begin{tabular}{l r r}
+		\hline
+		\textbf{Implementation}                                                                                      & \textbf{FPGA} & \textbf{Throughput} \\
+		\hline
+		Barrios et al.\ \cite{barriosHardwareImplementationCCSDS2021}                                                & XCKU040       & 18~MS/s             \\
+		S\'anchez et al.\ \cite{sanchezReducingDataDependencies2022, barriosRemovingDataDependencies2024}, predictor & XCKU040       & 231~MS/s            \\
+		Barrios et al.\ \cite{barriosRemovingDataDependencies2024}, predictor                                        & XCKU040       & 236~MS/s            \\
+		B\'ascones et al.\ \cite{basconesRealTimeFPGAImplementation2022}                                             & XQRKU060      & 285~MS/s            \\
+		Chatziantoniou et al.\ \cite{chatziantoniouScalableDataRateNearLossless2022a} 1 core                         & XCKU040       & 285~MS/s            \\
+		Chatziantoniou et al.\ \cite{chatziantoniouScalableDataRateNearLossless2022a} 5 core                         & XCKU040       & 1375~MS/s           \\
+		Vorhaug et al.\ \cite{vorhaugHyperspectralImageCompression2024}                                              & XCKU040       & 110~MS/s            \\
+		Jia et al.\ \cite{jiaRemovalFeedbackLoop2025}, predictor                                                     & XCZU5EV       & 348~MS/s            \\
+		\hline
+	\end{tabular}
+\end{table}
+

@@ -4,6 +4,24 @@
 \section{Verification Model}
 
 \begin{table}[ht]
+	\caption{\acrshort{CPU} time and memory use profile for image compression using C++ predictor and reduced memory usage.}
+	\label{tab:profile-new}
+	\begin{center}
+		\begin{tabular}{lrr}
+			\hline
+			\textbf{Module} & \textbf{CPU Time} & \textbf{Memory Use} \\
+			\hline
+			Total           & 9.4s              & 438MB               \\
+			Loading         & 0.9\%             & 17.2\%              \\
+			Predictor       & 72.6\%            & 13.8\%              \\
+			Hybrid encoder  & 26.4\%            & 69.0\%              \\
+			Save outputs    & <0.1\%            & N/A                 \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[ht]
 	\caption{Compression performance, execution time of predictor in parenthesis (TODO: find better way of displaying than in parenthesis)}
 	\label{tab:performance-results-hlm-compress}
 	\begin{center}
@@ -37,6 +55,14 @@
 	\end{center}
 \end{table}
 
+\subsection{Debugging}
+
+Clamping of reconstructed sample.
+
+Selection of quantization bin center.
+
+Rounding of signed integers in python vs C++.
+
 \section{Compression Performance}
 
 \begin{table}[ht]
@@ -54,6 +80,8 @@
 		\end{tabular}
 	\end{center}
 \end{table}
+
+The difference in compression performance shown in \autoref{tab:performance-results-hlm-dw}, especially that of Landsat, are likely due to the characteristics of the specific images used. For example, the Landsat image only has six spectral bands, as opposed to 120 and 200 (?) for Hypso and Aviris.
 
 \begin{table}[ht]
 	\caption{Reductions in compression performance for coastline image for this work and the work by \citeauthor{jiaRemovalFeedbackLoop2025}.}
@@ -90,6 +118,8 @@
 		\end{tabular}
 	\end{center}
 \end{table}
+
+Note that the delayed weight update scheme does not affect the PSNR of the reconstructed images. This is due to the maximum error feature of the algorithm. Only the compression performance is affected.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -133,6 +163,29 @@
 			\hline
 		\end{tabular}
 	\end{center}
+\end{table}
+
+\begin{table}[ht]
+	\caption{Throughputs of hardware implementations of the issue 2 algorithm in open literature.}
+	\label{tab:throughput-this-work}
+	\centering
+	\begin{tabular}{l r r r r r r}
+		\hline
+		\textbf{Implementation}                                                                                      & \textbf{FPGA} & \textbf{LUT} & \textbf{FF} & \textbf{DSP} & \textbf{BRAM} & \textbf{Throughput} \\
+		\hline
+		Barrios et al.\ \cite{barriosHardwareImplementationCCSDS2021}                                                & XCKU040       & 17185        & 11915       & 63           & 85            & 18~MS/s             \\
+		S\'anchez et al.\ \cite{sanchezReducingDataDependencies2022, barriosRemovingDataDependencies2024}, predictor & XCKU040       & 19840        & 12970       & 33           & 213           & 231~MS/s            \\
+		Barrios et al.\ \cite{barriosRemovingDataDependencies2024}, predictor                                        & XCKU040       & 11095        & 11729       & 20           & 186.5         & 236~MS/s            \\
+		B\'ascones et al.\ \cite{basconesRealTimeFPGAImplementation2022}                                             & XQRKU060      & 16458        & 15707       & 30           & 187.5         & 285~MS/s            \\
+		Chatziantoniou et al.\ \cite{chatziantoniouScalableDataRateNearLossless2022a} 1 core                         & XCKU040       & 18861        & 21395       & -            & 104           & 285~MS/s            \\
+		Chatziantoniou et al.\ \cite{chatziantoniouScalableDataRateNearLossless2022a} 5 core                         & XCKU040       & 67362        & 68987       & -            & 306           & 1375~MS/s           \\
+		Vorhaug et al.\ \cite{vorhaugHyperspectralImageCompression2024}                                              & XCKU040       & 5577         & 2635        & 4            & 57.5          & 110~MS/s            \\
+		Vorhaug et al.\ \cite{vorhaugHyperspectralImageCompression2024}                                              & XCZU7EV       & 5475         & 2635        & 4            & 57.5          & 141~MS/s            \\
+		This work                                                                                                    & XCZU7EV       & 6331         & 3442        & 4            & 79.5          & 200~MS/s            \\
+		Jia et al.\ \cite{jiaRemovalFeedbackLoop2025}, predictor                                                     & XCZU5EV       & 3995         & 5050        & 7            & 94            & 348~MS/s            \\
+		This work, predictor                                                                                         & XCZU7EV       & 2969         & 2185        & 4            & 65.5          & 313~MS/s            \\
+		\hline
+	\end{tabular}
 \end{table}
 
 \section{Hardware Testing}
