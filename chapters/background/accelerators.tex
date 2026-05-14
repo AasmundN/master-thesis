@@ -23,3 +23,5 @@ To alleviate the challenges in long design time of \acrshort{RTL} code, a new de
 The satellites of the \acrshort{hypso} project use \acrlong{MPSoC}s (\acrshort{MPSoC}) from AMD (formerly Xilinx), namely the Zynq chips \cite{grotteOceanColorHyperspectral2022}. These \acrshort{COTS} embed two ARM processing units, a simple \acrshort{GPU}, and several useful peripherals including \acrlong{ADC}s (\acrshort{ADC}), timers and support for various communication protocols. The system runs the Linux operating system, providing tools for management of complex tasks and threads. Additionally, the chips include embedded \acrfull{PL}, equivalent to an embedded \acrshort{FPGA}. Embedding the \acrshort{PL} directly in the \acrshort{MPSoC} allows custom logic to directly access the main data buss and other systems on the chip, including \acrfull{DMA} for fast and \acrshort{CPU} independent memory accesses. These features give great benefits in terms of efficiency in speed and power as compared to separate \acrshort{FPGA}s.
 
 \textbf{TODO:} paragraph about verification. DUT, constrained random, golden model etc
+
+\textbf{TODO:} paragraph about bus interfaces

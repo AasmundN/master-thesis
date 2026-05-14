@@ -24,6 +24,15 @@
 	\label{fig:fid}
 \end{figure}
 
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=1\textwidth]{figures/ccsds-pipeline-naive.png}
+	\end{center}
+	\caption{}
+	\label{fig:ccsds-pipeline-naive}
+\end{figure}
+
+
 \begin{equation}
 	\text{sgn}^+\bigl[e_z(t)\bigr] =
 	\begin{cases}
@@ -36,7 +45,15 @@
 
 \begin{figure}[ht]
 	\begin{center}
-		\includegraphics[width=0.8\textwidth]{figures/delayed-weight-updates.png}
+		\includegraphics[width=1\textwidth]{figures/ccsds-pipeline-math-opt.png}
+	\end{center}
+	\caption{}
+	\label{fig:ccsds-pipeline-math-opt}
+\end{figure}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.8\textwidth]{figures/ccsds-weight-updates.png}
 	\end{center}
 	\caption{The proposed weight update scheme by \citeauthor{jiaRemovalFeedbackLoop2025}. Weights are kept unchanged for the first samples of every line, after which the sample from four samples earlier is used in the weight update calculation.}
 	\label{fig:delayed-weight-updates}

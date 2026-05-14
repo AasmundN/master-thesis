@@ -3,7 +3,7 @@
 
 This work builds upon, and aims to improve, the work of \citeauthor{vorhaugHyperspectralImageCompression2024} in \cite{vorhaugHyperspectralImageCompression2024}. \citeauthor{vorhaugHyperspectralImageCompression2024} implemented an issue 2 compliant hardware accelerator for use on-board the \acrshort{hypso} missions. The hardware accelerator was successfully integrated and tested on-board the \acrshort{hypso}-1 satellite, showing its viability for use. Before testing, the hardware was verified using a verification model, also written by \citeauthor{vorhaugHyperspectralImageCompression2024}. The following sections outlines the verification model and design of the hardware accelerator.
 
-\subsection{Verification Model}
+\section{Verification Model}
 
 The verification model is implemented in the Python programming language and is fully compliant with the issue 2 standard. This includes support for all three entropy coders, full and reduced prediction mode, and all available local sum types. Since the purpose of the model is hardware verification, it saves intermediate values of the calculations and stores them in files. This results in large amounts of data to be stored in memory during execution, as well as written to the disk after completion. For this reason, the model is not suited for compression of full scale satellite images. Note that the verification model only implements compression, not decompression.
 
@@ -11,7 +11,7 @@ The model uses an object oriented programming style and consists of, in addition
 
 As the model is only intended for small test images, the calculations are implemented in a fully serial manner. All intermediary results are stored in global arrays that are modified in place. This removes the need for careful buffering of data that is needed by later calculations at the cost of massive penalties in memory usage. The use of large, global arrays also impacts execution time due to the constantly moving large chunks of data in and out the the memory caches. A final caveat is that modifying and accessing data in place makes the flow of the program harder to read, as function calls do not have clearly defined inputs and outputs at the call site.
 
-\subsection{Hardware Accelerator}
+\section{Hardware Accelerator}
 
 The hardware accelerator uses the mathematical optimization approach suggested by \citeauthor{sanchezReducingDataDependencies2022}. \autoref{fig:vorhaug-block} shows a block diagram of the implementation. The implementation is only configurable using parameters in the \acrshort{RTL} code, and not at runtime. This allows high optimization by the synthesizer and \acrshort{PnR} tool, resulting in a small hardware area. Data is moved in and out of the module using the \acrshort{AXI} bus interface, which allows easy integration into the \acrshort{MPSoC} on-board \acrshort{hypso}. Because the implementation uses the \acrshort{BIL} processing order, as required by the mathematical optimization approach, the design features an optional reordering buffer. This module reorders from the \acrshort{BIP} used by the systems on \acrshort{hypso} to \acrshort{BIL} ordering.
 
@@ -23,13 +23,25 @@ The hardware accelerator uses the mathematical optimization approach suggested b
 	\label{fig:vorhaug-block}
 \end{figure}
 
+The controller module keeps track of the sample index of the current input sample and passes it through a control object to the predictor module. Additionally, a global valid signal can be used to freeze the calculation if needed. The predictor and encoder modules are responsible for producing the mapped quantizer indices and compressed image bitstream, respectively. Outputs of the encoder are buffered in the packer module and shaped into blocks matching the data width of the output \acrshort{AXI} bus. The accelerator uses a pipelined architecture to achieve high throughput. Once the control object passed to the first stage of the predictor has propagated through the pipeline and arrived at packer, the first valid block is output at the data bus. The predictor is the main focus of this work, and is covered in greater detail by the following sections.
+
 \begin{figure}[ht]
 	\begin{center}
 		\includegraphics[width=1\textwidth]{figures/vorhaug-pipeline.png}
 	\end{center}
-	\caption{Full pipeline of \citeauthor{vorhaugHyperspectralImageCompression2024}. The indivisible weight update calculation in stage 3 restricts the throughput.}
+	\caption{Full pipeline of \citeauthor{vorhaugHyperspectralImageCompression2024}. The indivisible weight update calculation in stage 3 restricts the throughput due to the dependency indicated by the red arrows.}
 	\label{fig:vorhaug-pipeline}
 \end{figure}
+
+\autoref{fig:vorhaug-pipeline} shows the pipeline of the prediction stage of the accelerator. By use of the mathematical optimization approach, the need for results from the sample representative stage to calculate the double resolution prediction error (\autoref{eq:double-resolution-prediction-error}) is eliminated. This, in combination with speculative calculation of the two possible outcomes of the sign calculation, results in a pipeline similar to that of \autoref{fig:ccsds-pipeline-math-opt}. The prediction calculation and weight updates are done in pipeline stage three. The prediction calculation, specifically the predicted central local difference (\autoref{eq:predicted-central-local-difference}), depends on the updated weight. In turn, the weight update depends on the result of the prediction calculation. Because of this, the weight update calculation cannot be split into multiple stages, limiting the achievable clock speed and throughput of the design.
+
+Calculation of the quantizer index $q_z(t)$ and the predicted sample and sample endpoint difference $\theta_z(t)$ of equations \ref{eq:quantizer-index} and \ref{eq:theta} both require a division by $2 m_z(t) + 1$. These operations are started in parallel in stage four, and are performed using a shift/subtract algorithm \cite[pp.~256--268]{parhami2010computer}. The algorithm allows a pipelined divider with a length dependant on the bit depth of the operands, meaning that the pipeline depth of the predictor is dictated by the dynamic range $D$.
+
+In order to provide necessary values to calculations, a set of shift registers are used to buffer values until they are needed. Values are pushed into the registers when ready and read by stages at different taps. Special buffers are used to provide the sample representatives and local differences that constitute the prediction neighborhood, and are made using a set of \acrfull{FIFO} buffers. See the work of \citeauthor{vorhaugHyperspectralImageCompression2024} for a full explanation.
+
+The accelerator was verified using the verification model previously mentioned. A verification framework reads intermediary values from the design during simulation and compares them to the results of the verification model. Inputs and outputs are passed to the design using a simulated \acrshort{AXI} interface. Test data is randomly generated, providing sufficient coverage of the different configuration of image sizes and header configurations.
+
+For the implementation of the delayed weight updates proposed by \citeauthor{jiaRemovalFeedbackLoop2025}, the weight update calculation of stage three is the most interesting of the accelerator (\autoref{fig:vorhaug-weights-hw}). The hardware shown in the figure is duplicated for each of the elements in the weight vector, indexed by $i$. The two possible outcomes of the weight update are calculated in parallel with the sign of the prediction error. After resolution of the prediction and sign calculations, the correct path is selected. For $t=0$, initial weight values following the default initialization method (\autoref{eq:weight-init}) are selected. Each band keeps a separate weight vector which is individually updated. As described by \citeauthor{sanchezReducingDataDependencies2022}, the accelerator uses the \acrshort{BIL} processing order, which processes frames sequentially (\autoref{fig:BIL}). A \acrshort{FIFO} of size $N_x$ stores weights at the end of each line. At the beginning a new line, the weight stored from the previous frame of the same band is retrieved. For updates within a frame the weight is stored in a simple register.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -39,13 +51,7 @@ The hardware accelerator uses the mathematical optimization approach suggested b
 	\label{fig:vorhaug-weights-hw}
 \end{figure}
 
-\begin{figure}[ht]
-	\begin{center}
-		\includegraphics[width=0.5\textwidth]{figures/sign-block-diagram.png}
-	\end{center}
-	\caption{}
-	\label{fig:sign-block-diagram}
-\end{figure}
+The calculation of the sign of the double-resolution prediction error follows the mathematical optimization approach as described in \autoref{eq:math-opt}. The expression can be efficiently calculated by digital hardware using the following boolean expression:
 
 \begin{equation}
 	\begin{cases}
@@ -54,3 +60,13 @@ The hardware accelerator uses the mathematical optimization approach suggested b
 	\end{cases}
 	\label{eq:sign-hw}
 \end{equation}
+
+Here the difference between the sample and predicted sample is denoted as the prediction residual $\Delta_z(t) = s_z(t) - \hat{s}_z(t)$. Here a boolean 1 corresponds to a negative sign, and a boolean 0 to a positive sign. The \acrfull{LSB} of $\tilde{s}_z(t)$ indicates whether it is odd or even, meaning that the upper clause corresponds to the two upped clauses of \autoref{eq:math-opt}. The \acrshort{MSB} of $\Delta_z(t)$ gives its sign when represented using twos complement.
+
+% \begin{figure}[ht]
+% 	\begin{center}
+% 		\includegraphics[width=0.5\textwidth]{figures/sign-block-diagram.png}
+% 	\end{center}
+% 	\caption{Calculation of the sign of the double-resolution prediction error following the mathematical optimization approach proposed by \citeauthor{sanchezReducingDataDependencies2022}.}
+% 	\label{fig:sign-block-diagram}
+% \end{figure}
