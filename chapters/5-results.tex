@@ -123,7 +123,7 @@ Note that the delayed weight update scheme does not affect the PSNR of the recon
 
 \begin{figure}[ht]
 	\begin{center}
-		\includegraphics[angle=90, width=0.8\textwidth]{results/lacrau/lacrau-dec.png}
+		\includegraphics[angle=90, width=0.8\textwidth]{figures/hypso2-rgb/hypso_decoded.png}
 	\end{center}
 	\caption{Decoded Hypso 2 image}
 	\label{fig:lacrau-dec}
@@ -131,8 +131,8 @@ Note that the delayed weight update scheme does not affect the PSNR of the recon
 
 \begin{figure}[ht]
 	\begin{center}
-		\includegraphics[height=0.28\textheight,valign=t]{results/aviris/aviris_decoded.jpg}
-		\includegraphics[height=0.28\textheight,valign=t]{results/landsat/landsat_decoded.jpg}
+		\includegraphics[height=0.28\textheight,valign=t]{results/aviris/aviris_decoded.png}
+		\includegraphics[height=0.28\textheight,valign=t]{results/landsat/landsat_decoded.png}
 	\end{center}
 	\caption{Decoded Aviris and Landsat images.}
 	\label{fig:landsat}
@@ -156,10 +156,10 @@ Note that the delayed weight update scheme does not affect the PSNR of the recon
 			\hline
 			\textbf{FPGA}          & \textbf{LUT} & \textbf{FF} & \textbf{DSP} & \textbf{BRAM} & \textbf{Power} & \textbf{Frequency} \\
 			\hline
-			Zynq-7030              & 5958         & 3425        & 4            & 83.5          & 152 mW         & 90.9 MHz           \\
-			Zynq ZU7EV             & 6331         & 3442        & 4            & 79.5          & 273 mW         & 200.0 MHz          \\
-			Zynq-7030 (predictor)  & 2841         & 2212        & 4            & 69.5          & 263 mW         & 125.0 MHz          \\
-			Zynq ZU7EV (predictor) & 2969         & 2185        & 4            & 65.5          & 467 mW         & 312.5 MHz          \\
+			Zynq-7030              & 5969         & 3463        & 4            & 83.5          & 284 mW         & 92.6 MHz           \\
+			Zynq ZU7EV             & 6349         & 3480        & 4            & 79.5          & 890 mW         & 202.0 MHz          \\
+			Zynq-7030 (predictor)  & 2866         & 2250        & 4            & 69.5          & 419 mW         & 137.0 MHz          \\
+			Zynq ZU7EV (predictor) & 2807         & 2244        & 4            & 69.5          & 1282 mW        & 350.9 MHz          \\
 			\hline
 		\end{tabular}
 	\end{center}
@@ -181,9 +181,9 @@ Note that the delayed weight update scheme does not affect the PSNR of the recon
 		Chatziantoniou et al.\ \cite{chatziantoniouScalableDataRateNearLossless2022a} 5 core                         & XCKU040       & 67362        & 68987       & -            & 306           & 1375~MS/s           \\
 		Vorhaug et al.\ \cite{vorhaugHyperspectralImageCompression2024}                                              & XCKU040       & 5577         & 2635        & 4            & 57.5          & 110~MS/s            \\
 		Vorhaug et al.\ \cite{vorhaugHyperspectralImageCompression2024}                                              & XCZU7EV       & 5475         & 2635        & 4            & 57.5          & 141~MS/s            \\
-		This work                                                                                                    & XCZU7EV       & 6331         & 3442        & 4            & 79.5          & 200~MS/s            \\
 		Jia et al.\ \cite{jiaRemovalFeedbackLoop2025}, predictor                                                     & XCZU5EV       & 3995         & 5050        & 7            & 94            & 348~MS/s            \\
-		This work, predictor                                                                                         & XCZU7EV       & 2969         & 2185        & 4            & 65.5          & 313~MS/s            \\
+		This work                                                                                                    & XCZU7EV       & 6349         & 3480        & 4            & 79.5          & 202~MS/s            \\
+		This work, predictor                                                                                         & XCZU7EV       & 2807         & 2244        & 4            & 69.5          & 351~MS/s            \\
 		\hline
 	\end{tabular}
 \end{table}
