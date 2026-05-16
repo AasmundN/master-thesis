@@ -5,4 +5,8 @@ Work should be done to properly integrate the issue 2 implementation into the HY
 
 The decrease in compression performance introduced by delayed weight updates cause significantly longer downlink time which is not outweighed by the reduced execution time, by far.
 
-If this is to be used onboard the satellite, we need to write a faster decompressor. Two problems: serialized processing and excessive storing of intermediates. Use buffers to store only the data that is needed, similar to the hardware. Would also speed up the implementation due to simpler memory accesses.
+If this is to be used onboard the satellite, we need to write a faster decompressor. Two problems: serialized processing and excessive storing of intermediaries. Use buffers to store only the data that is needed, similar to the hardware. Would also speed up the implementation due to simpler memory accesses.
+
+Higher execution time of the encoder for higher error limits suggest that the encoding of low-entropy samples is slower than that of high-entropy samples.
+
+C++ predictor optimizations: data type selection and minimal dependency buffers

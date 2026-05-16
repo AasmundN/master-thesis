@@ -92,6 +92,7 @@ The following sections give a brief technical overview of the predictor and enco
 \end{table}
 
 \subsection{Predictor}
+\label{sec:predictor}
 
 \begin{figure}[ht]
 	\begin{center}
@@ -177,7 +178,7 @@ where the double-resolution predicted sample value $\tilde{s}_z(t)$ is an interm
 
 \subsubsection{Sample representatives}
 
-As mentioned, sample representatives are used in place of the sample values in order to allow the decompressor to reproduce the prediction model. Selecting sample representatives to be equal to the quantizer bin center minimizes the per-pixel reconstruction error. However, a different selection may be used to minimize other quality metrics, such as the \acrfull{MSE} (\autoref{sec:metrics}) \cite{LosslessMultispectralHyperspectral2022}. For this reason, the user is provided with a set of parameters which control the selection of the sample representatives in relation to the quantizer bin center. Intermediary values of the sample representative calculation are the double-resolution sample representative $\tilde{s}''_z(t)$ and the quantizer bin center $s'_z(t)$.
+As mentioned, sample representatives are used in place of the sample values in order to allow the decompressor to reproduce the prediction model. Selecting sample representatives to be equal to the quantizer bin center minimizes the per-pixel reconstruction error. However, a different selection may be used to minimize other quality metrics, such as the \acrfull{MSE} (\autoref{sec:metrics}) \cite{LosslessMultispectralHyperspectral2022}. For this reason, the user is provided with a set of parameters which control the selection of the sample representatives in relation to the quantizer bin center. Intermediate values of the sample representative calculation are the double-resolution sample representative $\tilde{s}''_z(t)$ and the quantizer bin center $s'_z(t)$.
 
 \subsubsection{Local Sums and Differences}
 
