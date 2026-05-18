@@ -1,12 +1,43 @@
 \chapter{Discussion and Further Work}
 \label{sec:discussion}
 
-Work should be done to properly integrate the issue 2 implementation into the HYPSO-2 on-board-processing (OPU) system. This includes writing software for header, and selection of parameters. As of now, HYPSO-2 still uses the outdated issue 1 implementation. Although fast, it cannot achieve compression rates close to those of issue 2. Issue 2 for HYPSO-3!! Header software should be written in C, for easy integration with the existing software.
+\subsection{Compression Performance}
 
 The decrease in compression performance introduced by delayed weight updates cause significantly longer downlink time which is not outweighed by the reduced execution time, by far.
 
-If this is to be used onboard the satellite, we need to write a faster decompressor. Two problems: serialized processing and excessive storing of intermediaries. Use buffers to store only the data that is needed, similar to the hardware. Would also speed up the implementation due to simpler memory accesses.
+\subsection{Decompressor Performance}
 
 Higher execution time of the encoder for higher error limits suggest that the encoding of low-entropy samples is slower than that of high-entropy samples.
 
 C++ predictor optimizations: data type selection and minimal dependency buffers
+
+\subsection{Place in the State-of-the-art}
+
+\begin{table}[ht]
+	\caption{Throughputs of hardware implementations of the issue 2 algorithm in open literature.}
+	\label{tab:throughput-this-work}
+	\centering
+	\begin{tabular}{l r r r r r r}
+		\hline
+		\textbf{Implementation}                                                                                      & \textbf{FPGA} & \textbf{LUT} & \textbf{FF} & \textbf{DSP} & \textbf{BRAM} & \textbf{Throughput} \\
+		\hline
+		Barrios et al.\ \cite{barriosHardwareImplementationCCSDS2021}                                                & XCKU040       & 17185        & 11915       & 63           & 85            & 18~MS/s             \\
+		S\'anchez et al.\ \cite{sanchezReducingDataDependencies2022, barriosRemovingDataDependencies2024}, predictor & XCKU040       & 19840        & 12970       & 33           & 213           & 231~MS/s            \\
+		Barrios et al.\ \cite{barriosRemovingDataDependencies2024}, predictor                                        & XCKU040       & 11095        & 11729       & 20           & 186.5         & 236~MS/s            \\
+		B\'ascones et al.\ \cite{basconesRealTimeFPGAImplementation2022}                                             & XQRKU060      & 16458        & 15707       & 30           & 187.5         & 285~MS/s            \\
+		Chatziantoniou et al.\ \cite{chatziantoniouScalableDataRateNearLossless2022a} 1 core                         & XCKU040       & 18861        & 21395       & -            & 104           & 285~MS/s            \\
+		Chatziantoniou et al.\ \cite{chatziantoniouScalableDataRateNearLossless2022a} 5 core                         & XCKU040       & 67362        & 68987       & -            & 306           & 1375~MS/s           \\
+		Vorhaug et al.\ \cite{vorhaugHyperspectralImageCompression2024}                                              & XCKU040       & 5577         & 2635        & 4            & 57.5          & 110~MS/s            \\
+		Vorhaug et al.\ \cite{vorhaugHyperspectralImageCompression2024}                                              & XCZU7EV       & 5475         & 2635        & 4            & 57.5          & 141~MS/s            \\
+		Jia et al.\ \cite{jiaRemovalFeedbackLoop2025}, predictor                                                     & XCZU5EV       & 3995         & 5050        & 7            & 94            & 348~MS/s            \\
+		This work                                                                                                    & XCZU7EV       & 6349         & 3480        & 4            & 79.5          & 202~MS/s            \\
+		This work, predictor                                                                                         & XCZU7EV       & 2807         & 2244        & 4            & 69.5          & 351~MS/s            \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\section{On-board Testing}
+
+Work should be done to properly integrate the issue 2 implementation into the HYPSO-2 on-board-processing (OPU) system. This includes writing software for header, and selection of parameters. As of now, HYPSO-2 still uses the outdated issue 1 implementation. Although fast, it cannot achieve compression rates close to those of issue 2. Issue 2 for HYPSO-3!! Header software should be written in C, for easy integration with the existing software.
+
+If this is to be used onboard the satellite, we need to write a faster decompressor. Two problems: serialized processing and excessive storing of intermediaries. Use buffers to store only the data that is needed, similar to the hardware. Would also speed up the implementation due to simpler memory accesses.

@@ -3,37 +3,68 @@
 
 \section{Verification Model}
 
+% \begin{table}[ht]
+% 	\caption{\acrshort{CPU} time and memory use profile for image compression using C++ predictor and reduced memory usage.}
+% 	\label{tab:profile-new}
+% 	\begin{center}
+% 		\begin{tabular}{lrr}
+% 			\hline
+% 			\textbf{Module} & \textbf{CPU Time} & \textbf{Memory Use} \\
+% 			\hline
+% 			Total           & 9.4s              & 438MB               \\
+% 			Loading         & 0.9\%             & 17.2\%              \\
+% 			Predictor       & 72.6\%            & 13.8\%              \\
+% 			Hybrid encoder  & 26.4\%            & 69.0\%              \\
+% 			Save outputs    & <0.1\%            & N/A                 \\
+% 			\hline
+% 		\end{tabular}
+% 	\end{center}
+% \end{table}
+
 \begin{table}[ht]
-	\caption{\acrshort{CPU} time and memory use profile for image compression using C++ predictor and reduced memory usage.}
-	\label{tab:profile-new}
+	\caption{Performance of verification model with C++ predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs.}
+	\label{tab:coastline-hlm}
 	\begin{center}
-		\begin{tabular}{lrr}
+		\begin{tabular}{lrrrrr}
 			\hline
-			\textbf{Module} & \textbf{CPU Time} & \textbf{Memory Use} \\
+			\textbf{PAE} & \textbf{CR} & \textbf{Loading (s)} & \textbf{Predictor (s)} & \textbf{Encoder (s)} & \textbf{Save Data (s)} \\
 			\hline
-			Total           & 9.4s              & 438MB               \\
-			Loading         & 0.9\%             & 17.2\%              \\
-			Predictor       & 72.6\%            & 13.8\%              \\
-			Hybrid encoder  & 26.4\%            & 69.0\%              \\
-			Save outputs    & <0.1\%            & N/A                 \\
+			0            & 1.995       & 0.311                & 295.273                & 393.706              & 0.069                  \\
+			1            & 2.488       & 0.121                & 293.722                & 408.911              & 0.054                  \\
+			3            & 3.077       & 0.076                & 294.704                & 471.881              & 0.044                  \\
+			7            & 3.912       & 0.076                & 292.520                & 658.729              & 0.034                  \\
+			15           & 5.219       & 0.076                & 290.610                & 888.570              & 0.024                  \\
 			\hline
 		\end{tabular}
 	\end{center}
 \end{table}
 
 \begin{table}[ht]
-	\caption{Compression performance, execution time of predictor in parenthesis (TODO: find better way of displaying than in parenthesis)}
-	\label{tab:performance-results-hlm-compress}
+	\caption{}
+	\label{tab:performance-results-hlm-compress-cpp}
 	\begin{center}
-		\begin{tabular}{lrrrlrr}
+		\begin{tabular}{lrrrrr}
 			\hline
-			\textbf{Image} & \textbf{Predictor} & \textbf{Samples} & \multicolumn{2}{r}{\textbf{Time (s)}} & \textbf{Throughput (MS/s)} & \textbf{Memory (MB)}         \\
+			\textbf{Image} & \textbf{Predictor} & \textbf{Samples} & \textbf{Time (s)} & \textbf{Throughput (MS/s)} & \textbf{Memory (MB)} \\
 			\hline
-			Hypso 2        & C++                & 78361920         & 821                                   & (293)                      & 0.095                & 32415 \\
-			Aviris         & C++                & 77643776         & 1166                                  & (290)                      & 0.066                & 32091 \\
-			Landsat        & C++                & 6291456          & 103                                   & (22)                       & 0.061                & 2669  \\
-			Hypso 2        & Python             & 78361920         & 2818                                  & (2169)                     & 0.027                & 38996 \\
-			Landsat        & Python             & 6291456          & 263                                   & (161)                      & 0.024                & 3204  \\
+			Hypso 2        & C++                & 78361920         & 821               & 0.095                      & 32415                \\ % & (293)
+			Aviris         & C++                & 77643776         & 1166              & 0.066                      & 32091                \\ % & (290)
+			Landsat        & C++                & 6291456          & 103               & 0.061                      & 2669                 \\ % & (22)
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{table}[ht]
+	\caption{}
+	\label{tab:performance-results-hlm-compress-py}
+	\begin{center}
+		\begin{tabular}{lrrrrr}
+			\hline
+			\textbf{Image} & \textbf{Predictor} & \textbf{Samples} & \textbf{Time (s)} & \textbf{Throughput (MS/s)} & \textbf{Memory (MB)} \\
+			\hline
+			Hypso 2        & Python             & 78361920         & 2818              & 0.027                      & 38996                \\ % & (2169)
+			Landsat        & Python             & 6291456          & 263               & 0.024                      & 3204                 \\ % & (161)
 			\hline
 		\end{tabular}
 	\end{center}
@@ -55,33 +86,51 @@
 	\end{center}
 \end{table}
 
+% \subsection{Debugging}
+%
+% Clamping of reconstructed sample.
+%
+% Selection of quantization bin center.
+%
+% Rounding of signed integers in python vs C++.
+
+\section{Compression Performance}
+
 \begin{table}[ht]
-	\caption{Performance of verification model with C++ predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs.}
-	\label{tab:coastline-hlm}
+	\caption{Reduction in compression performance averaged over ten HYPSO-2 coastline images for a set of absolute error limits. Results are compared with those of \citeauthor{jiaRemovalFeedbackLoop2025}.}
+	\label{tab:coastline-reduction}
 	\begin{center}
-		\begin{tabular}{lrrrrr}
+		\begin{tabular}{lrrrr}
 			\hline
-			\textbf{PAE} & \textbf{CR} & \textbf{Loading (s)} & \textbf{Predictor (s)} & \textbf{Encoder (s)} & \textbf{Save Data (s)} \\
+			\textbf{PAE} & \textbf{Ordinary} & \textbf{Delayed} & \textbf{Reduction} & \textbf{Reduction, \citeauthor{jiaRemovalFeedbackLoop2025}} \\
 			\hline
-			0            & 1.995       & 0.311                & 295.273                & 393.706              & 0.069                  \\
-			1            & 2.488       & 0.121                & 293.722                & 408.911              & 0.054                  \\
-			3            & 3.077       & 0.076                & 294.704                & 471.881              & 0.044                  \\
-			7            & 3.912       & 0.076                & 292.520                & 658.729              & 0.034                  \\
-			15           & 5.219       & 0.076                & 290.610                & 888.570              & 0.024                  \\
+			0            & 2.002             & 1.995            & $-0.371\%$         & $-1.53\%$                                                   \\
+			1            & 2.500             & 2.488            & $-0.470\%$         & $-2.88\%$                                                   \\
+			3            & 3.095             & 3.077            & $-0.565\%$         & $-3.86\%$                                                   \\
+			7            & 3.941             & 3.912            & $-0.739\%$         & $-4.30\%$                                                   \\
+			15           & 5.262             & 5.219            & $-0.826\%$         & $-1.23\%$                                                   \\
 			\hline
 		\end{tabular}
 	\end{center}
 \end{table}
 
-\subsection{Debugging}
-
-Clamping of reconstructed sample.
-
-Selection of quantization bin center.
-
-Rounding of signed integers in python vs C++.
-
-\section{Compression Performance}
+% \begin{table}[ht]
+% 	\caption{Reductions in compression performance for coastline image for this work and the work by \citeauthor{jiaRemovalFeedbackLoop2025}.}
+% 	\label{tab:cr-compared}
+% 	\begin{center}
+% 		\begin{tabular}{lrr}
+% 			\hline
+% 			PAE & Coastline, \citeauthor{jiaRemovalFeedbackLoop2025} & Coastline, this work \\
+% 			\hline
+% 			0   & $-1.53\%$                                          & $-0.371\%$           \\ % 2.03            -> 2.02
+% 			1   & $-2.88\%$                                          & $-0.470\%$           \\ % 2.55 (225.86dB) -> 2.53 (225.86dB)
+% 			3   & $-3.86\%$                                          & $-0.565\%$           \\ % 3.17 (207.95dB) -> 3.15 (207.94dB)
+% 			7   & $-4.30\%$                                          & $-0.739\%$           \\ % 4.07 (192.54dB) -> 4.03 (192.54dB)
+% 			15  & $-1.23\%$                                          & $-0.826\%$           \\ % 5.45 (178.10dB) -> 5.39 (178.10dB)
+% 			\hline
+% 		\end{tabular}
+% 	\end{center}
+% \end{table}
 
 \begin{table}[ht]
 	\caption{Delayed weight updates, relative 16 and absolute 4}
@@ -89,11 +138,11 @@ Rounding of signed integers in python vs C++.
 	\begin{center}
 		\begin{tabular}{lrrrr}
 			\hline
-			\textbf{Image} & \textbf{Delayed} & \textbf{Ordinary} & \textbf{Decrease} \\
+			\textbf{Image} & \textbf{Ordinary} & \textbf{Delayed} & \textbf{Decrease} \\
 			\hline
-			Hypso 2        & 2.47             & 2.49              & $-0.80\%$         \\
-			Aviris         & 4.31             & 4.41              & $-2.23\%$         \\
-			Landsat        & 4.82             & 5.21              & $-7.49\%$         \\
+			Hypso 2        & 2.49              & 2.47             & $-0.80\%$         \\
+			Aviris         & 4.41              & 4.31             & $-2.23\%$         \\
+			Landsat        & 5.21              & 4.82             & $-7.49\%$         \\
 			\hline
 		\end{tabular}
 	\end{center}
@@ -102,54 +151,18 @@ Rounding of signed integers in python vs C++.
 The difference in compression performance shown in \autoref{tab:performance-results-hlm-dw}, especially that of Landsat, are likely due to the characteristics of the specific images used. For example, the Landsat image only has six spectral bands, as opposed to 120 and 200 (?) for Hypso and Aviris.
 
 \begin{table}[ht]
-	\caption{}
-	\label{tab:coastline-reduction}
-	\begin{center}
-		\begin{tabular}{lrrr}
-			\hline
-			\textbf{PAE} & \textbf{CNES} & \textbf{HLM} & \textbf{Reduction} \\
-			\hline
-			0            & 2.002         & 1.995        & -0.371\%           \\
-			1            & 2.500         & 2.488        & -0.470\%           \\
-			3            & 3.095         & 3.077        & -0.565\%           \\
-			7            & 3.941         & 3.912        & -0.739\%           \\
-			15           & 5.262         & 5.219        & -0.826\%           \\
-			\hline
-		\end{tabular}
-	\end{center}
-\end{table}
-
-\begin{table}[ht]
-	\caption{Reductions in compression performance for coastline image for this work and the work by \citeauthor{jiaRemovalFeedbackLoop2025}.}
-	\label{tab:cr-compared}
-	\begin{center}
-		\begin{tabular}{lrr}
-			\hline
-			PAE & Coastline, \citeauthor{jiaRemovalFeedbackLoop2025} & Coastline, this work \\
-			\hline
-			0   & $-1.53\%$                                          & $-0.371\%$           \\ % 2.03            -> 2.02
-			1   & $-2.88\%$                                          & $-0.470\%$           \\ % 2.55 (225.86dB) -> 2.53 (225.86dB)
-			3   & $-3.86\%$                                          & $-0.565\%$           \\ % 3.17 (207.95dB) -> 3.15 (207.94dB)
-			7   & $-4.30\%$                                          & $-0.739\%$           \\ % 4.07 (192.54dB) -> 4.03 (192.54dB)
-			15  & $-1.23\%$                                          & $-0.826\%$           \\ % 5.45 (178.10dB) -> 5.39 (178.10dB)
-			\hline
-		\end{tabular}
-	\end{center}
-\end{table}
-
-\begin{table}[ht]
 	\caption{PSNR of decompressed images with delayed weight updates. Difference compared to without delayed updates are negligible, exact same when rounded to two decimals.}
 	\label{tab:psnr-compared}
 	\begin{center}
 		\begin{tabular}{lrr}
 			\hline
-			PAE & CR   & PSNR (dB) \\
+			\textbf{PAE} & \textbf{CR} & \textbf{PSNR (dB)} \\
 			\hline
-			0   & 2.02 & N/A       \\ % 2.03            -> 2.02
-			1   & 2.53 & 225.86    \\ % 2.55 (225.86dB) -> 2.53 (225.86dB)
-			3   & 3.15 & 207.94    \\ % 3.17 (207.95dB) -> 3.15 (207.94dB)
-			7   & 4.03 & 192.54    \\ % 4.07 (192.54dB) -> 4.03 (192.54dB)
-			15  & 5.39 & 178.10    \\ % 5.45 (178.10dB) -> 5.39 (178.10dB)
+			0            & 2.02        & N/A                \\ % 2.03            -> 2.02
+			1            & 2.53        & 225.86             \\ % 2.55 (225.86dB) -> 2.53 (225.86dB)
+			3            & 3.15        & 207.94             \\ % 3.17 (207.95dB) -> 3.15 (207.94dB)
+			7            & 4.03        & 192.54             \\ % 4.07 (192.54dB) -> 4.03 (192.54dB)
+			15           & 5.39        & 178.10             \\ % 5.45 (178.10dB) -> 5.39 (178.10dB)
 			\hline
 		\end{tabular}
 	\end{center}
@@ -174,13 +187,13 @@ Note that the delayed weight update scheme does not affect the PSNR of the recon
 	\label{fig:landsat}
 \end{figure}
 
-\begin{figure}[ht]
-	\begin{center}
-		\includegraphics[width=0.65\textwidth]{figures/relative-psnr-coastline.png}
-	\end{center}
-	\caption{}
-	\label{fig:relative-psnr-coastline}
-\end{figure}
+% \begin{figure}[ht]
+% 	\begin{center}
+% 		\includegraphics[width=0.65\textwidth]{figures/relative-psnr-coastline.png}
+% 	\end{center}
+% 	\caption{}
+% 	\label{fig:relative-psnr-coastline}
+% \end{figure}
 
 \section{RTL Results}
 
@@ -200,28 +213,3 @@ Note that the delayed weight update scheme does not affect the PSNR of the recon
 		\end{tabular}
 	\end{center}
 \end{table}
-
-\begin{table}[ht]
-	\caption{Throughputs of hardware implementations of the issue 2 algorithm in open literature.}
-	\label{tab:throughput-this-work}
-	\centering
-	\begin{tabular}{l r r r r r r}
-		\hline
-		\textbf{Implementation}                                                                                      & \textbf{FPGA} & \textbf{LUT} & \textbf{FF} & \textbf{DSP} & \textbf{BRAM} & \textbf{Throughput} \\
-		\hline
-		Barrios et al.\ \cite{barriosHardwareImplementationCCSDS2021}                                                & XCKU040       & 17185        & 11915       & 63           & 85            & 18~MS/s             \\
-		S\'anchez et al.\ \cite{sanchezReducingDataDependencies2022, barriosRemovingDataDependencies2024}, predictor & XCKU040       & 19840        & 12970       & 33           & 213           & 231~MS/s            \\
-		Barrios et al.\ \cite{barriosRemovingDataDependencies2024}, predictor                                        & XCKU040       & 11095        & 11729       & 20           & 186.5         & 236~MS/s            \\
-		B\'ascones et al.\ \cite{basconesRealTimeFPGAImplementation2022}                                             & XQRKU060      & 16458        & 15707       & 30           & 187.5         & 285~MS/s            \\
-		Chatziantoniou et al.\ \cite{chatziantoniouScalableDataRateNearLossless2022a} 1 core                         & XCKU040       & 18861        & 21395       & -            & 104           & 285~MS/s            \\
-		Chatziantoniou et al.\ \cite{chatziantoniouScalableDataRateNearLossless2022a} 5 core                         & XCKU040       & 67362        & 68987       & -            & 306           & 1375~MS/s           \\
-		Vorhaug et al.\ \cite{vorhaugHyperspectralImageCompression2024}                                              & XCKU040       & 5577         & 2635        & 4            & 57.5          & 110~MS/s            \\
-		Vorhaug et al.\ \cite{vorhaugHyperspectralImageCompression2024}                                              & XCZU7EV       & 5475         & 2635        & 4            & 57.5          & 141~MS/s            \\
-		Jia et al.\ \cite{jiaRemovalFeedbackLoop2025}, predictor                                                     & XCZU5EV       & 3995         & 5050        & 7            & 94            & 348~MS/s            \\
-		This work                                                                                                    & XCZU7EV       & 6349         & 3480        & 4            & 79.5          & 202~MS/s            \\
-		This work, predictor                                                                                         & XCZU7EV       & 2807         & 2244        & 4            & 69.5          & 351~MS/s            \\
-		\hline
-	\end{tabular}
-\end{table}
-
-\section{Hardware Testing}

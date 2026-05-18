@@ -1,11 +1,11 @@
 \chapter{Implementation and Verification}
 \label{sec:implementation}
 
-This section outlines the integration of the new weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025} into the hardware accelerator implemented by \citeauthor{vorhaugHyperspectralImageCompression2024}. The use of this new weight update scheme, dubbed delayed weight updates, results in a compressor that is no longer compliant with the issue 2 standard. Because of this, corresponding modififications to the predictor of the decomrpessor must be made to verify the results. A few open-source compressor have been developed, including the verification model presented by \citeauthor{vorhaugHyperspectralImageCompression2024}. Kevin Caldwell et al. and Daniel Báscones et al. have compressors written in the programming languages C and Java respectively \footnote{As of writing, the compressors are available online in the Github repositories \textit{Kevin-Caldwell/hyperC} and \textit{Daniel-BG/CCSDS123}.}. The latter is related to the works in \cite{basconesParallelImplementationCCSDS2017} and \cite{basconesFPGAAcceleratorRealTime2020}, whereas the first is not supported by any published works. Both compressors are compliant with the issue 2 standard, but only implement support for the sample-adaptive encoder and with limited support for decompression. This prompts the need for an open-source decompressor with support for the hybrid encoder. Before the changes to the hardware accelerator are presented, the outline for developing such a decompressor is covered.
+This section outlines the integration of the new weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025} into the hardware accelerator implemented by \citeauthor{vorhaugHyperspectralImageCompression2024}. The use of this new weight update scheme, dubbed delayed weight updates, results in a compressor that is no longer compliant with the issue 2 standard. Because of this, corresponding modifications to the predictor of the decompressor must be made to verify the results. A few open-source compressor have been developed, including the verification model presented by \citeauthor{vorhaugHyperspectralImageCompression2024}. Kevin Caldwell et al. and Daniel Báscones et al. have compressors written in the programming languages C and Java respectively \footnote{As of writing, the compressors are available online in the Github repositories \textit{Kevin-Caldwell/hyperC} and \textit{Daniel-BG/CCSDS123}.}. The latter is related to the works in \cite{basconesParallelImplementationCCSDS2017} and \cite{basconesFPGAAcceleratorRealTime2020}, whereas the first is not supported by any published works. Both compressors are compliant with the issue 2 standard, but only implement support for the sample-adaptive encoder and with limited support for decompression. This prompts the need for an open-source decompressor with support for the hybrid encoder. Before the changes to the hardware accelerator are presented, the outline for developing such a decompressor is covered.
 
 \section{Open-source Decompressor}
 
-As shown in \autoref{sec:compression}, the issue 2 compressor and decompressor have many similarities. This is especially true for the predictor stage, but also applies to the processing of header configuration. To shorten the development time, and for easier integration into existing systems, the verification model written by \citeauthor{vorhaugHyperspectralImageCompression2024} was used as a starting point for the implementation of the decompressor. As opposed to the verification model, the decompressor is not only needed for verification purposes. To successfully integrate the delayed weight updates into the on-board compressor, the decompressor must be able to operate on full scale satellite images. This means that the execution time and memory usage of the program must be kept in mind during development. Delayed weight updates are implemented as an optional feature of the tool, allowing easier verification using other issue 2 compliant tools and test data.
+As shown in \autoref{sec:compression}, the issue 2 compressor and decompressor have many similarities. This is especially true for the predictor stage, but also applies to the processing of header configuration. To shorten the development time, and for easier integration into existing systems, the verification model written by \citeauthor{vorhaugHyperspectralImageCompression2024} was used as a starting point for the implementation of the decompressor. As opposed to the verification model by \citeauthor{vorhaugHyperspectralImageCompression2024}, the decompressor is not only needed for verification purposes. To successfully integrate the delayed weight updates into the on-board compressor, the decompressor must be able to operate on full scale satellite images. This means that the execution time and memory usage of the program must be kept in mind during development. Delayed weight updates (\autoref{eq:delayed-weight-updates}) are implemented as an optional feature of the tool, allowing easier verification using other issue 2 compliant tools and test data.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -30,14 +30,14 @@ The profiling results are summarized in \autoref{tab:profile}, showing the total
 			Total           & 22.9s             & 1203MB              \\
 			Loading         & 0.3\%             & 5.7\%               \\
 			Predictor       & 65.2\%            & 11.2\%              \\
-			Hybrid encoder  & 16.7\%            & 83.1\%              \\
-			Save outputs    & 17.8\%            & N/A                 \\
+			Hybrid Encoder  & 16.7\%            & 83.1\%              \\
+			Save Data       & 17.8\%            & N/A                 \\
 			\hline
 		\end{tabular}
 	\end{center}
 \end{table}
 
-Python is an interpreted language with dynamic typing. Such programming languages are known to be significantly slower than traditional compiled languages with static typing. Commonly, Python libraries such as Numpy are implemented in compiled languages such as C, C++ or Rust. By use of special libraries and builtin support in the Python language, bindings to the compiled library are created that allow classes and other objects to be used by Python. This combines the simple syntax and fast development times enabled by Python with the high speeds of precompiled libraries. In order to improve the performance of the predictor stage while reusing the encoder and header readers of the old verification model, this work rewrites the predictor stage in C++. By use of the library \textit{pybind11}, bindings are created that allow the new predictor class to be instantiated by the old Python framework. The interface of the new class is identical to that of the old class, while allowing data to be passed between the C++ and Python programs at runtime.
+Python is an interpreted language with dynamic typing. Such programming languages are known to be significantly slower than traditional compiled languages with static typing. Commonly, Python libraries such as Numpy are implemented in compiled languages such as C, C++ or Rust. By use of special libraries and builtin support in the Python language, bindings to the compiled library are created that allow classes and other objects to be used by Python. This combines the simple syntax and fast development times enabled by Python with the high speeds of precompiled libraries. In order to improve the performance of the predictor stage while reusing the encoder and header readers of the old verification model, this work rewrites the predictor stage in C++. By use of the library \textit{pybind11}, bindings are created that allow the new predictor class to be instantiated by the old Python framework. The interface of the new class is identical to that of the old class, while allowing data to be passed between the C++ and Python programs at runtime. For the rest of this document, the ter \textit{verification model} will refere to the tool by \citeauthor{vorhaugHyperspectralImageCompression2024} including the rewritten predictor and decompression support.
 
 \subsection{Implementation Details}
 
@@ -55,15 +55,15 @@ Python is an interpreted language with dynamic typing. Such programming language
 	\begin{center}
 		\includegraphics[width=0.65\textwidth]{figures/ccsds-flow-chart-compressor.png}
 	\end{center}
-	\caption{Flowchart for the C++ prediction loop for compression (left) and decompression (right). Samples are iterated in the \acrshort{BIP} order, with lossy reconstruction during decompression marked in red.}
+	\caption{Flowchart for the C++ prediction loop for compression (left) and decompression (right). Samples are iterated in the \acrshort{BIP} order, with reconstruction during decompression marked in red.}
 	\label{fig:flow-chart-compressor}
 \end{figure}
 
 \autoref{fig:flow-chart-compressor} shows flowcharts for the C++ prediction loops of the compressor (left) and decompressor (right). Samples are stored internally in \acrshort{BIP} ordering, and are iterated correspondingly. Calculations are done in a serial manner closely following the dependency flow shown in \autoref{fig:dependencies}, grouped by local sums and differences, prediction, quantization, sample representatives, mapping and weight updates. Each intermediate value has an associated class method that takes its dependant values as inputs and returns a single value. This avoids hidden side effects, resulting in coherent procedures that make the flow of the program easy to follow, as opposed to modifying data in place. For the special case of $t=0$, only a handful of the values need to be calculated, and other intermediaries are set to zero. During decompression, the quantizer indices, prediction residuals and image samples are reconstructed as described in \autoref{sec:predictor}.
 
-Inspired by the compressor written in Java by Báscones et al., the C++ predictor makes use of a sampler class to allow selectively storing intermediaries. Each intermediate value has a corresponding sampler object that wraps a dynamically allocated array for storage. At the call site of the intermediate value calculations, the sampler objects sample method wraps the calculation, returning the result and storing it internally. If sampling is disabled, results are not stored and the corresponding arrays are never allocated, reducing memory requirements. The internal arrays of the sampler objects are retrieved and stored to files. This provides the same output files of the original verification model, allowing use for verification of the hardware accelerator.
+Inspired by the compressor written in Java by Báscones et al., the C++ predictor makes use of a sampler class to allow selectively storing intermediaries. Each intermediate value has a corresponding sampler object that wraps a dynamically allocated array for storage. At the call site of the intermediate value calculations, the sampler objects sample method wraps the calculation, returning the result and storing it internally. If sampling is disabled, results are not stored and the corresponding arrays are never allocated, reducing memory requirements. The internal arrays of the sampler objects are retrieved and stored to files. This provides the same output files of the original verification model, allowing use for verification of the hardware accelerator. Values that are needed to fulfill $z-1$ and $t-1$ dependencies, such as sample representatives and local differences, are always stored in their corresponding arrays. Doing this simplifies the implementation at the cost of larger memory requirements as opposed to using specialized buffers.
 
-To fully support decompression, the hybrid encoder class of the verification model is also modified, still using the Python language. \autoref{lst:pseudocode-decoder} shows pseudocode for the reconstruction of mapped quantizer indices encoded using the hybrid encoder. Before decoding the image body, the final accumulator values and \acrshort{V2V} active prefixes of the encoder are read from the image tail. Processing order is determined by the associated header configuration field, and the decoder iterates in reverse. If periodic error limit updates are used during the processing order \acrshort{BI}, encoded error limits must be decoded at certain intervals. For $t=0$, samples are encoded as is and may be decoded by reading an unsigned integer of size $D$ from the bitstream. Otherwise, samples are decoded as either high- or low-entropy codes based on the average estimate. The average estimate is updated after sample decoding based on the decoded sample. To allow reconstruction of rounding errors introduced during accumulator rescaling (\autoref{eq:accumulator}), the encoder encodes extra bits corresponding to the \acrshort{LSB} of the accumulator before rescaling. For full details on the decoding process see the work by \citeauthor{blanesHYBRIDENTROPYENCODER} \cite{blanesHYBRIDENTROPYENCODER}.
+To fully support decompression, the hybrid encoder class of the old software is also modified, still using the Python language. \autoref{lst:pseudocode-decoder} shows pseudocode for the reconstruction of mapped quantizer indices encoded using the hybrid encoder. Before decoding the image body, the final accumulator values and \acrshort{V2V} active prefixes of the encoder are read from the image tail. Processing order is determined by the associated header configuration field, and the decoder iterates in reverse. If periodic error limit updates are used during the processing order \acrshort{BI}, encoded error limits must be decoded at certain intervals. For $t=0$, samples are encoded as is and may be decoded by reading an unsigned integer of size $D$ from the bitstream. Otherwise, samples are decoded as either high- or low-entropy codes based on the average estimate. The average estimate is updated after sample decoding based on the decoded sample. To allow reconstruction of rounding errors introduced during accumulator rescaling (\autoref{eq:accumulator}), the encoder encodes extra bits corresponding to the \acrshort{LSB} of the accumulator before rescaling. For full details on the decoding process see the work by \citeauthor{blanesHYBRIDENTROPYENCODER} \cite{blanesHYBRIDENTROPYENCODER}.
 
 \begin{lstlisting}[
     float=ht,
@@ -107,37 +107,51 @@ def decode_sample(z, t): # pops bits from compressed bitstream
 
 \subsection{Verification}
 
-Verification of the C++ predictor and new decompression feature was done using compression and decompression tools developed by the French space agency \acrfull{CNES}, in addition to test vectors provided by the \acrshort{CCSDS} working group.
+Before introducing the change in the weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025}, the verification model was implemented in compliance with the issue 2 standard. This allows using existing tools and data for verification. Verification of the C++ predictor and new decompression feature was done using compression and decompression tools developed by the French space agency \acrfull{CNES}, in addition to test vectors provided by the \acrshort{CCSDS} working group. Test vector \textit{Test1-20190201} is designed to provide sufficient coverage of the configurations and corner cases of the issue 2 algorithm. It contains a total of 2021 test cases, each containing a test image with accompanying header binary, optional tables and the compressed bitstream. The test vector does not include references for the decompressed images, with potential loss. To facilitate verification of the decompression feature, all test cases were decompressed using the \acrshort{CNES} decompressor to provide the necessary reference files.
 
-After verification of the issue 2 compliant software was completed, the option for using delayed weight updates was added.
+Of the 2021 test cases in the test vector, only 161 use the hybrid encoder, which is the only encoder supported by the decompressor. To provide a more complete verification of the predictor of the decompressor, a setup where mapped quantizer indices were passed directly from the output of the compressor predictor to the input of the decompressor predictor was used (\autoref{fig:encoder-bypass}). This bypassed the entropy encoder, allowing the use of the full test vector, including test cases configured for use of the sample-adaptive and block-adaptive encoders.
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.6\textwidth]{figures/ccsds-encoder-bypass.png}
+	\end{center}
+	\caption{Isolated verification of decompressor by passing mapped quantizer indices of the compressor predictor directly to the decompressor predictor, bypassing the entropy encoder.}
+	\label{fig:encoder-bypass}
+\end{figure}
+
+To verify and evaluate the compression performance of the delayed weight update scheme, a set of coastline images taken by the satellites \acrshort{hypso}-2, Aviris and Landsat were used. Coastline images were chosen to allow comparison with the results of \citeauthor{jiaRemovalFeedbackLoop2025}, and the images are compressed using the same absolute error limits, \acrfull{PAE}. Visual inspection of decompressed images, in combination with \acrshort{PSNR}, is used to show that images can be reconstructed from the compressed bitstream. Additionally, images are compressed and decompressed using the lossless mode, during which decompressed images should be identical to the originals.
 
 \section{Hardware Accelerator}
+
+The hardware accelerator developed by \citeauthor{vorhaugHyperspectralImageCompression2024} is updated in accordance with the delayed weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025}, presented in \autoref{eq:delayed-weight-updates}. By use of this new approach, the previously indivisible weight update calculation of pipeline stage three (\autoref{fig:vorhaug-pipeline}) can be split into four distinct stages as shown in \autoref{fig:new-stage3}. The prediction calculation is done in parallel with the weight update, with stage 3a and 3b calculating $\hat{d}_z(t)$ and $\breve{s}_z(t)$. $\tilde{s}_z(t)$ and $\hat{s}_z(t)$ are calculated in stage 3c before $\Delta_z(t)$ and $m_z(t)$ are found in stage 3d. As described by \citeauthor{sanchezReducingDataDependencies2022}, speculative execution of the two possible outcomes of the weight update is performed in two parallel execution paths. Once the required values to find the sign of the prediction error (\autoref{eq:math-opt}) resolves in stage 3d, the correct value is chosen.
 
 \begin{figure}[ht]
 	\begin{center}
 		\includegraphics[width=0.85\textwidth]{figures/new-stage3.png}
 	\end{center}
-	\caption{Proposed pipeline for delayed weight updates.}
+	\caption{Updated pipeline stage three, implementing delayed weight updates as described by \citeauthor{jiaRemovalFeedbackLoop2025}. Speculative execution of the possible weight values is still performed following the mathematical optimization approach by \citeauthor{sanchezReducingDataDependencies2022}.}
 	\label{fig:new-stage3}
 \end{figure}
 
 \begin{figure}[ht]
 	\begin{center}
-		\includegraphics[width=1\textwidth]{figures/weights-pipeline-hw.png}
+		\includegraphics[width=0.45\textwidth]{figures/ccsds-stage3-hw.png}
 	\end{center}
-	\caption{}
-	\label{fig:weights-pipeline-hw}
-\end{figure}
-
-\begin{figure}[ht]
-	\begin{center}
-		\includegraphics[width=0.45\textwidth]{figures/weights-hw.png}
-	\end{center}
-	\caption{}
+	\caption{Hardware for selecting the correct value of the updated weight values in accordance with the delayed weight update scheme.}
 	\label{fig:weights-hw}
 \end{figure}
 
-% Analysis of the new critical path after implementation of the new weight update scheme showed that the new path was in the sample representative stage
+The hardware presented in \autoref{fig:weights-hw} is responsible for selecting the correct, updated weight value and is duplicated for each element $i$ of the weight vector (\autoref{eq:weight-vector}). A new weight value is selected every cycle in stage 3a, allowing the calculation of $\hat{d}_z(t)$ to proceed in the following cycle. The module remains the same as that of \citeauthor{vorhaugHyperspectralImageCompression2024} (\autoref{fig:vorhaug-weights-hw}) except for one additional multiplexor. This allows the same weight to be reused for the first three samples of each line (\autoref{eq:delayed-weight-updates}). If $x>3$ the output of the weight update pipeline, $\omega_{z,updated}^{(i)}(t)$, is selected.
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=1\textwidth]{figures/ccsds-stage3-hw-pipeline.png}
+	\end{center}
+	\caption{Hardware of the weight update pipeline. For $x>3$ weight refinement is applied before the correct speculative path is selected.}
+	\label{fig:weights-pipeline-hw}
+\end{figure}
+
+\autoref{fig:weights-pipeline-hw} shows the pipelined calculation of the weight updates. Stages 3a to 3c calculate the weight offset (\autoref{eq:weight-offset}) and adds the weight of $t-3$. Stage 3d applies weight refinement for $x>3$, before the speculative paths started in stage 3b are resolved based on the sign of the prediction error.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -175,7 +189,7 @@ Efforts have been made to integrate and test the accelerator on the HYPSO-2 engi
 		Dynamic range                    & $D$                          & 16                     \\
 		Sample encoding order            &                              & BIL                    \\
 		Entropy coder type               &                              & Hybrid coder           \\
-		Quantizer method                 &                              & Absolute               \\
+		Quantizer method                 &                              & Absolute and Relative  \\
 		Number of prediction bands       & $P$                          & 3                      \\
 		Register size                    & $R$                          & 64                     \\
 		Local sum type                   &                              & Narrow column-oriented \\
@@ -190,7 +204,7 @@ Efforts have been made to integrate and test the accelerator on the HYPSO-2 engi
 		Band-varying absolute limits     &                              & Disabled               \\
 		Absolute error limit             & $a_z$                        & \emph{Varied}          \\
 		Band-varying relative limits     &                              & Disabled               \\
-		Relative error limit             & $r_z$                        & $0$                    \\
+		Relative error limit             & $r_z$                        & \emph{Varied}          \\
 		Sample representative resolution & $\Theta$                     & $3$                    \\
 		Sample representative offset     & $\psi_z$                     & $7$                    \\
 		Band-varying offset              &                              & Disabled               \\
