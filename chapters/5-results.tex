@@ -22,7 +22,7 @@
 % \end{table}
 
 \begin{table}[ht]
-	\caption{Performance of verification model with C++ predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs.}
+	\caption{Performance of compression using verification model with C++ predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs.}
 	\label{tab:coastline-hlm}
 	\begin{center}
 		\begin{tabular}{lrrrrr}
@@ -40,14 +40,14 @@
 \end{table}
 
 \begin{table}[ht]
-	\caption{}
+	\caption{Performance of compression using verification model with C++ predictor and delayed weight updates for single image tests from HYPSO-2, Aviris and Landsat.}
 	\label{tab:performance-results-hlm-compress-cpp}
 	\begin{center}
 		\begin{tabular}{lrrrrr}
 			\hline
 			\textbf{Image} & \textbf{Predictor} & \textbf{Samples} & \textbf{Time (s)} & \textbf{Throughput (MS/s)} & \textbf{Memory (MB)} \\
 			\hline
-			Hypso 2        & C++                & 78361920         & 821               & 0.095                      & 32415                \\ % & (293)
+			HYPSO-2        & C++                & 78361920         & 821               & 0.095                      & 32415                \\ % & (293)
 			Aviris         & C++                & 77643776         & 1166              & 0.066                      & 32091                \\ % & (290)
 			Landsat        & C++                & 6291456          & 103               & 0.061                      & 2669                 \\ % & (22)
 			\hline
@@ -56,22 +56,7 @@
 \end{table}
 
 \begin{table}[ht]
-	\caption{}
-	\label{tab:performance-results-hlm-compress-py}
-	\begin{center}
-		\begin{tabular}{lrrrrr}
-			\hline
-			\textbf{Image} & \textbf{Predictor} & \textbf{Samples} & \textbf{Time (s)} & \textbf{Throughput (MS/s)} & \textbf{Memory (MB)} \\
-			\hline
-			Hypso 2        & Python             & 78361920         & 2818              & 0.027                      & 38996                \\ % & (2169)
-			Landsat        & Python             & 6291456          & 263               & 0.024                      & 3204                 \\ % & (161)
-			\hline
-		\end{tabular}
-	\end{center}
-\end{table}
-
-\begin{table}[ht]
-	\caption{Decompression}
+	\caption{Performance of decompression using verification model with C++ predictor and delayed weight updates for single image tests from HYPSO-2, Aviris and Landsat.}
 	\label{tab:performance-results-hlm-decompress}
 	\begin{center}
 		\begin{tabular}{lrrrr}
@@ -85,6 +70,31 @@
 		\end{tabular}
 	\end{center}
 \end{table}
+
+\begin{table}[ht]
+	\caption{Performance of compression using verification model with Python predictor and delayed weight updates for single image tests from HYPSO-2 and Landsat.}
+	\label{tab:performance-results-hlm-compress-py}
+	\begin{center}
+		\begin{tabular}{lrrrrr}
+			\hline
+			\textbf{Image} & \textbf{Predictor} & \textbf{Samples} & \textbf{Time (s)} & \textbf{Throughput (MS/s)} & \textbf{Memory (MB)} \\
+			\hline
+			HYPSO-2        & Python             & 78361920         & 2818              & 0.027                      & 38996                \\ % & (2169)
+			Landsat        & Python             & 6291456          & 263               & 0.024                      & 3204                 \\ % & (161)
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[height=0.28\textheight,valign=t]{figures/hypso2-rgb/hypso_decoded.png}
+		\includegraphics[height=0.28\textheight,valign=t]{results/aviris/aviris_decoded.png}
+		\includegraphics[height=0.28\textheight,valign=t]{results/landsat/landsat_decoded.png}
+	\end{center}
+	\caption{Decompressed images from HYPSO-2, Aviris and Landsat, compressed with delayed weight update scheme.}
+	\label{fig:landsat}
+\end{figure}
 
 % \subsection{Debugging}
 %
@@ -133,14 +143,14 @@
 % \end{table}
 
 \begin{table}[ht]
-	\caption{Delayed weight updates, relative 16 and absolute 4}
+	\caption{Reduction in compression performance for single image tests using relative error limit 16 and absolute error limit 4.}
 	\label{tab:performance-results-hlm-dw}
 	\begin{center}
 		\begin{tabular}{lrrrr}
 			\hline
 			\textbf{Image} & \textbf{Ordinary} & \textbf{Delayed} & \textbf{Decrease} \\
 			\hline
-			Hypso 2        & 2.49              & 2.47             & $-0.80\%$         \\
+			HYPSO-2        & 2.49              & 2.47             & $-0.80\%$         \\
 			Aviris         & 4.41              & 4.31             & $-2.23\%$         \\
 			Landsat        & 5.21              & 4.82             & $-7.49\%$         \\
 			\hline
@@ -151,7 +161,7 @@
 The difference in compression performance shown in \autoref{tab:performance-results-hlm-dw}, especially that of Landsat, are likely due to the characteristics of the specific images used. For example, the Landsat image only has six spectral bands, as opposed to 120 and 200 (?) for Hypso and Aviris.
 
 \begin{table}[ht]
-	\caption{PSNR of decompressed images with delayed weight updates. Difference compared to without delayed updates are negligible, exact same when rounded to two decimals.}
+	\caption{PSNR of decompressed images averaged over ten coastline images from HYPSO-2 for a set of PAEs.}
 	\label{tab:psnr-compared}
 	\begin{center}
 		\begin{tabular}{lrr}
@@ -170,23 +180,6 @@ The difference in compression performance shown in \autoref{tab:performance-resu
 
 Note that the delayed weight update scheme does not affect the PSNR of the reconstructed images. This is due to the maximum error feature of the algorithm. Only the compression performance is affected.
 
-\begin{figure}[ht]
-	\begin{center}
-		\includegraphics[width=0.8\textwidth]{figures/hypso2-rgb/hypso_decoded.png}
-	\end{center}
-	\caption{Decoded Hypso 2 image}
-	\label{fig:lacrau-dec}
-\end{figure}
-
-\begin{figure}[ht]
-	\begin{center}
-		\includegraphics[height=0.28\textheight,valign=t]{results/aviris/aviris_decoded.png}
-		\includegraphics[height=0.28\textheight,valign=t]{results/landsat/landsat_decoded.png}
-	\end{center}
-	\caption{Decoded Aviris and Landsat images.}
-	\label{fig:landsat}
-\end{figure}
-
 % \begin{figure}[ht]
 % 	\begin{center}
 % 		\includegraphics[width=0.65\textwidth]{figures/relative-psnr-coastline.png}
@@ -195,10 +188,18 @@ Note that the delayed weight update scheme does not affect the PSNR of the recon
 % 	\label{fig:relative-psnr-coastline}
 % \end{figure}
 
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.6\textwidth]{figures/prediction_bands.png}
+	\end{center}
+	\caption{Compression performance using relative error limit 16 and absolute error limit 4 for different numbers of prediction bands $P$, with and without delayed weight updates. Results are averaged over a set of ten HYPSO-2 coastline images.}
+	\label{fig:prediction_bands}
+\end{figure}
+
 \section{RTL Results}
 
 \begin{table}[ht]
-	\caption{}
+	\caption{Resource utilization and maximum clock frequency of the issue 2 hardware accelerator for two different FPGAs, both for the whole accelerator and only the predictor module.}
 	\label{tab:performance-results-hw}
 	\begin{center}
 		\begin{tabular}{lrrrrrr}

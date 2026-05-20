@@ -70,3 +70,44 @@ Here the difference between the sample and predicted sample is denoted as the pr
 % 	\caption{Calculation of the sign of the double-resolution prediction error following the mathematical optimization approach proposed by \citeauthor{sanchezReducingDataDependencies2022}.}
 % 	\label{fig:sign-block-diagram}
 % \end{figure}
+
+\subsubsection{CCSDS 123.0-B-2 Compliance}
+
+\begin{table}[h]
+	\centering
+	\caption{Issue 2 compliance of the hardware accelerator developed by \citeauthor{vorhaugHyperspectralImageCompression2024}. Most notable is that only reduced prediction mode and narrow local sums are supported.}
+	\begin{tabular}{lll}
+		\hline
+		\textbf{Characteristic}                 & \textbf{Support} & \textbf{Range}              \\
+		\hline
+		Number of bands $N_Z$                   & Partial          & 2-$2^{16}$                  \\
+		Number of columns $N_X$                 & Partial          & D+8-$2^{16}$                \\
+		Number of lines $N_Y$                   & Yes              & 1-$2^{16}$                  \\
+		Dynamic range $D$                       & Yes              & 2-32                        \\
+		Signed/Unsigned samples                 & Partial          & Unsigned                    \\
+		Bands for prediction $P$                & Yes              & 0-15                        \\
+		Local sum mode                          & Partial          & Narrow                      \\
+		Prediction mode                         & Partial          & Reduced                     \\
+		Register size $R$                       & Yes              & $\max\{32, D+\Omega+2\}$-64 \\
+		Resolution $\Theta$                     & Yes              & 0-4                         \\
+		Damping $\phi$                          & Yes              & 0-15                        \\
+		Offset $\psi$                           & Yes              & 0-15                        \\
+		Band varying $\phi,\psi$                & No               & N/A                         \\
+		Weight resolution                       & Yes              & 4-19                        \\
+		Custom weight initialization            & No               & N/A                         \\
+		Weight update params $v_{min}, v_{max}$ & Yes              & (-6)-9                      \\
+		Weight update interval $t_{inc}$        & Yes              & $2^4, 2^5,...,2^{11}$       \\
+		Weight exponent offsets                 & No               & N/A                         \\
+		Error modes                             & Yes              & All Modes                   \\
+		Band-independent errors                 & No               & N/A                         \\
+		Error limit constants $A^{*}, R^{*}$    & Yes              & 0-$2^D-1$                   \\
+		Periodic error update                   & No               & N/A                         \\
+		Output word size                        & Yes              & 1-8                         \\
+		Encoding order                          & Partial          & BIL                         \\
+		Accumulator initialization              & Yes              & 0-$2^{D+\gamma_0}-1$        \\
+		Unary length limit $U_{max}$            & Yes              & 8-32                        \\
+		Initial count exponent $\gamma_0$       & Yes              & 1-8                         \\
+		Re-scaling parameter $\gamma^{*}$       & Yes              & 4-11                        \\
+		\hline
+	\end{tabular}
+\end{table}

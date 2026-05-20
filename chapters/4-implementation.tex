@@ -1,4 +1,4 @@
-\chapter{Implementation and Verification}
+\chapter{Methodology}
 \label{sec:implementation}
 
 This section outlines the integration of the new weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025} into the hardware accelerator implemented by \citeauthor{vorhaugHyperspectralImageCompression2024}. The use of this new weight update scheme, dubbed delayed weight updates, results in a compressor that is no longer compliant with the issue 2 standard. Because of this, corresponding modifications to the predictor of the decompressor must be made to verify the results. A few open-source compressor have been developed, including the verification model presented by \citeauthor{vorhaugHyperspectralImageCompression2024}. Kevin Caldwell et al. and Daniel Báscones et al. have compressors written in the programming languages C and Java respectively \footnote{As of writing, the compressors are available online in the Github repositories \textit{Kevin-Caldwell/hyperC} and \textit{Daniel-BG/CCSDS123}.}. The latter is related to the works in \cite{basconesParallelImplementationCCSDS2017} and \cite{basconesFPGAAcceleratorRealTime2020}, whereas the first is not supported by any published works. Both compressors are compliant with the issue 2 standard, but only implement support for the sample-adaptive encoder and with limited support for decompression. This prompts the need for an open-source decompressor with support for the hybrid encoder. Before the changes to the hardware accelerator are presented, the outline for developing such a decompressor is covered.
@@ -39,7 +39,7 @@ The profiling results are summarized in \autoref{tab:profile}, showing the total
 
 Python is an interpreted language with dynamic typing. Such programming languages are known to be significantly slower than traditional compiled languages with static typing. Commonly, Python libraries such as Numpy are implemented in compiled languages such as C, C++ or Rust. By use of special libraries and builtin support in the Python language, bindings to the compiled library are created that allow classes and other objects to be used by Python. This combines the simple syntax and fast development times enabled by Python with the high speeds of precompiled libraries. In order to improve the performance of the predictor stage while reusing the encoder and header readers of the old verification model, this work rewrites the predictor stage in C++. By use of the library \textit{pybind11}, bindings are created that allow the new predictor class to be instantiated by the old Python framework. The interface of the new class is identical to that of the old class, while allowing data to be passed between the C++ and Python programs at runtime. For the rest of this document, the ter \textit{verification model} will refere to the tool by \citeauthor{vorhaugHyperspectralImageCompression2024} including the rewritten predictor and decompression support.
 
-\subsection{Implementation Details}
+\subsection{Implementation}
 
 \begin{figure}[ht]
 	\begin{center}
@@ -133,7 +133,7 @@ The hardware accelerator developed by \citeauthor{vorhaugHyperspectralImageCompr
 	\label{fig:new-stage3}
 \end{figure}
 
-\begin{figure}[ht]
+\begin{figure}[ht!]
 	\begin{center}
 		\includegraphics[width=0.45\textwidth]{figures/ccsds-stage3-hw.png}
 	\end{center}
@@ -151,7 +151,7 @@ The hardware presented in \autoref{fig:weights-hw} is responsible for selecting 
 	\label{fig:weights-pipeline-hw}
 \end{figure}
 
-\autoref{fig:weights-pipeline-hw} shows the pipelined calculation of the weight updates. Stages 3a to 3c calculate the weight offset (\autoref{eq:weight-offset}) and adds the weight of $t-3$. Stage 3d applies weight refinement for $x>3$, before the speculative paths started in stage 3b are resolved based on the sign of the prediction error.
+\autoref{fig:weights-pipeline-hw} shows the pipelined calculation of the weight updates. Stages 3a to 3c calculate the weight offset (\autoref{eq:weight-offset}) and adds the weight of $t-3$. Stage 3d applies weight refinement for $x>3$, before the speculative paths started in stage 3b are resolved based on the sign of the prediction error. Finally, the updated weight is clipped within the bounds of $\omega_{min}$ and $\omega_{max}$ and made available to the hardware of \autoref{fig:weights-hw}. Ideally, the operations of the weight update calculation should be split between pipeline stages such that the path delay is equal in the stages. However, as long as neither of the weight update stages constitute the critical path of the design the selected distribution is good enough.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -161,6 +161,8 @@ The hardware presented in \autoref{fig:weights-hw} is responsible for selecting 
 	\label{fig:new-stageD9}
 \end{figure}
 
+Timing analysis after splitting the weight update stage showed that the calculation of the sample representatives in stage D+9 was the new critical path. To further increase the maximum achievable clock speed, stage 9 was split into three stages as shown in \autoref{fig:new-stageD9}. Firstly, calculation of the clipped quantizer bin center $s'_z(t)$ (\autoref{eq:quantizer-bin-center}) is split into two stages. Here, $s'_{z,1}(t) = q_z(t)(2 m_z(t) + 1)$ and is calculated in parallel with the mapped quantizer index $\delta_z(t)$ in stage D+9a. $s'_{z,2}(t)$ in stage D+9b adds the predicted sample value $\hat{s}_z(t)$ and clips the result within $s_{min}$ and $s_{max}$ giving the final value of $s'_z(t)$. The double-resolution sample representative $\tilde{s}''_z(t)$ and sample representative $s''_z(t)$ is calculated in stage D+9c. The full, updated pipeline is presented in \autoref{fig:new-pipeline}.
+
 \begin{figure}[ht]
 	\begin{center}
 		\includegraphics[angle=90, height=1\textheight]{figures/ccsds-new-pipeline.png}
@@ -169,11 +171,13 @@ The hardware presented in \autoref{fig:weights-hw} is responsible for selecting 
 	\label{fig:new-pipeline}
 \end{figure}
 
+Update buffers sizes becuase we have more pipeline stages...
+
 \subsection{Verification}
 
-Verification model and random tests.
+Verification of the changes in the hardware accelerator are done reusing the verification framework developed by \citeauthor{vorhaugHyperspectralImageCompression2024}, with only slight modifications.
 
-\subsection{Testing}
+\subsection{On-board Testing}
 
 Efforts have been made to integrate and test the accelerator on the HYPSO-2 engineering model. Not completed.
 

@@ -1,20 +1,24 @@
 \chapter{Discussion and Further Work}
 \label{sec:discussion}
 
-\subsection{Compression Performance}
+\section{Compression Performance}
 
 The decrease in compression performance introduced by delayed weight updates cause significantly longer downlink time which is not outweighed by the reduced execution time, by far.
 
-\subsection{Decompressor Performance}
+\section{Verification Model Performance}
 
 Higher execution time of the encoder for higher error limits suggest that the encoding of low-entropy samples is slower than that of high-entropy samples.
 
 C++ predictor optimizations: data type selection and minimal dependency buffers
 
-\subsection{Place in the State-of-the-art}
+\section{Verification Coverage}
+
+Coverage data from randomly generated tests was collected and is presented in \autoref{app:verification-coverage}.
+
+\section{Place in State-of-the-art}
 
 \begin{table}[ht]
-	\caption{Throughputs of hardware implementations of the issue 2 algorithm in open literature.}
+	\caption{Hardware utilization and throughput of hardware accelerators of the issue 2 standard. The predictor module is the smallest and fastest in open litterature.}
 	\label{tab:throughput-this-work}
 	\centering
 	\begin{tabular}{l r r r r r r}
@@ -35,6 +39,12 @@ C++ predictor optimizations: data type selection and minimal dependency buffers
 		\hline
 	\end{tabular}
 \end{table}
+
+\section{CCSDS 123.0-B-2 Compliance}
+
+With delayed weight updates we are not compliant...
+
+Minimum x-size is now D+13
 
 \section{On-board Testing}
 
