@@ -73,9 +73,12 @@ Here the difference between the sample and predicted sample is denoted as the pr
 
 \subsubsection{CCSDS 123.0-B-2 Compliance}
 
+\autoref{tab:compliance} gives an overview of the issue 2 features that are supported by the hardware accelerator by \citeauthor{vorhaugHyperspectralImageCompression2024}. Only reduced prediction mode and narrow local sums are supported. For some images this can mean a sub-optimal compression performance. Band-dependant error limits are also not supported. Otherwise, feature support is similar to those of other implementations in the open literature. The works by \citeauthor{basconesFPGAAcceleratorRealTime2020} and \citeauthor{chatziantoniouScalableDataRateNearLossless2022a} support all local sums and prediction modes, with the latter also supporting band-dependant error limits   \cite{basconesFPGAAcceleratorRealTime2020, chatziantoniouScalableDataRateNearLossless2022a}. Due to the use of an external quantizer, the latter does not support quantization methods as the standard. Another notable difference is support for runtime configuration, which is supported by the two mentioned works. The implementation by \citeauthor{vorhaugHyperspectralImageCompression2024} requires recompilation of the design when changing feature parameters. This allows the design to maintain a significantly smaller hardware footprint than other implementations, but at the cost of flexibility.
+
 \begin{table}[h]
 	\centering
 	\caption{Issue 2 compliance of the hardware accelerator developed by \citeauthor{vorhaugHyperspectralImageCompression2024}. Most notable is that only reduced prediction mode and narrow local sums are supported.}
+	\label{tab:compliance}
 	\begin{tabular}{lll}
 		\hline
 		\textbf{Characteristic}                 & \textbf{Support} & \textbf{Range}              \\
@@ -100,7 +103,7 @@ Here the difference between the sample and predicted sample is denoted as the pr
 		Weight exponent offsets                 & No               & N/A                         \\
 		Error modes                             & Yes              & All Modes                   \\
 		Band-independent errors                 & No               & N/A                         \\
-		Error limit constants $A^{*}, R^{*}$    & Yes              & 0-$2^D-1$                   \\
+		Error limit constants $r_z, a_z$        & Yes              & 0-$2^D-1$                   \\
 		Periodic error update                   & No               & N/A                         \\
 		Output word size                        & Yes              & 1-8                         \\
 		Encoding order                          & Partial          & BIL                         \\

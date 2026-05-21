@@ -107,9 +107,11 @@ def decode_sample(z, t): # pops bits from compressed bitstream
 
 \subsection{Verification}
 
-Before introducing the change in the weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025}, the verification model was implemented in compliance with the issue 2 standard. This allows using existing tools and data for verification. Verification of the C++ predictor and new decompression feature was done using compression and decompression tools developed by the French space agency \acrfull{CNES}, in addition to test vectors provided by the \acrshort{CCSDS} working group. Test vector \textit{Test1-20190201} is designed to provide sufficient coverage of the configurations and corner cases of the issue 2 algorithm. It contains a total of 2021 test cases, each containing a test image with accompanying header binary, optional tables and the compressed bitstream. The test vector does not include references for the decompressed images, with potential loss. To facilitate verification of the decompression feature, all test cases were decompressed using the \acrshort{CNES} decompressor to provide the necessary reference files.
+Before introducing the change in the weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025}, the verification model is implemented in compliance with the issue 2 standard. This allows using existing tools and data for verification. Verification of the C++ predictor and new decompression feature is done using compression and decompression tools developed by the French space agency \acrfull{CNES}, in addition to test vectors provided by the \acrshort{CCSDS} working group. Test vector \textit{Test1-20190201} is designed to provide sufficient coverage of the configurations and corner cases of the issue 2 algorithm. It contains a total of 2021 test cases, each containing a test image with accompanying header binary, optional tables and the compressed bitstream. The test vector does not include references for the decompressed images, with potential loss. To facilitate verification of the decompression feature, all test cases were decompressed using the \acrshort{CNES} decompressor to provide the necessary reference files.
 
 Of the 2021 test cases in the test vector, only 161 use the hybrid encoder, which is the only encoder supported by the decompressor. To provide a more complete verification of the predictor of the decompressor, a setup where mapped quantizer indices were passed directly from the output of the compressor predictor to the input of the decompressor predictor was used (\autoref{fig:encoder-bypass}). This bypassed the entropy encoder, allowing the use of the full test vector, including test cases configured for use of the sample-adaptive and block-adaptive encoders.
+
+To allow easier debugging of the new predictor module, the sample class allows setting a reference file for each intermediate value. Calculated values are then compared with the reference during runtime, notifying the user of deviating values. The old Python predictor module is used to generate reference files.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -119,7 +121,7 @@ Of the 2021 test cases in the test vector, only 161 use the hybrid encoder, whic
 	\label{fig:encoder-bypass}
 \end{figure}
 
-To verify and evaluate the compression performance of the delayed weight update scheme, a set of coastline images taken by the satellites \acrshort{hypso}-2, Aviris and Landsat were used. Coastline images were chosen to allow comparison with the results of \citeauthor{jiaRemovalFeedbackLoop2025}, and the images are compressed using the same absolute error limits, \acrfull{PAE}. Visual inspection of decompressed images, in combination with \acrshort{PSNR}, is used to show that images can be reconstructed from the compressed bitstream. Additionally, images are compressed and decompressed using the lossless mode, during which decompressed images should be identical to the originals.
+To verify and evaluate the compression performance of the delayed weight update scheme, a set of coastline images taken by the satellites \acrshort{hypso}-2, Aviris and Landsat are used. Coastline images are chosen to allow comparison with the results of \citeauthor{jiaRemovalFeedbackLoop2025}, and the images are compressed using the same absolute error limits, \acrfull{PAE}, $\{0, 1, 3, 7, 15\}$. Visual inspection of decompressed images, in combination with \acrshort{PSNR}, is used to show that images can be reconstructed from the compressed bitstream. Additionally, images are compressed and decompressed using the lossless mode, during which decompressed images should be identical to the originals.
 
 \section{Hardware Accelerator}
 
@@ -157,31 +159,51 @@ The hardware presented in \autoref{fig:weights-hw} is responsible for selecting 
 	\begin{center}
 		\includegraphics[width=0.55\textwidth]{figures/ccsds-new-stageD9.png}
 	\end{center}
-	\caption{Sample representative stage split into three stages $D+9a$, $D+9b$, and $D+9c$, reducing the new critical path after splitting the weight update stage.}
+	\caption{Sample representative stage split into three stages D+9a, D+9b, and D+9c, reducing the new critical path after splitting the weight update stage.}
 	\label{fig:new-stageD9}
 \end{figure}
 
-Timing analysis after splitting the weight update stage showed that the calculation of the sample representatives in stage D+9 was the new critical path. To further increase the maximum achievable clock speed, stage 9 was split into three stages as shown in \autoref{fig:new-stageD9}. Firstly, calculation of the clipped quantizer bin center $s'_z(t)$ (\autoref{eq:quantizer-bin-center}) is split into two stages. Here, $s'_{z,1}(t) = q_z(t)(2 m_z(t) + 1)$ and is calculated in parallel with the mapped quantizer index $\delta_z(t)$ in stage D+9a. $s'_{z,2}(t)$ in stage D+9b adds the predicted sample value $\hat{s}_z(t)$ and clips the result within $s_{min}$ and $s_{max}$ giving the final value of $s'_z(t)$. The double-resolution sample representative $\tilde{s}''_z(t)$ and sample representative $s''_z(t)$ is calculated in stage D+9c. The full, updated pipeline is presented in \autoref{fig:new-pipeline}.
+Timing analysis after splitting the weight update stage showed that the calculation of the sample representatives in stage D+9 was the new critical path. To further increase the maximum achievable clock speed, stage 9 was split into three stages as shown in \autoref{fig:new-stageD9}. Firstly, calculation of the clipped quantizer bin center $s'_z(t)$ (\autoref{eq:quantizer-bin-center}) is split into two stages. Here, $s'_{z,1}(t) = q_z(t)(2 m_z(t) + 1)$ and is calculated in parallel with the mapped quantizer index $\delta_z(t)$ in stage D+9a. $s'_{z,2}(t)$ in stage D+9b adds the predicted sample value $\hat{s}_z(t)$ and clips the result within $s_{min}$ and $s_{max}$ giving the final value of $s'_z(t)$. The double-resolution sample representative $\tilde{s}''_z(t)$ and sample representative $s''_z(t)$ are calculated in stage D+9c.
 
-\begin{figure}[ht]
-	\begin{center}
-		\includegraphics[angle=90, height=1\textheight]{figures/ccsds-new-pipeline.png}
-	\end{center}
-	\caption{Proposed pipeline with delayed weight updates allowing splitting stage 3 into four separate stages, 3a to 3d. Additionally, the sample representative calculation in stage $D+9$ is split into two stages $D+9a$ and $D+9b$.}
-	\label{fig:new-pipeline}
-\end{figure}
-
-Update buffers sizes becuase we have more pipeline stages...
+The full, updated pipeline is presented in \autoref{fig:new-pipeline}. To facilitate the increased number of pipeline stages, the data shift registers responsible for providing data when needed had to be updated. This was simply a matter of updating the length of the registers and adjusting the taps for data retrieval.
 
 \subsection{Verification}
 
-Verification of the changes in the hardware accelerator are done reusing the verification framework developed by \citeauthor{vorhaugHyperspectralImageCompression2024}, with only slight modifications.
+Verification of the changes in the hardware accelerator is done reusing the verification framework developed by \citeauthor{vorhaugHyperspectralImageCompression2024}, with only slight modifications. Here, the test data is applied to the simulated design and to a golden model. Outputs are then compared to determine the correctness of the design. The verification framework is written using Python, with support for using different \acrshort{RTL} simulators such as Questa and GHDL. The golden model is the updated verification model. Modifications are made to read outputs from the golden model from files rather then accessing them directly from old Python predictor module. Checks of the intermediate values are also updated in accordance to the updated predictor pipeline.
+
+Randomly generated test data is used as the inputs of the verification framework. For each test, a random header configuration selected from the support values (\autoref{tab:compliance}) and a random image are generated. Random images are generated based on three different methods: uniform distribution, normal distribution and singular values. A method is selected at random and image samples are selected from the corresponding distribution. For the singular value method, all samples have the same value. The value is selected as either the sample minimum, middle or maximum sample value. To ensure sufficient verification coverage of different combinations of feature parameters and corner cases, coverage data is collected (\autoref{app:verification-coverage}). The data shows how many of the 512 test cases uses each of the available parameters.
+
+\subsection{Performance Evaluation}
+
+The performance of the updated accelerator is done in terms of hardware resource utilization, power usage, and maximum clock frequency. Since the accelerator processes one sample per clock cycle, after the pipeline is filled, the clock speed can be directly translated to sample throughput. The design is implemented for two different \acrshort{FPGA}s: Zynq-7030 and Zynq XCZU7EV. The former is used on-board the \acrshort{hypso} satellites, and the latter is used by \citeauthor{jiaRemovalFeedbackLoop2025} in their work presenting the delayed weight update scheme. Additionally, metrics are evaluated for the full accelerator and for the predictor module only. This allows comparison with implementation in the literature that only implement the predictor. The header configuration used during evaluation is based on the work by \citeauthor{blanesPerformanceImpactParameter2019} and is presented in \autoref{tab:parameters}. These values are also the same as those used by \citeauthor{vorhaugHyperspectralImageCompression2024}.
 
 \subsection{On-board Testing}
 
-Efforts have been made to integrate and test the accelerator on the HYPSO-2 engineering model. Not completed.
+To verify the accelrator on real hardware, the design is integrated into the \acrfull{OPU} of the \acrshort{hypso}-2 satellite. The central component of the \acrshort{OPU} is the Zynq-7030 \acrshort{MPSoC} from AMD (formerly Xilinx). The chip contains dual ARM \acrshort{CPU}s and an integrated Kintex-7 \acrshort{FPGA}. \autoref{fig:OPU} shows an overview of the \acrshort{OPU}. Images are captured by the \acrfull{HSI} and passed to the software running on the ARM \acrshort{CPU}s for preprocessing. Raw image cubes are then stored in \acrshort{RAM} and retrieved by the cubeDMA (Direct Memory Access) module inside the \acrshort{FPGA} fabric for compression using the \acrshort{CCSDS} compressor. The compressed image is moved back to \acrshort{RAM} and then stored to an SD-card. Once a downlink is scheduled, the image is retrieved and passed to the separate \acrfull{PC} and downlinked using S-band radio. For more details on the \acrshort{hypso}-1 and \acrshort{hypso}-2 \acrshort{OPU}, please refer to the work by \citeauthor{langerRobustReconfigurableOnBoard2023} \cite{langerRobustReconfigurableOnBoard2023}.
 
-\begin{table}[ht]
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.7\textwidth]{figures/ccsds-OPU.png}
+	\end{center}
+	\caption{Processing system on-board the \acrshort{hypso}-2 satellite. Raw images (red arrows) are compressed using the issue 2 accelerator. Compressed images (blue arrows) are stored on an SD-card while awaiting downlink.}
+	\label{fig:OPU}
+\end{figure}
+
+\autoref{app:block-design} shows the integration of the accelerator from the work of \citeauthor{vorhaugHyperspectralImageCompression2024}. A special clock module allows selecting the clock frequency of the accelerator separately from the rest of the system. This work only modifies the predictor module of the accelrator, without touching external interfaces. Thus, no changes to the integration for \acrshort{hypso} are necessary with the exception of tuning the clock frequency and rebuilding the system.
+
+Before uplinking the modified design to the satellite they are tested on the on-ground engineering model. The engineering model has identical hardware and software to the satellite, allowing efficient testing and development. A set of \acrshort{hypso} images are compressed using the accelerator on-ground and verified against the verification model.
+
+% Some large figures here...
+
+\begin{figure}[p!]
+	\begin{center}
+		\includegraphics[angle=90, height=1\textheight]{figures/ccsds-new-pipeline.png}
+	\end{center}
+	\caption{Proposed pipeline with delayed weight updates allowing splitting stage 3 into four separate stages, 3a to 3d. Additionally, the sample representative calculation in stage $D+9$ is split into three stages.}
+	\label{fig:new-pipeline}
+\end{figure}
+
+\begin{table}[p!]
 	\centering
 	\caption{Selected predictor and hybrid encoder parameters. Values are selected based on the work by \citeauthor{blanesPerformanceImpactParameter2019}, and are the same as those used by \citeauthor{vorhaugHyperspectralImageCompression2024} \cite{blanesPerformanceImpactParameter2019, vorhaugHyperspectralImageCompression2024}. Table recreated from \cite{vorhaugHyperspectralImageCompression2024}.}
 	\label{tab:parameters}
@@ -206,9 +228,9 @@ Efforts have been made to integrate and test the accelerator on the HYPSO-2 engi
 		Weight update exponent offsets   & $\zeta_z^{(i)}, \zeta_z^{*}$ & $0$                    \\
 		Periodic error limit update      &                              & Disabled               \\
 		Band-varying absolute limits     &                              & Disabled               \\
-		Absolute error limit             & $a_z$                        & \emph{Varied}          \\
+		Absolute error limit             & $a_z$                        & 4                      \\
 		Band-varying relative limits     &                              & Disabled               \\
-		Relative error limit             & $r_z$                        & \emph{Varied}          \\
+		Relative error limit             & $r_z$                        & 16                     \\
 		Sample representative resolution & $\Theta$                     & $3$                    \\
 		Sample representative offset     & $\psi_z$                     & $7$                    \\
 		Band-varying offset              &                              & Disabled               \\
@@ -221,3 +243,4 @@ Efforts have been made to integrate and test the accelerator on the HYPSO-2 engi
 		\bottomrule
 	\end{tabular}
 \end{table}
+
