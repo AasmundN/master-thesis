@@ -3,7 +3,7 @@
 
 The \acrfull{CCSDS} is a multi-institutional working group developing algorithms and standards for increased cooperation amongst space actors. A portion of their work has been concerned with the effective encoding of hyperspectral and multispectral images. Standard CCSDS 123.0-B-1, hereby referred to as issue 1, describes a lossless compression algorithm tailored for high throughput \acrshort{FPGA} implementations. Issue 1 has been implemented and used successfully by several missions, the \acrshort{hypso} project being one of them \cite{fjeldtvedtEfficientRealTimeFPGA2018, bakkenHYPSO1CubeSatFirst2023}. In 2019, Issue 1 was followed by standard CCSDS 123.0-B-2, referred to as Issue 2. The following sections are based on the description of issue 2 presented in \fullcite{theconsultativecommitteeforspacedatasystemsLowComplexityLosslessNearLossless2019}.
 
-Issue 1 formalizes the \acrfull{FL} algorithm presented by \citeauthor{KlimeshFL}, which uses an adaptive filtering prediction technique to achieve lossless compression at low computational complexity suitable for space applications \cite{KlimeshFL, LosslessMultispectralHyperspectral2022}. To meet the needs of limited satellite downlink capabilities, lossy compression techniques have seen increasing use \cite{LosslessMultispectralHyperspectral2022}. For this reason, issue 2 introduces a new near-lossless feature based on the \acrfull{FLEX} algorithm presented by \citeauthor{KeymeulenFLEX} \cite{KeymeulenFLEX}. Near-lossless compression, as opposed to lossy compression, provides the user with fine-tuned control over the per-pixel loss through tunable error limit parameters.
+Issue 1 formalizes the \acrfull{FL} algorithm presented by \citeauthor{KlimeshFL}, which uses an adaptive filtering prediction technique to achieve lossless compression at low computational complexity \cite{KlimeshFL, LosslessMultispectralHyperspectral2022}. To meet the needs of limited satellite downlink capabilities, lossy compression techniques have seen increasing use \cite{LosslessMultispectralHyperspectral2022}. For this reason, issue 2 introduces a new near-lossless feature based on the \acrfull{FLEX} algorithm presented by \citeauthor{KeymeulenFLEX} \cite{KeymeulenFLEX}. Near-lossless compression, as opposed to lossy compression, provides the user with fine-tuned control over the per-pixel loss through tunable error limit parameters.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -41,7 +41,7 @@ The weight vector is adapted (updated) in increments $\Delta\mathbf{c}_k$ based 
 	\label{fig:hsi}
 \end{figure}
 
-\autoref{fig:hsi} shows the layout of a hyperspectral image. The sizes of the dimensions $x$, $y$, and $z$ are denoted $N_x$, $N_y$, and $N_z$. Samples of the same $z$ coordinate correspond to frequency bands, while samples of the same $y$ coordinate are denoted as part of the same frame. In a bushbroom imager, like the one on-board the HYPSO-1 mission, images are captured one frame at a time \cite{grotteOceanColorHyperspectral2022}. As the satellite moves, subsequent frames are concatenated to form the final image. The camera frame rate controls the time, and thus physical space, between captured frames. Samples within the same frame of a band are referred to as lines, and samples of the same $x$ and $y$ coordinate belong to a pixel.
+\autoref{fig:hsi} shows the layout of a hyperspectral image. The sizes of the dimensions $x$, $y$, and $z$ are denoted $N_x$, $N_y$, and $N_z$. Samples of the same $z$ coordinate correspond to frequency bands, while samples of the same $y$ coordinate are denoted as part of the same frame. In a pushbroom imager, like the one on-board the HYPSO satellites, images are captured one frame at a time \cite{grotteOceanColorHyperspectral2022}. As the satellite moves, subsequent frames are concatenated to form the final image. The camera frame rate controls the time, and thus physical space, between captured frames. Samples within the same frame of a band are referred to as lines, and samples of the same $x$ and $y$ coordinate belong to a pixel.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -148,7 +148,7 @@ The user may select an absolute and a relative error limit, $a_z$ and $r_z$ resp
 	\label{eq:maximum-error}
 \end{equation}
 
-\textbf{TODO}: periodic error limit updating.
+\textbf{TODO}: periodic error limit updating and band-dependant error limits
 
 Because the codewords used by the entropy coder to produce the compressed bitstream are only defined for positive integers, the signed quantizer indices are mapped to positive integer mapped quantizer indices $\delta_z(t)$. This mapping is reversible and is given by
 
@@ -162,7 +162,7 @@ Because the codewords used by the entropy coder to produce the compressed bitstr
 	\label{eq:mqi}
 \end{equation}
 
-where the double-resolution predicted sample value $\tilde{s}_z(t)$ is an intermediate value produced by the prediction stage (\autoref{fig:predictor-block}) which will be covered later in the document. The predicted sample and sample endpoint difference $\theta_z(t)$ is given by
+where the double-resolution predicted sample value $\tilde{s}_z(t)$ is an intermediate value produced by the prediction stage (\autoref{fig:predictor-block}), which will be covered later in the document. The predicted sample and sample endpoint difference $\theta_z(t)$ is given by
 
 \begin{equation}
 	\theta_z(t) =
@@ -318,7 +318,7 @@ where $\nu_{min}$, $\nu_{max}$, and $t_{inc}$ are user tunable parameters. The f
 
 \subsubsection{Prediction Calculation}
 
-The predicted central local difference $\hat{d}_z(t)$ in combination with the local sum $\sigma_z(t)$ produces the high-resolution predicted sample value $\breve{s}_z(t)$ as
+The predicted central local difference $\hat{d}_z(t)$ in combination with the local sum $\sigma_z(t)$ produce the high-resolution predicted sample value $\breve{s}_z(t)$ as
 
 \begin{equation}
 	\breve{s}_z(t) = \operatorname{clip}\!\left(
@@ -380,7 +380,7 @@ Finally, the predicted sample value $\hat{s}_z(t)$ is given by
 	\label{eq:decalc-quantizer-index}
 \end{equation}
 
-where $\hat{s}_z(t)$ and $\theta_z(t)$ are computed using prediction data from previously decoded samples. The range of possible values for the reconstructed sample is now $[s'_z(t) - m_z(t), s'_z(t) + m_z(t)]$ \cite{LosslessMultispectralHyperspectral2022}. When the maximum error $m_z(t)$ is zero, prediction residuals may be reconstructed without loss. For this work the quantizer bin center $s'_z(t)$ is selected for reconstruction of samples. Thus, the dequantization step is given by
+where $\hat{s}_z(t)$ and $\theta_z(t)$ are computed using prediction data from previously decoded samples. The range of possible values for the reconstructed sample is now $[s'_z(t) - m_z(t), s'_z(t) + m_z(t)]$ \cite{LosslessMultispectralHyperspectral2022}. When the maximum error $m_z(t)$ is zero, prediction residuals may be reconstructed without loss. For this work, the quantizer bin center $s'_z(t)$ is selected for reconstruction of samples. Thus, the dequantization step is given by
 
 \begin{equation}
 	\Delta_z(t) =
@@ -400,13 +400,13 @@ Finally, the reconstructed sample is retrieved from the predicted sample value a
 
 \subsubsection{Data Dependencies}
 
-Both the issue 1 and issue 2 algorithms contain backwards data dependencies that make efficient implementations for hardware challenging. Dependencies are split into two groups: spectral and spatial dependencies, referred to as $z-1$ and $t-1$ dependencies. As an example take the calculation of the weight vector, which is present in both versions of the algorithm, and for issue 2 is given by equations \ref{eq:weight-offset} and \ref{eq:weight-update}. This involves a $t-1$ dependency on the weight vector of sample $s_z(t-1)$. Pipelined hardware implementation must wait for such dependencies to resolve before proceeding, placing a restriction on the maximum achievable throughput.
+Both the issue 1 and issue 2 algorithms contain backwards data dependencies that make efficient implementations for hardware challenging. Dependencies are split into two groups: spectral and spatial dependencies, referred to as $z-1$ and $t-1$ dependencies. As an example take the calculation of the weight vector, which is present in both versions of the algorithm, and for issue 2 is given by equations \ref{eq:weight-offset} and \ref{eq:weight-update}. This involves a $t-1$ dependency on the weight vector of sample $s_z(t-1)$. Pipelined hardware implementations must wait for such dependencies to resolve before proceeding, placing a restriction on the maximum achievable throughput.
 
 The selection of sample processing order affects the number of processed samples that interleaves data dependant calculations. Thus, careful selection of processing order may alleviate the problem of data dependencies for pipelined hardware implementations. For the three main processing orders, the number of interleaving samples for $z-1$ and $t-1$ dependencies is summarized in \autoref{tab:orderings}, and may be calculated as follows:
 
 \begin{enumerate}
 	\item \acrshort{BSQ} iterates samples in the order (x, y, z). This means that $N_x \cdot N_y$ samples interleave $z-1$ dependencies as all samples of the first band are processed before moving to the next band. Spatial samples are processed sequentially, leaving a single sample between $t-1$ dependencies.
-	\item \acrshort{BIP} iterates samples in the order (z, x, y), leaving a single sample between $z-1$ dependencies. All samples of the same pixel are processed before moving the next spatial index, giving $N_z$ samples between $t-1$ dependencies.
+	\item \acrshort{BIP} iterates samples in the order (z, x, y), leaving a single sample between $z-1$ dependencies. All samples of the same pixel are processed before moving to the next spatial index, giving $N_z$ samples between $t-1$ dependencies.
 	\item \acrshort{BIL} iterates samples in the order (x, z, y). Lines are processed sequentially, leaving $N_x$ interleaved samples for $z-1$ dependencies and a single for $t-1$.
 \end{enumerate}
 
@@ -497,7 +497,7 @@ and
 
 Based on the average estimate $\tilde{\Sigma}_z(t) / \Gamma(t)$, the hybrid encoder chooses between two different types of encodings: high-entropy and low-entropy codes. For $t=0$, the mapped quantizer index is encoded as is using an unsigned integer of $D$ bits. For $t>0$, if $\tilde{\Sigma}_z(t) \cdot 2^{14} \ge T_0 \cdot \Gamma(t)$, a high-entropy code is selected. Otherwise, a low-entropy code is used. Here, $T_0$ is the low-entropy threshold.
 
-Low-entropy codes use a set of $16$ \acrshort{V2V} codes, indexed by the code index $i$. The work by \citeauthor{blanesHYBRIDENTROPYENCODER} shows that the statistical distribution of low-entropy mapped quantizer indices produced during near-lossless mode deviate from the geometric distribution of high-entropy indices. To accommodate this, a set of \acrshort{V2V} where developed, allowing efficient encoding of the low-entropy codes. Each of the $16$ codes has a corresponding codeword table, similar to the Huffman code example of \autoref{fig:huffman}.
+Low-entropy codes use a set of $16$ \acrshort{V2V} codes, indexed by the code index $i$. The work by \citeauthor{blanesHYBRIDENTROPYENCODER} shows that the statistical distribution of low-entropy mapped quantizer indices produced during near-lossless mode deviate from the geometric distribution of high-entropy indices. To accommodate this, a set of \acrshort{V2V} was developed, allowing efficient encoding of the low-entropy codes. Each of the $16$ codes have a corresponding codeword table, similar to the Huffman code example of \autoref{fig:huffman}.
 
 By use of the average estimate, and a threshold $T_i$, the low-entropy code index $i$ is selected. When multiple indices of the same index are observed, possibly interleaved by high-entropy codes, they are accumulated (active prefix) until a matching codeword is found and appended to the bitstream. This allows multiple mapped quantizer indices to be encoded by a single codeword. Low-entropy codewords corresponding to multiple samples may appear in the bitstream several samples after the first sample it encodes. For this reason, decoding can no longer proceed in the forward direction. To allow backwards decoding, the \acrshort{V2V} codes are suffix-free, rather than prefix-free. This means that no codeword is the suffix of another.
 
@@ -507,4 +507,6 @@ In order to retrieve the mapped quantizer indices from the compressed bitstream,
 
 \subsection{Header and Optional Files}
 
-Optional tables, error limit table, encoder accumulator initial file, and error limits encoded in bitstream.
+Configurable parameters of the algorithm are stored in a header binary file consisting of three main sections: image metadata, predictor metadata and entropy encoder metadata. Image metadata contains information such as the image dimensions, sample dynamic range and selected processing order. Predictor metadata includes the selected prediction mode and local sum type, as well as other tunable parameters. Similarly, the entropy encoder section specifies the selected entropy encoder and tunable parameters. The header config is passed to the compressor and prepended to the compressed bitstream. The decompressor reads the encoded header before reconstructing the image.
+
+Some sections of the encoded header may be left out given that they are known to the site of compression and decompression. These sections are referred to as optional tables, and need to be passed to the compressor and decompressor in addition to the header file and compressed bitstream. If periodic error limit updates are used, the user must provide an error limit table specifying the band dependant error limits. When the hybrid encoder is used, the user may provide initial values of the high-resolution accumulator (\autoref{eq:accumulator}) in an additional table. For full details of the encoding of the header see the standard.
