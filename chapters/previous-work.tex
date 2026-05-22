@@ -1,7 +1,7 @@
 \chapter{Previous Work}
 \label{sec:previous-work}
 
-This work builds upon, and aims to improve, the work of \citeauthor{vorhaugHyperspectralImageCompression2024} in \cite{vorhaugHyperspectralImageCompression2024}. \citeauthor{vorhaugHyperspectralImageCompression2024} implemented an issue 2 compliant hardware accelerator for use on-board the \acrshort{hypso} missions. The hardware accelerator was successfully integrated and tested on-board the \acrshort{hypso}-1 satellite, showing its viability for use. Before testing, the hardware was verified using a verification model, also written by \citeauthor{vorhaugHyperspectralImageCompression2024}. The following sections outlines the verification model and design of the hardware accelerator.
+This work builds upon, and aims to improve, the work of \citeauthor{vorhaugHyperspectralImageCompression2024} in \cite{vorhaugHyperspectralImageCompression2024}. \citeauthor{vorhaugHyperspectralImageCompression2024} implemented an issue 2 compliant hardware accelerator for use on-board the \acrshort{hypso} missions. The hardware accelerator was successfully integrated and tested on-board the \acrshort{hypso}-1 satellite, showing its viability for use. Before testing, the hardware was verified using a verification model, also written by \citeauthor{vorhaugHyperspectralImageCompression2024}. The following sections outline the verification model and design of the hardware accelerator.
 
 \section{Verification Model}
 
@@ -9,7 +9,7 @@ The verification model is implemented in the Python programming language and is 
 
 The model uses an object oriented programming style and consists of, in addition to a command line interface, three main modules: the header reader, predictor, and encoder. The header class stores the configuration used by the algorithm. Additionally it supports reading the configuration from files containing a header binary, optional tables and error limits. The raw image input of the compressor is passed to the predictor class which produces the mapped quantizer indices. These are passed to one of three encoder classes, depending on the selected entropy encoder. The header binary, produced by the header class, is prepended to the compressed image body before the result is stored to a file.
 
-As the model is only intended for small test images, the calculations are implemented in a fully serial manner. All intermediary results are stored in global arrays that are modified in place. This removes the need for careful buffering of data that is needed by later calculations at the cost of massive penalties in memory usage. The use of large, global arrays also impacts execution time due to the constantly moving large chunks of data in and out the the memory caches. A final caveat is that modifying and accessing data in place makes the flow of the program harder to read, as function calls do not have clearly defined inputs and outputs at the call site.
+As the model is only intended for small test images, the calculations are implemented in a fully serial manner. All intermediate results are stored in global arrays that are modified in place. This removes the need for careful buffering of data that is needed by later calculations at the cost of massive penalties in memory usage. The use of large, global arrays also impacts execution time due to the constantly moving large chunks of data in and out the the memory caches. A final caveat is that modifying and accessing data in place makes the flow of the program harder to read, as function calls do not have clearly defined inputs and outputs at the call site.
 
 \section{Hardware Accelerator}
 
@@ -61,7 +61,7 @@ The calculation of the sign of the double-resolution prediction error follows th
 	\label{eq:sign-hw}
 \end{equation}
 
-Here the difference between the sample and predicted sample is denoted as the prediction residual $\Delta_z(t) = s_z(t) - \hat{s}_z(t)$. Here a boolean 1 corresponds to a negative sign, and a boolean 0 to a positive sign. The \acrfull{LSB} of $\tilde{s}_z(t)$ indicates whether it is odd or even, meaning that the upper clause corresponds to the two upped clauses of \autoref{eq:math-opt}. The \acrshort{MSB} of $\Delta_z(t)$ gives its sign when represented using twos complement.
+Here the difference between the sample and predicted sample is denoted as the prediction residual $\Delta_z(t) = s_z(t) - \hat{s}_z(t)$. Here a boolean 1 corresponds to a negative sign, and a boolean 0 to a positive sign. The \acrfull{LSB} of $\tilde{s}_z(t)$ indicates whether it is odd or even, meaning that the upper clause corresponds to the two upper clauses of \autoref{eq:math-opt}. The \acrfull{MSB} of $\Delta_z(t)$ gives its sign when represented using twos complement.
 
 % \begin{figure}[ht]
 % 	\begin{center}
@@ -77,7 +77,7 @@ Here the difference between the sample and predicted sample is denoted as the pr
 
 \begin{table}[h]
 	\centering
-	\caption{Issue 2 compliance of the hardware accelerator developed by \citeauthor{vorhaugHyperspectralImageCompression2024}. Most notable is that only reduced prediction mode and narrow local sums are supported.}
+	\caption{Issue 2 compliance of the hardware accelerator developed by \citeauthor{vorhaugHyperspectralImageCompression2024}. Most notable is that only reduced prediction mode and narrow local sums are supported. Table format recreated from \cite{basconesFPGAAcceleratorRealTime2020}.}
 	\label{tab:compliance}
 	\begin{tabular}{lll}
 		\hline

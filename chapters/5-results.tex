@@ -40,7 +40,33 @@
 \end{table}
 
 \begin{table}[ht]
-	\caption{Performance of compression using verification model with C++ predictor and delayed weight updates for single image tests from HYPSO-2, Aviris and Landsat.}
+	\caption{Performance of decompression using verification model with C++ predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs.}
+	\label{tab:coastline-hlm}
+	\begin{center}
+		\begin{tabular}{lrrrrr}
+			\hline
+			\textbf{PAE} & \textbf{Loading (s)} & \textbf{Decoder (s)} & \textbf{Predictor (s)} & \textbf{Save Data (s)} \\
+			\hline
+			0            & 0.528                & 739.573              & 307.741                & 70.009                 \\
+			1            & 0.439                & 764.869              & 307.902                & 71.326                 \\
+			3            & 0.347                & 881.335              & 308.484                & 70.614                 \\
+			7            & 0.229                & 1245.921             & 305.587                & 70.191                 \\
+			15           & 0.112                & 1687.085             & 305.571                & 69.964                 \\
+			\hline
+		\end{tabular}
+	\end{center}
+\end{table}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=1\textwidth]{figures/execution_time.png}
+	\end{center}
+	\caption{Execution time for the C++ predictor and hybrid encoder modules during comrpession and decompression for a set of absolute error limits. Results are averaged over a set of ten \acrshort{hypso}-2 images.}
+	\label{fig:execution_time}
+\end{figure}
+
+\begin{table}[ht]
+	\caption{Performance of compression using verification model with C++ predictor and delayed weight updates for single image tests from HYPSO-2, Aviris and Landsat with $r_z=16$ and $a_z=4$.}
 	\label{tab:performance-results-hlm-compress-cpp}
 	\begin{center}
 		\begin{tabular}{lrrrrr}
@@ -56,7 +82,7 @@
 \end{table}
 
 \begin{table}[ht]
-	\caption{Performance of decompression using verification model with C++ predictor and delayed weight updates for single image tests from HYPSO-2, Aviris and Landsat.}
+	\caption{Performance of decompression using verification model with C++ predictor and delayed weight updates for single image tests from HYPSO-2, Aviris and Landsat with $r_z=16$ and $a_z=4$.}
 	\label{tab:performance-results-hlm-decompress}
 	\begin{center}
 		\begin{tabular}{lrrrr}
@@ -72,7 +98,7 @@
 \end{table}
 
 \begin{table}[ht]
-	\caption{Performance of compression using verification model with Python predictor and delayed weight updates for single image tests from HYPSO-2 and Landsat.}
+	\caption{Performance of compression using verification model with Python predictor and delayed weight updates for single image tests from HYPSO-2 and Landsat with $r_z=16$ and $a_z=4$.}
 	\label{tab:performance-results-hlm-compress-py}
 	\begin{center}
 		\begin{tabular}{lrrrrr}
@@ -92,7 +118,7 @@
 		\includegraphics[height=0.28\textheight,valign=t]{results/aviris/aviris_decoded.png}
 		\includegraphics[height=0.28\textheight,valign=t]{results/landsat/landsat_decoded.png}
 	\end{center}
-	\caption{Decompressed images from HYPSO-2, Aviris and Landsat, compressed with delayed weight update scheme.}
+	\caption{Decompressed images from HYPSO-2, Aviris and Landsat, compressed with delayed weight update scheme, used for single image tests with $r_z=16$ and $a_z=4$.}
 	\label{fig:landsat}
 \end{figure}
 
@@ -143,7 +169,7 @@
 % \end{table}
 
 \begin{table}[ht]
-	\caption{Reduction in compression performance for single image tests using relative error limit 16 and absolute error limit 4.}
+	\caption{Reduction in compression performance for single image tests with $r_z=16$ and $a_z=4$.}
 	\label{tab:performance-results-hlm-dw}
 	\begin{center}
 		\begin{tabular}{lrrrr}
@@ -170,9 +196,9 @@ The difference in compression performance shown in \autoref{tab:performance-resu
 			\hline
 			0            & 2.02        & N/A                \\ % 2.03            -> 2.02
 			1            & 2.53        & 225.86             \\ % 2.55 (225.86dB) -> 2.53 (225.86dB)
-			3            & 3.15        & 207.94             \\ % 3.17 (207.95dB) -> 3.15 (207.94dB)
-			7            & 4.03        & 192.54             \\ % 4.07 (192.54dB) -> 4.03 (192.54dB)
-			15           & 5.39        & 178.10             \\ % 5.45 (178.10dB) -> 5.39 (178.10dB)
+			3            & 3.15        & 207.95             \\ % 3.17 (207.95dB) -> 3.15 (207.94dB)
+			7            & 4.03        & 192.55             \\ % 4.07 (192.54dB) -> 4.03 (192.54dB)
+			15           & 5.39        & 178.08             \\ % 5.45 (178.10dB) -> 5.39 (178.10dB)
 			\hline
 		\end{tabular}
 	\end{center}
@@ -192,7 +218,7 @@ Note that the delayed weight update scheme does not affect the PSNR of the recon
 	\begin{center}
 		\includegraphics[width=0.6\textwidth]{figures/prediction_bands.png}
 	\end{center}
-	\caption{Compression performance using relative error limit 16 and absolute error limit 4 for different numbers of prediction bands $P$, with and without delayed weight updates. Results are averaged over a set of ten HYPSO-2 coastline images.}
+	\caption{Compression performance with $r_z=16$ and $a_z=4$ for different numbers of prediction bands $P$, with and without delayed weight updates. Results are averaged over a set of ten HYPSO-2 coastline images.}
 	\label{fig:prediction_bands}
 \end{figure}
 
