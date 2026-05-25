@@ -23,7 +23,7 @@
 
 \begin{table}[ht]
 	\caption{Performance of compression using verification model with C++ predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs.}
-	\label{tab:coastline-hlm}
+	\label{tab:coastline-compress}
 	\begin{center}
 		\begin{tabular}{lrrrrr}
 			\hline
@@ -41,7 +41,7 @@
 
 \begin{table}[ht]
 	\caption{Performance of decompression using verification model with C++ predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs.}
-	\label{tab:coastline-hlm}
+	\label{tab:coastline-decompress}
 	\begin{center}
 		\begin{tabular}{lrrrrr}
 			\hline
@@ -61,7 +61,7 @@
 	\begin{center}
 		\includegraphics[width=1\textwidth]{figures/execution_time.png}
 	\end{center}
-	\caption{Execution time for the C++ predictor and hybrid encoder modules during comrpession and decompression for a set of absolute error limits. Results are averaged over a set of ten \acrshort{hypso}-2 images.}
+	\caption{Execution time for the C++ predictor and hybrid encoder modules during compression and decompression for a set of absolute error limits. Results are averaged over a set of ten \acrshort{hypso}-2 images.}
 	\label{fig:execution_time}
 \end{figure}
 
@@ -149,6 +149,14 @@
 		\end{tabular}
 	\end{center}
 \end{table}
+
+\begin{figure}[ht]
+	\begin{center}
+		\includegraphics[width=0.6\textwidth]{figures/bitrate.png}
+	\end{center}
+	\caption{Compression performance presented in bits per sample for a set of absolute error limits. Results are averaged over a set of ten \acrshort{hypso}-2 coastline images with $D=16$.}
+	\label{fig:bitrate}
+\end{figure}
 
 % \begin{table}[ht]
 % 	\caption{Reductions in compression performance for coastline image for this work and the work by \citeauthor{jiaRemovalFeedbackLoop2025}.}

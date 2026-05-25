@@ -1,7 +1,7 @@
 \chapter{Methodology}
 \label{sec:implementation}
 
-This section outlines the integration of the new weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025} into the hardware accelerator implemented by \citeauthor{vorhaugHyperspectralImageCompression2024}. The use of this new weight update scheme, dubbed delayed weight updates, results in a compressor that is no longer compliant with the issue 2 standard. Because of this, corresponding modifications to the predictor of the decompressor must be made to verify the results. A few open-source compressor have been developed, including the verification model presented by \citeauthor{vorhaugHyperspectralImageCompression2024}. Kevin Caldwell et al. and Daniel Báscones et al. have compressors written in the programming languages C and Java respectively \footnote{As of writing, the compressors are available online in the Github repositories \textit{Kevin-Caldwell/hyperC} and \textit{Daniel-BG/CCSDS123}.}. The latter is related to the works in \cite{basconesParallelImplementationCCSDS2017} and \cite{basconesFPGAAcceleratorRealTime2020}, whereas the first is not supported by any published works. Both compressors are compliant with the issue 2 standard, but only implement support for the sample-adaptive encoder and with limited support for decompression. This prompts the need for an open-source decompressor with support for the hybrid encoder. Before the changes to the hardware accelerator are presented, the outline for developing such a decompressor is covered.
+This section outlines the integration of the new weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025} into the hardware accelerator implemented by \citeauthor{vorhaugHyperspectralImageCompression2024}. The use of this new weight update scheme, dubbed delayed weight updates, results in a compressor that is no longer compliant with the issue 2 standard. Because of this, corresponding modifications to the predictor of the decompressor must be made to verify the results. A few open-source compressor have been developed, including the verification model presented by \citeauthor{vorhaugHyperspectralImageCompression2024}. Kevin Caldwell et al. and Daniel Báscones et al. have compressors written in the programming languages C and Java respectively \footnote{As of writing, the compressors are available online in the Github repositories \textit{Kevin-Caldwell/hyperC} and \textit{Daniel-BG/CCSDS123}.}. The latter is related to the works in \cite{basconesFPGAAcceleratorRealTime2020}, whereas the first is not supported by any published works. Both compressors are compliant with the issue 2 standard, but only implement support for the sample-adaptive encoder and with limited support for decompression. This prompts the need for an open-source decompressor with support for the hybrid encoder. Before the changes to the hardware accelerator are presented, the outline for developing such a decompressor is covered.
 
 \section{Open-source Decompressor}
 
@@ -127,6 +127,16 @@ Compression performance is also evaluated across a range of prediction bands $\{
 
 \section{Hardware Accelerator}
 
+\begin{equation}
+	\omega^{(i)}_{z, \text{unclipped}}(t+1)=
+	\begin{cases}
+		\omega^{(i)}_z(t),                                                                                                                   & x \le 2,          \\[6pt]
+		\omega^{(i)}_z(t-3) + \omega^{(i)}_{z, \text{offset}}(t-3),                                                                          & x = 3,            \\[6pt]
+		\left\lfloor \dfrac{1}{2}\left(\omega^{(i)}_z(t-3) + \omega^{(i)}_{z, \text{offset}}(t-3) + \omega^{(i)}_z(t) \right) \right\rfloor, & \text{otherwise}.
+	\end{cases}
+	\label{eq:delayed-weight-updates-modified}
+\end{equation}
+
 The hardware accelerator developed by \citeauthor{vorhaugHyperspectralImageCompression2024} is updated in accordance with the delayed weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025}, presented in \autoref{eq:delayed-weight-updates}. By use of this new approach, the previously indivisible weight update calculation of pipeline stage three (\autoref{fig:vorhaug-pipeline}) can be split into four distinct stages as shown in \autoref{fig:new-stage3}. The prediction calculation is done in parallel with the weight update, with stage 3a and 3b calculating $\hat{d}_z(t)$ and $\breve{s}_z(t)$. $\tilde{s}_z(t)$ and $\hat{s}_z(t)$ are calculated in stage 3c before $\Delta_z(t)$ and $m_z(t)$ are found in stage 3d. As described by \citeauthor{sanchezReducingDataDependencies2022}, speculative execution of the two possible outcomes of the weight update is performed in two parallel execution paths. Once the required values to find the sign of the prediction error (\autoref{eq:math-opt}) resolves in stage 3d, the correct value is chosen.
 
 \begin{figure}[ht]
@@ -177,7 +187,9 @@ Randomly generated test data is used as the inputs of the verification framework
 
 \subsection{Performance Evaluation}
 
-The performance of the updated accelerator is done in terms of hardware resource utilization, power usage, and maximum clock frequency. Since the accelerator processes one sample per clock cycle, after the pipeline is filled, the clock speed can be directly translated to sample throughput. The design is implemented for two different \acrshort{FPGA}s: Zynq-7030 and Zynq XCZU7EV. The former is used on-board the \acrshort{hypso} satellites, and the latter is used by \citeauthor{jiaRemovalFeedbackLoop2025} in their work presenting the delayed weight update scheme. Additionally, metrics are evaluated for the full accelerator and for the predictor module only. This allows comparison with implementation in the literature that only implement the predictor. The header configuration used during evaluation is based on the work by \citeauthor{blanesPerformanceImpactParameter2019} and is presented in \autoref{tab:parameters}. These values are also the same as those used by \citeauthor{vorhaugHyperspectralImageCompression2024}.
+The performance of the updated accelerator is done in terms of hardware resource utilization, power usage, and maximum clock frequency. Since the accelerator processes one sample per clock cycle, after the pipeline is filled, the clock speed can be directly translated to sample throughput. The design is implemented for two different \acrshort{FPGA}s: Zynq-7030 and Zynq XCZU7EV. The former is used on-board the \acrshort{hypso} satellites, and the latter is used by \citeauthor{jiaRemovalFeedbackLoop2025} in their work presenting the delayed weight update scheme. Maximum clock frequency is estimated using static timing analysis tools.
+
+The design is evaluated for the full accelerator and for the predictor module only. This allows comparison with implementations in the literature that only implement the predictor. The header configuration used during evaluation is based on the work by \citeauthor{blanesPerformanceImpactParameter2019} and is presented in \autoref{tab:parameters}. These values are also the same as those used by \citeauthor{vorhaugHyperspectralImageCompression2024}.
 
 \subsection{On-board Testing}
 
@@ -193,7 +205,7 @@ To verify the accelrator on real hardware, the design is integrated into the \ac
 
 \autoref{app:block-design} shows the integration of the accelerator from the work of \citeauthor{vorhaugHyperspectralImageCompression2024}. The diagram shows the configured modules inside the Zynq-7030. A special clock module allows selecting the clock frequency of the accelerator separately from the rest of the system. This work only modifies the predictor module of the accelerator, without touching external interfaces. Thus, no changes to the integration for \acrshort{hypso} are necessary, with the exception of tuning the clock frequency and rebuilding the system. Note that for integration into the \acrshort{OPU}, the reorder buffer designed by \citeauthor{vorhaugHyperspectralImageCompression2024} must be used.
 
-Before uplinking the modified design to the satellite it is tested on the on-ground engineering model. The engineering model has identical hardware and software to the satellite, allowing efficient testing and development. A set of \acrshort{hypso} images are compressed using the accelerator on-ground and verified against the verification model.
+Before uplinking the modified design to the satellite it is tested on the on-ground engineering model. The engineering model has identical hardware and software to the satellite, allowing efficient testing and development. A same set of ten \acrshort{hypso}-2 coastline images used to evaluate the verification model are compressed using the accelerator on-ground and verified against the verification model.
 
 % Some large figures here...
 
