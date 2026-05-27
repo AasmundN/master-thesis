@@ -66,7 +66,7 @@
 \end{figure}
 
 \begin{table}[ht]
-	\caption{Performance of compression using verification model with C++ predictor and delayed weight updates for single image tests from HYPSO-2, Aviris and Landsat with $r_z=16$ and $a_z=4$.}
+	\caption{Performance of compression using verification model with C++ predictor and delayed weight updates for single image tests from HYPSO-2, AVIRIS and Landsat with $r_z=16$ and $a_z=4$.}
 	\label{tab:performance-results-hlm-compress-cpp}
 	\begin{center}
 		\begin{tabular}{lrrrrr}
@@ -74,7 +74,7 @@
 			\textbf{Image} & \textbf{Predictor} & \textbf{Samples} & \textbf{Time (s)} & \textbf{Throughput (MS/s)} & \textbf{Memory (MB)} \\
 			\hline
 			HYPSO-2        & C++                & 78361920         & 821               & 0.095                      & 32415                \\ % & (293)
-			Aviris         & C++                & 77643776         & 1166              & 0.066                      & 32091                \\ % & (290)
+			AVIRIS         & C++                & 77643776         & 1166              & 0.066                      & 32091                \\ % & (290)
 			Landsat        & C++                & 6291456          & 103               & 0.061                      & 2669                 \\ % & (22)
 			\hline
 		\end{tabular}
@@ -82,7 +82,7 @@
 \end{table}
 
 \begin{table}[ht]
-	\caption{Performance of decompression using verification model with C++ predictor and delayed weight updates for single image tests from HYPSO-2, Aviris and Landsat with $r_z=16$ and $a_z=4$.}
+	\caption{Performance of decompression using verification model with C++ predictor and delayed weight updates for single image tests from HYPSO-2, AVIRIS and Landsat with $r_z=16$ and $a_z=4$.}
 	\label{tab:performance-results-hlm-decompress}
 	\begin{center}
 		\begin{tabular}{lrrrr}
@@ -90,7 +90,7 @@
 			\textbf{Image} & \textbf{Samples} & \textbf{Time (s)} & \textbf{Throughput (MS/s)} & \textbf{Memory (MB)} \\
 			\hline
 			Hypso 2        & 78361920         & 1093              & 0.072                      & 32414                \\
-			Aviris         & 77643776         & 1834              & 0.042                      & 32091                \\
+			AVIRIS         & 77643776         & 1834              & 0.042                      & 32091                \\
 			Landsat        & 6291456          & 149               & 0.042                      & 2667                 \\
 			\hline
 		\end{tabular}
@@ -118,7 +118,7 @@
 		\includegraphics[height=0.28\textheight,valign=t]{results/aviris/aviris_decoded.png}
 		\includegraphics[height=0.28\textheight,valign=t]{results/landsat/landsat_decoded.png}
 	\end{center}
-	\caption{Decompressed images from HYPSO-2, Aviris and Landsat, compressed with delayed weight update scheme, used for single image tests with $r_z=16$ and $a_z=4$.}
+	\caption{Decompressed images from HYPSO-2, AVIRIS and Landsat, compressed with delayed weight update scheme, used for single image tests with $r_z=16$ and $a_z=4$.}
 	\label{fig:landsat}
 \end{figure}
 
@@ -203,14 +203,14 @@
 			\textbf{Image} & \textbf{Ordinary} & \textbf{Delayed} & \textbf{Decrease} \\
 			\hline
 			HYPSO-2        & 2.49              & 2.47             & $-0.80\%$         \\
-			Aviris         & 4.41              & 4.31             & $-2.23\%$         \\
+			AVIRIS         & 4.41              & 4.31             & $-2.23\%$         \\
 			Landsat        & 5.21              & 4.82             & $-7.49\%$         \\
 			\hline
 		\end{tabular}
 	\end{center}
 \end{table}
 
-The difference in compression performance shown in \autoref{tab:performance-results-hlm-dw}, especially that of Landsat, are likely due to the characteristics of the specific images used. For example, the Landsat image only has six spectral bands, as opposed to 120 and 200 (?) for Hypso and Aviris.
+The difference in compression performance shown in \autoref{tab:performance-results-hlm-dw}, especially that of Landsat, are likely due to the characteristics of the specific images used. For example, the Landsat image only has six spectral bands, as opposed to 120 and 200 (?) for Hypso and AVIRIS.
 
 \begin{table}[ht]
 	\caption{PSNR of decompressed images averaged over ten coastline images from HYPSO-2 for a set of PAEs.}

@@ -84,15 +84,18 @@ This removes the dependence of the clipped quantizer bin center (\autoref{eq:dou
 
 The mathematical optimization approach is used by \citeauthor{vorhaugHyperspectralImageCompression2024} to develop a full issue 2 accelerator for use on-board the \acrshort{hypso} missions \cite{vorhaugHyperspectralImageCompression2024}. By use of VHDL \acrshort{RTL}, the design reaches a throughput of 110 MS/s on the Kintex XCKU040 \acrshort{FPGA}, the same \acrshort{FPGA} used in the evaluations of the previously mentioned issue 2 implementations. However, for the Zynq-7030, used on-board \acrshort{hypso}-1 and 2, a modest throughput of 67 MS/s is reached. This does not fulfill the real-time requirement of the \acrshort{hypso}-1 image sensor of 110.6 MS/s. The design is implemented without support for runtime configuration, resulting in the smallest compressor in open literature in terms of resource utilization.
 
+The achievable throughput of the mathematical optimization approach is constrained by the indivisible weight update calculation. To alleviate the problem, \citeauthor{jiaRemovalFeedbackLoop2025} suggest a modified weight update scheme, dubbed delayed weight updates \cite{jiaRemovalFeedbackLoop2025}. Their predictor is implemented using VHDL \acrshort{RTL}, reaching a throughput of 348 MS/s, while maintaining a small area footprint. Note that this result is achieved using a different \acrshort{FPGA}, Zynq XCZU5EV, than the previous works. Delayed weight updates come at slight degradation in compression performance. The analysis made by \citeauthor{jiaRemovalFeedbackLoop2025} is made using data sets from known missions, such as AVIRIS, over a set of absolute error limits, $\{0,1,3,7,15\}$. Results show a reduction in compression ratio in the range $1-5\%$, outperforming the approach of skipping weight updates as suggested by \citeauthor{barriosRemovingDataDependencies2024}.
+
 \begin{figure}[ht]
 	\begin{center}
-		\includegraphics[width=0.8\textwidth]{figures/ccsds-weight-updates.png}
+		\includegraphics[width=0.8\textwidth]{figures/ccsds-refined-weight-updates.png}
 	\end{center}
 	\caption{The proposed weight update scheme by \citeauthor{jiaRemovalFeedbackLoop2025}. Weights are kept unchanged for the first samples of every line, after which the sample from four samples earlier is used in the weight update calculation.}
 	\label{fig:delayed-weight-updates}
 \end{figure}
 
-The achievable throughput of the mathematical optimization approach is constrained by the indivisible weight update calculation. To alleviate the problem, \citeauthor{jiaRemovalFeedbackLoop2025} suggest a modified weight update scheme, dubbed delayed weight updates \cite{jiaRemovalFeedbackLoop2025}. Their predictor is implemented using VHDL \acrshort{RTL}, reaching a throughput of 348 MS/s, while maintaining a small area footprint. Note that this result is achieved using a different \acrshort{FPGA}, Zynq XCZU5EV, than the previous works. Delayed weight updates come at slight degradation in compression performance. The analysis made by \citeauthor{jiaRemovalFeedbackLoop2025} is made using data sets from known missions, such as AVIRIS, over a set of absolute error limits, $\{0,1,3,7,15\}$. Results show a reduction in compression ratio in the range $1-5\%$, outperforming the approach of skipping weight updates as suggested by \citeauthor{barriosRemovingDataDependencies2024}.
+The delayed weight update scheme is visualized in \autoref{fig:delayed-weight-updates}. For the first samples of each band, weights a
+re kept unchanged. From the fifth sample, $t=4$, weights of $t-3$ are used to calculate the weight update. From the sixth sample, a weight refinement step is added. This helps remedy the loss in compression performance by taking the current weights into account when calculating the updated weights. Weight updates using the delayed weight update scheme are summarized as
 
 \begin{equation}
 	\omega^{(i)}_{z, \text{unclipped}}(t+1)=
@@ -103,6 +106,15 @@ The achievable throughput of the mathematical optimization approach is constrain
 	\end{cases}
 	\label{eq:delayed-weight-updates}
 \end{equation}
+
+The final, clipped weight update is then given by
+
+\begin{equation}
+	\omega^{(i)}_z(t + 1) = \text{clip} \left( \omega_{z, \text{unclipped}}^{(i)}(t+1), \{ \omega_{min}, \omega_{max} \} \right).
+	\label{eq:clipped-delayed-weight-updates}
+\end{equation}
+
+Out of the mentioned works, only four implement the hybrid encoder. Combined with their predictor with prequantization, \citeauthor{chatziantoniouScalableDataRateNearLossless2022a} use an implementation of the hybrid encoder presented in a previous work by the same author \cite{chatziantoniouScalableDataRateNearLossless2022a, chatziantoniouHighPerformanceRTLImplementation2020}. This encoder reaches a throughput of 341 MS/s when configured in lossless mode for the AVIRIS image set on the Kintex XCKU040. Throughput drops drastically for increasing absolute error limits, with roughly 250 MS/s and 125 MS/s for $a_z$ equal to $1$ and $2$ respectively. The hybrid encoder implemented by \citeauthor{basconesFPGAAcceleratorRealTime2020} reaches a throughput slightly below 300 MS/s when configured for AVIRIS on the same \acrshort{FPGA}, and is designet to not be sensitive to the selected absolute error limit. The hybrid encoder of \citeauthor{vorhaugHyperspectralImageCompression2024} reaches a somewhat lower throughput of 165 MS/s, but is also insensitive to the absolute error limit.
 
 \begin{table}[ht]
 	\caption{Hardware utilization and throughput of hardware accelerators of the issue 2 standard. The predictor module is the smallest and fastest in open litterature.}
@@ -124,4 +136,6 @@ The achievable throughput of the mathematical optimization approach is constrain
 		\hline
 	\end{tabular}
 \end{table}
+
+\autoref{tab:throughputs} summorizes the resource utilization and throughput of issue 2 implementations presented in the open literature. For real-time processing and full support of the issue 2 standard, the implementation by \citeauthor{basconesFPGAAcceleratorRealTime2020} is the most viable. However, the use of \acrshort{FID} proceessing order and support for runtime configurations results in a large are footprint of 16458 LUTs and 15707 FFs, as well as 187.5 BRAMs caused by the reorder buffers. The prequantization technique used by \citeauthor{chatziantoniouScalableDataRateNearLossless2022a} reaches realtime throughput and shows that image segmentation can be used to further increase processing speeds. However, their core is even larger at 18861 LUTs and 21395 FFs. Fewer BRAMs are used due to not requiring reordering buffers. As shown by \citeauthor{vorhaugHyperspectralImageCompression2024}, combinding the mathematical optimization approach with not supporting runtime configuration results in the smallest core of the literature at only 5577 LUTs and 2635 FFs. However, the core does not reach realtime performance, not matching the throughputs of \citeauthor{sanchezReducingDataDependencies2022} and \citeauthor{barriosRemovingDataDependencies2024} that use the same implementation approach. The aim of this work is to use the new weight update scheme proposed by \citeauthor{jiaRemovalFeedbackLoop2025} to increase the throughput of \citeauthor{vorhaugHyperspectralImageCompression2024}s implementation. This should be done while maintaining the low are footprint.
 
