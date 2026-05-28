@@ -1,4 +1,4 @@
-\section{Hardware Accelerators \protect\footnote{The section on hardware accelerators is taken as is from specialization project \cite{noersett2025}.}}
+\section{Hardware Accelerators}
 
 \begin{figure}[ht]
 	\begin{center}
@@ -8,6 +8,7 @@
 	\label{fig:fpga}
 \end{figure}
 
+\protect\footnote{The section on hardware accelerators is taken as is from specialization project \cite{noersett2025}.}
 Embedded real-time systems often operate under strict deadlines. Missing these deadlines can be detrimental to system performance and correct functioning. At the same time, designers must balance budgets on power, area and cost. An effective approach to designing robust and responsive systems is to utilize multiprocessors \cite{WOLF2023453}. Multiprocessor systems contain multiple \acrlong{PE}s (\acrshort{PE}), that can be optimized for specific functions, performing tasks in parallel. It is well known that the use of simpler units running in parallel can provide the same performance at a lower power and cost \cite{sarpeshkarUniversalPrinciplesUltra2012, WOLF2023453}.
 
 In addition to programmable \acrshort{PE}s, e.g. \acrlong{CPU}s (\acrshort{CPU}), which provide great flexibility, multiprocessor systems can achieve enormous performance improvements by the use of specialized hardware accelerators \cite{WOLF2023453}. One such example is the \acrfull{GPU}, which has become a staple of modern personal computers. \acrshort{FPGA}s allow designers to design custom logic at low costs, as compared to the higher performance and costly \acrlong{ASIC}s (\acrshort{ASIC}). Most \acrshort{FPGA}s also come at the added benefit of being reconfigurable, which provides flexibility for remotely deployed systems.

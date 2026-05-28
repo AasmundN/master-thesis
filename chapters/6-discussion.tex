@@ -7,6 +7,10 @@ The decrease in compression performance introduced by delayed weight updates cau
 
 Bitrate varies greatly with image characteristics. Hypso images do not achieve low bitrates, aviris is significantly lower bitrates.
 
+The quality of the weight update scheme does not affect the quality of the reconstructed images. This is because the quantizer and prediction loop guarantee that image samples can be reconstructed with at most $m_z(t)$ of error (\autoref{sec:compression}). Weight updates affect the accuracy of the predicted sample values, and thus the entropy of the prediction residuals. This, in turn, affect the achievable compression performance.
+
+Note that compression ratio is highly dependant on the selected error limits, and these results may not be applicable to all configurations
+
 \section{Verification Model Performance}
 
 Higher execution time of the encoder for higher error limits suggest that the encoding of low-entropy samples is slower than that of high-entropy samples.

@@ -152,7 +152,8 @@
 \RequirePackage{babel}                      % language specifics
 \RequirePackage{geometry}                   % page layout
 \RequirePackage{enumitem}                   % customising list appearance
-\RequirePackage{graphicx}                   % including figures
+\RequirePackage{efbox, graphicx}                   % including figures
+\efboxsetup{linecolor=black,linewidth=1pt,margin=0pt}
 \RequirePackage[export]{adjustbox}
 \RequirePackage{amsmath}                    % advanced math typesetting
 \RequirePackage{titling}
