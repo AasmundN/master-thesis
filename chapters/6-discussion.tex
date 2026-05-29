@@ -1,30 +1,52 @@
 \chapter{Discussion and Further Work}
 \label{sec:discussion}
 
-\section{Compression Performance}
-
-The decrease in compression performance introduced by delayed weight updates cause significantly longer downlink time which is not outweighed by the reduced execution time, by far.
-
-Bitrate varies greatly with image characteristics. Hypso images do not achieve low bitrates, aviris is significantly lower bitrates.
-
-The quality of the weight update scheme does not affect the quality of the reconstructed images. This is because the quantizer and prediction loop guarantee that image samples can be reconstructed with at most $m_z(t)$ of error (\autoref{sec:compression}). Weight updates affect the accuracy of the predicted sample values, and thus the entropy of the prediction residuals. This, in turn, affect the achievable compression performance.
-
-Note that compression ratio is highly dependant on the selected error limits, and these results may not be applicable to all configurations
-
 \section{Verification Model Performance}
 
-Higher execution time of the encoder for higher error limits suggest that the encoding of low-entropy samples is slower than that of high-entropy samples.
+As shown by tables \ref{tab:coastline-compress} and \ref{tab:coastline-compress-py}, the new C++ predictor greatly outperforms the old Python predictor in terms of execution time. A factor seven improvement is achieved for the predictor, resulting in an improvement factor between $2$ and $4$ depending on the absolute error limit. As the error limit increases, the execution time of the encoder module increases, taking up a greater percentage of the total execution time. This diminishes the improvement due to the new predictor.
 
-C++ predictor optimizations: data type selection and minimal dependency buffers
+The increase in execution time of the encoder for higher absolute error limits is likely due to the increased number of samples that are encoded using low-entropy codes. This is caused by lower entropy of prediction residuals for higher error limits. The codewords of high-entropy codes can be calculated on-the-fly, resulting in fast execution time. However, the \acrshort{V2V} codes used for low-entropy samples require codeword tables, adding additional lookup time. By use of specialized algorithms for binary tree lookups, additional improvements to execution time might be gained.
+
+The verification model by \citeauthor{vorhaugHyperspectralImageCompression2024} stores all intermediate values for both the predictor and encoder modules. By use of the sampler class (\autoref{sec:implementation}), the new predictor allows selectively storing intermediates, reducing the memory requirements. Additionally, storing of most intermediate values of the encoder module has been made optional. Detailed analysis of the memory usage of the verification model has not been performed in this work. However, before modification, the compressor was not able to operate on full \acrshort{hypso}-2 images, $N_z=120$, $N_y=598$ and $N_x=1092$, on a machine with 64 GB of memory. With reduced memory requirements, peak allocated memory for \acrshort{hypso}-2 images range between 30 and 40 GB. This is still a large amount of memory, but is low enough that successful evaluation of the delayed weight update scheme could be performed.
+
+For use in the \acrshort{hypso} mission, compression is performed using the on-board hardware accelerator. This means that the verification model is not needed for compression during the acquisition of images. However, for on-ground decompression when the delayed weight update scheme is used, compliant software is required. This prompts the need for improving the execution time of the verification model, as the execution times (\autoref{tab:coastline-decompress}) upwards of half an hour ($~2000$ seconds) are unacceptable. As shown by the rewritten predictor module, rewriting the hybrid encoder module to C++ can provide great performance improvements, and is therefor suggested. Additionally, specialized algorithms for lookup in \acrshort{V2V} codeword tables should be utilized.
+
+The encoder module uses large arrays that are modified and accessed in-place during calculations. A similar scheme was used by the Python predictor, but is somewhat mitigated by the sampler class of the C++ predictor. However, values needed by complex data dependencies, such as sample representatives and weight updates, are still stored in large arrays. Moving large amounts of data in and out of the memory caches for access is slow, placing a large execution time penalty on the program. In order to remove most of the required memory, and improve execution time, the use of specialized buffers should be employed. These buffers would be similar to those used by the hardware accelerator of \citeauthor{vorhaugHyperspectralImageCompression2024}, storing and providing only values that are needed for calculations. Additional memory can be saved by use of C++ type templates that select the required data type based the dynamic range of the image that is processed.
+
+\section{Compression Performance}
+
+As shown by \autoref{tab:coastline-reduction}, the reduction in compression performance due to delayed weight updates is minimal for the \acrshort{hypso}-2 coastline image set, at less than one percent. The performance penalty for the AVIRIS Yellowstone set is significantly larger, at over four percent for the selected error limits. This is likely due to higher correlation between image samples, such that the images are well suited for predictive compression. The higher compression ratios that are achieved for these images, as shown in figures \ref{fig:compression-performance-hypso} and \ref{fig:compression-performance-aviris}, support this.
+
+The quality of the weight update scheme does not affect the quality of the reconstructed images. This is because the quantizer and prediction loop guarantee that image samples can be reconstructed with at most $m_z(t)$ of error (\autoref{sec:compression}). Weight updates affect the accuracy of the predicted sample values, and thus the entropy of the prediction residuals. This, in turn, affects the achievable compression performance. For images with high correlation between samples, such as the AVIRIS Yellowstone set, the quality of the weight vectors is of higher importance. This results in the greater performance penalty due to the delayed weight updates that is observed as compared to the \acrshort{hypso}-2 images.
+
+Comparing the compression performance of this work with the results of \citeauthor{jiaRemovalFeedbackLoop2025} is challenging. The work does not mention in detail the configurations that are used for compression, other than reduced prediction mode and narrow local sums. Additionally, AVIRIS images are grouped into categories depending on image characteristics such as coastline and urban. However, the exact image groups are not mentioned. By averaging the results of \citeauthor{jiaRemovalFeedbackLoop2025} for AVIRIS images, a reduction of compression performance between one and four percent is given. These number lie in a similar range as those achieved for AVIRIS Yellowstone images of this work (\autoref{tab:coastline-reduction}).
+
+Compression performance is greatly dependant on the selected configurations for the issue 2 algorithm. Furthermore, results depend on the applicable image sensor and characteristics of the image motive. The configuration used for the evaluations of this work is based on the extensive analysis by \citeauthor{blanesPerformanceImpactParameter2019} \cite{blanesPerformanceImpactParameter2019}. Additionally, a simple analysis is made here to find the most suited number of prediction bands for \acrshort{hypso}-2 images. This is due to the direct impact of this parameter on the area footprint of the hardware accelerator, as shown by \citeauthor{vorhaugHyperspectralImageCompression2024} \cite{vorhaugHyperspectralImageCompression2024}. Results using both ordinary and delayed weight updates correspond well to the value suggested by \citeauthor{blanesPerformanceImpactParameter2019}, as shown in \autoref{fig:prediction_bands}, with the optimal value being $P=2$ or $P=3$.
+
+\autoref{tab:psnr-compared} shows how the \acrshort{PSNR} of reconstructed \acrshort{hypso}-2 images drops as the absolute error limit is increased, starting as 226 dB for $a_z=1$. As mentioned, the quality of the reconstructed images is not affected by the weight update scheme. Selecting the correct error limits is a tradeoff between the desired compression ratio and the required quality of reconstructed images. Some work has been done to analyse the effects of lossy compression on hyperspectral images, such as \cite{chen2019compression, garcia2020competitive, garciavilchez2010impact}, but the threshold for acceptable loss varies on the usecases of the images. Finding suitable error limits for use in the \acrshort{hypso} mission requires extensive analysis, and is outside the scope of this work.
 
 \section{Verification Coverage}
 
 Coverage data from randomly generated tests was collected and is presented in \autoref{app:verification-coverage}.
 
+A large number of possible corner cases exists, so it is impossible to do extensive testing.
+
+\section{RTL Results}
+
+Why is it so small?
+
+Band dependant error limits?
+
+Further improvements: hybrid encoder, there exists better performing implementations.
+
+Moving around the calculations of the weight update pipeline to further increase throughput.
+
+Packer and reorder buffers do not need work as they have higher top speeds as found by Vorhaug.
+
 \section{Place in State-of-the-art}
 
 \begin{table}[ht]
-	\caption{Hardware utilization and throughput of hardware accelerators of the issue 2 standard. The predictor module is the smallest and fastest in open litterature.}
+	\caption{Hardware utilization and throughput of hardware accelerators of the issue 2 standard. The predictor module is the smallest and fastest in open literature.}
 	\label{tab:throughput-this-work}
 	\centering
 	\begin{tabular}{l r r r r r r}
@@ -50,10 +72,16 @@ Coverage data from randomly generated tests was collected and is presented in \a
 
 With delayed weight updates we are not compliant...
 
-Minimum x-size is now D+13
+Minimum x-size is now D+13 due to pipeline depth and size of sample representative and local difference buffers.
 
 \section{On-board Testing}
 
-Work should be done to properly integrate the issue 2 implementation into the HYPSO-2 on-board-processing (OPU) system. This includes writing software for header, and selection of parameters. As of now, HYPSO-2 still uses the outdated issue 1 implementation. Although fast, it cannot achieve compression rates close to those of issue 2. Issue 2 for HYPSO-3!! Header software should be written in C, for easy integration with the existing software.
+The successful on-board compression, downlink and decompression of an image from the \acrshort{hypso}-2 satellite shows that the delayed weight update scheme is a viable solution for increased throughput of issue 2 accelerators. The updated design was run at a clock frequency of 92 MHz on the Zynq-7030, matching the frequency estimate given by static timing analysis. The original design by \citeauthor{vorhaugHyperspectralImageCompression2024} was tested on-board \acrshort{hypso}-1, and ran at a lower frequency of 50 MHz. Future improvements to the design should aim at reaching 100 MHz, which would allow the removal of the additional clocking wizard block as the surround systems run at this frequency.
 
-If this is to be used onboard the satellite, we need to write a faster decompressor. Two problems: serialized processing and excessive storing of intermediaries. Use buffers to store only the data that is needed, similar to the hardware. Would also speed up the implementation due to simpler memory accesses.
+During integration for \acrshort{hypso}-2 an error was encountered in which the accelerator produced the wrong outputs. This turned out to be caused by the wrong selection of byte endianness on the output transmitted by the \acrshort{AXI} bus. The final image files that are stored to the on-board SD-card use the big endian byte order. Because of this it was assumed that the same ordering should be used for transmission on the output data bus. This assumption proved wrong, and little endian had to be used. At some point in the on-board image processing between retrieval from the compressor and storage, the byte order is switched.
+
+Bug in hardware that was not detected by simulation. Internal register that needs to be reset between each compression, likely due to requiring some initial value for the calculations. Solved by reprogramming fpga between runs.
+
+The decrease in compression performance introduced by delayed weight updates cause significantly longer downlink time which is not outweighed by the reduced execution time, by far.
+
+Work should be done to properly integrate the issue 2 implementation into the HYPSO-2 on-board-processing (OPU) system. This includes writing software for header, and selection of parameters. As of now, HYPSO-2 still uses the outdated issue 1 implementation. Although fast, it cannot achieve compression rates close to those of issue 2. Issue 2 for HYPSO-3!! Header software should be written in C, for easy integration with the existing software.

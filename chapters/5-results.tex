@@ -37,15 +37,20 @@ During compression, execution time for the loading and saving of data to and fro
 	\caption{Performance of compression using verification model with C++ predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs.}
 	\label{tab:coastline-compress}
 	\begin{center}
-		\begin{tabular}{lrrrrr}
+		\begin{tabular}{lrrrrrr}
 			\hline
-			\textbf{PAE} & \textbf{CR} & \textbf{Load Data (s)} & \textbf{Predictor (s)} & \textbf{Encoder (s)} & \textbf{Save Data (s)} \\
+			\textbf{PAE} & \textbf{CR} & \textbf{Load Data (s)} & \textbf{Predictor (s)} & \textbf{Encoder (s)} & \textbf{Save Data (s)} & \textbf{Total (s)} \\
 			\hline
-			0            & 1.995       & 0.311                  & 295.273                & 393.706              & 0.069                  \\
-			1            & 2.488       & 0.121                  & 293.722                & 408.911              & 0.054                  \\
-			3            & 3.077       & 0.076                  & 294.704                & 471.881              & 0.044                  \\
-			7            & 3.912       & 0.076                  & 292.520                & 658.729              & 0.034                  \\
-			15           & 5.219       & 0.076                  & 290.610                & 888.570              & 0.024                  \\
+			% 0            & 1.995       & 0.311                  & 295.273                & 393.706              & 0.069                  &                    \\
+			% 1            & 2.488       & 0.121                  & 293.722                & 408.911              & 0.054                  &                    \\
+			% 3            & 3.077       & 0.076                  & 294.704                & 471.881              & 0.044                  &                    \\
+			% 7            & 3.912       & 0.076                  & 292.520                & 658.729              & 0.034                  &                    \\
+			% 15           & 5.219       & 0.076                  & 290.610                & 888.570              & 0.024                  &                    \\
+			0            & 1.995       & 0.311                  & 295.273                & 393.706              & 0.069                  & 691.354            \\
+			1            & 2.488       & 0.121                  & 293.722                & 408.911              & 0.054                  & 705.296            \\
+			3            & 3.077       & 0.076                  & 294.704                & 471.881              & 0.044                  & 769.782            \\
+			7            & 3.912       & 0.076                  & 292.520                & 658.729              & 0.034                  & 955.271            \\
+			15           & 5.219       & 0.076                  & 290.610                & 888.570              & 0.024                  & 1184.499           \\
 			\hline
 		\end{tabular}
 	\end{center}
@@ -55,15 +60,20 @@ During compression, execution time for the loading and saving of data to and fro
 	\caption{Performance of decompression using verification model with C++ predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs.}
 	\label{tab:coastline-decompress}
 	\begin{center}
-		\begin{tabular}{lrrrrr}
+		\begin{tabular}{lrrrrrr}
 			\hline
-			\textbf{PAE} & \textbf{Load Data (s)} & \textbf{Decoder (s)} & \textbf{Predictor (s)} & \textbf{Save Data (s)} \\
+			\textbf{PAE} & \textbf{Load Data (s)} & \textbf{Decoder (s)} & \textbf{Predictor (s)} & \textbf{Save Data (s)} & \textbf{Total (s)} \\
 			\hline
-			0            & 0.528                  & 739.573              & 307.741                & 70.009                 \\
-			1            & 0.439                  & 764.869              & 307.902                & 71.326                 \\
-			3            & 0.347                  & 881.335              & 308.484                & 70.614                 \\
-			7            & 0.229                  & 1245.921             & 305.587                & 70.191                 \\
-			15           & 0.112                  & 1687.085             & 305.571                & 69.964                 \\
+			% 0            & 0.528                  & 739.573              & 307.741                & 70.009                 &                    \\
+			% 1            & 0.439                  & 764.869              & 307.902                & 71.326                 &                    \\
+			% 3            & 0.347                  & 881.335              & 308.484                & 70.614                 &                    \\
+			% 7            & 0.229                  & 1245.921             & 305.587                & 70.191                 &                    \\
+			% 15           & 0.112                  & 1687.085             & 305.571                & 69.964                 &                    \\
+			0            & 0.528                  & 739.573              & 307.741                & 70.009                 & 1117.851           \\
+			1            & 0.439                  & 764.869              & 307.902                & 71.326                 & 1144.536           \\
+			3            & 0.347                  & 881.335              & 308.484                & 70.614                 & 1260.780           \\
+			7            & 0.229                  & 1245.921             & 305.587                & 70.191                 & 1621.928           \\
+			15           & 0.112                  & 1687.085             & 305.571                & 69.964                 & 2062.732           \\
 			\hline
 		\end{tabular}
 	\end{center}
@@ -73,15 +83,20 @@ During compression, execution time for the loading and saving of data to and fro
 	\caption{Performance of compression using verification model with Python predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs. \textbf{TODO} update values when results are ready.}
 	\label{tab:coastline-compress-py}
 	\begin{center}
-		\begin{tabular}{lrrrrr}
+		\begin{tabular}{lrrrrrr}
 			\hline
-			\textbf{PAE} & \textbf{CR} & \textbf{Load Data (s)} & \textbf{Predictor (s)} & \textbf{Encoder (s)} & \textbf{Save Data (s)} \\
+			\textbf{PAE} & \textbf{CR} & \textbf{Load Data (s)} & \textbf{Predictor (s)} & \textbf{Encoder (s)} & \textbf{Save Data (s)} & \textbf{Total (s)} \\
 			\hline
-			0            & 1.923       & 0.339                  & 2091.803               & 391.609              & 244.665                \\
-			1            & 2.378       & 0.600                  & 2117.772               & 400.696              & 247.626                \\
-			3            & 2.905       & 0.290                  & 2117.119               & 412.869              & 245.374                \\
-			7            & 3.636       & 0.075                  & 2115.089               & 527.766              & 245.211                \\
-			15           & 4.798       & 0.081                  & 2132.114               & 880.100              & 243.001                \\
+			% 0            & 1.923       & 0.339                  & 2091.803               & 391.609              & 244.665                &                    \\
+			% 1            & 2.378       & 0.600                  & 2117.772               & 400.696              & 247.626                &                    \\
+			% 3            & 2.905       & 0.290                  & 2117.119               & 412.869              & 245.374                &                    \\
+			% 7            & 3.636       & 0.075                  & 2115.089               & 527.766              & 245.211                &                    \\
+			% 15           & 4.798       & 0.081                  & 2132.114               & 880.100              & 243.001                &                    \\
+			0            & 1.923       & 0.339                  & 2091.803               & 391.609              & 244.665                & 2730.339           \\
+			1            & 2.378       & 0.600                  & 2117.772               & 400.696              & 247.626                & 2769.072           \\
+			3            & 2.905       & 0.290                  & 2117.119               & 412.869              & 245.374                & 2778.557           \\
+			7            & 3.636       & 0.075                  & 2115.089               & 527.766              & 245.211                & 2891.777           \\
+			15           & 4.798       & 0.081                  & 2132.114               & 880.100              & 243.001                & 3260.094           \\
 			\hline
 		\end{tabular}
 	\end{center}
