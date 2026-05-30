@@ -1,22 +1,3 @@
-@article{basconesFPGAAcceleratorRealTime2020,
-  title = {An {{FPGA Accelerator}} for {{Real-Time Lossy Compression}} of {{Hyperspectral Images}}},
-  author = {Báscones, Daniel and González, Carlos and Mozos, Daniel},
-  date = {2020-01},
-  journaltitle = {Remote Sensing},
-  volume = {12},
-  number = {16},
-  pages = {2563},
-  publisher = {Multidisciplinary Digital Publishing Institute},
-  issn = {2072-4292},
-  doi = {10.3390/rs12162563},
-  url = {https://www.mdpi.com/2072-4292/12/16/2563},
-  urldate = {2026-05-16},
-  abstract = {Hyperspectral images offer great possibilities for remote studies, but can be difficult to manage due to their size. Compression helps with storage and transmission, and many efforts have been made towards standardizing compression algorithms, especially in the lossless and near-lossless domains. For long term storage, lossy compression is also of interest, but its complexity has kept it away from real-time performance. In this paper, JYPEC, a lossy hyperspectral compression algorithm that combines PCA and JPEG2000, is accelerated using an FPGA. A tier 1 coder (a key step and the most time-consuming in JPEG2000 compression) was implemented in a heavily pipelined fashion. Results showed a performance comparable to that of existing 0.18 μm CMOS implementations, all while keeping a small footprint on FPGA resources. This enabled the acceleration of the most complex step of JYPEC, bringing the total execution time below the real-time constraint.},
-  langid = {english},
-  keywords = {EBCOT,FPGA,hyperspectral image,JPEG2000,lossy compression,PCA,real time},
-  file = {/Users/aasmundnorsett/Zotero/storage/KQJYBCZ5/Báscones et al. - 2020 - An FPGA Accelerator for Real-Time Lossy Compression of Hyperspectral Images.pdf}
-}
-
 @article{basconesParallelImplementationCCSDS2017,
   title = {Parallel {{Implementation}} of the {{CCSDS}} 1.2.3 {{Standard}} for {{Hyperspectral Lossless Compression}}},
   author = {Báscones, Daniel and González, Carlos and Mozos, Daniel},
@@ -36,9 +17,11 @@
   file = {/Users/aasmundnorsett/Zotero/storage/ZHSZW57X/Báscones et al. - 2017 - Parallel Implementation of the CCSDS 1.2.3 Standard for Hyperspectral Lossless Compression.pdf}
 }
 
-@article{blanesHYBRIDENTROPYENCODER,
+@inproceedings{blanesHYBRIDENTROPYENCODER,
   title = {{{THE HYBRID ENTROPY ENCODER OF CCSDS}} 123.0-{{B-2}}: {{INSIGHTS AND DECODING PROCESS}}},
+  booktitle = {Proceedings of the {{OBPDC}}},
   author = {Blanes, Ian and Kiely, Aaron and Santos, Lucana and Hernández-Cabronero, Miguel and Serra-Sagristà, Joan},
+  date = {2020},
   abstract = {In February 2019, the Consultative Committee for Space Data Systems (CCSDS) published the 123.0-B-2 standard titled “Low-Complexity Lossless and Near-Lossless Multispectral and Hyperspectral Image Compression”. It includes a new state-of-the-art entropy encoder: the hybrid encoder. This encoder, originally proposed by NASA’s Jet Propulsion Laboratory (JPL), was designed to also provide efficient coding of the low-entropy data often produced by the new in-loop quantizer included in the standard. This document describes some of the insights that went into the design of that entropy encoder, including previously-unpublished details on the how the probability model was designed, on how the variable-tovariable codes that it employs were produced, and on its reverse-order decoder. In addition to providing some of the insights that went into the design of the hybrid encoder in CCSDS 123.0-B-2, this paper aims to clearly describe the decoding process. This complements the CCSDS 123.0-B-2 standard, which only describes the operations from the point of view of a compliant compressor. Due to the notable differences in the coding and decoding processes of the hybrid entropy encoder, this manuscript provides as well a straightforward description of the steps involved in the decoding process.},
   langid = {english},
   file = {/Users/aasmundnorsett/Zotero/storage/RJSQ7HIT/Blanes et al. - THE HYBRID ENTROPY ENCODER OF CCSDS 123.0-B-2 INSIGHTS AND DECODING PROCESS.pdf}
@@ -95,8 +78,6 @@
   publisher = {Multidisciplinary Digital Publishing Institute},
   issn = {2072-4292},
   doi = {10.3390/rs15153756},
-  url = {https://www.mdpi.com/2072-4292/15/15/3756},
-  urldate = {2026-05-21},
   abstract = {Hyperspectral imaging is a powerful remote sensing technology, but its use in space is limited by the large volume of data it produces, which leads to a downlink bottleneck. Therefore, most payloads to date have been oriented towards demonstrating the scientific usefulness of hyperspectral data sporadically over diverse areas rather than detailed monitoring of spatio-spectral dynamics. The key to overcoming the data bandwidth limitation is to process the data on-board the satellite prior to downlink. In this article, the design, implementation, and in-flight demonstration of the on-board processing pipeline of the HYPSO-1 cube-satellite are presented. The pipeline provides not only flexible image processing but also reliability and resilience, characterized by robust booting and updating procedures. The processing time and compression rate of the simplest pipeline, which includes capturing, binning, and compressing the image, are analyzed in detail. Based on these analyses, the implications of the pipeline performance on HYPSO-1’s mission are discussed.},
   langid = {english},
   keywords = {cubesat,hyperspectral compression,hyperspectral imaging,image processing system,on-board processing},
@@ -162,8 +143,6 @@
   pages = {9544--9553},
   issn = {1558-0644},
   doi = {10.1109/TGRS.2019.2927434},
-  url = {https://ieeexplore.ieee.org/document/8782791/},
-  urldate = {2026-05-16},
   abstract = {Compression of hyperspectral images onboard of spacecrafts is a tradeoff between the limited computational resources and the ever-growing spatial and spectral resolution of the optical instruments. As such, it requires low-complexity algorithms with good rate-distortion performance and high throughput. In recent years, the Consultative Committee for Space Data Systems (CCSDS) has focused on lossless and near-lossless compression approaches based on predictive coding, resulting in the recently published CCSDS 123.0-B-2 recommended standard. While the in-loop reconstruction of quantized prediction residuals provides excellent rate-distortion performance for the near-lossless operating mode, it significantly constrains the achievable throughput due to data dependencies. In this paper, we study the performance of a faster method based on the prequantization of the image followed by a lossless predictive compressor. While this is well known to be suboptimal, one can exploit powerful signal models to reconstruct the image at the ground segment, recovering part of the suboptimality. In particular, we show that convolutional neural networks can be used for this task and that they can recover the whole SNR drop incurred at a bit rate of 2 bits per pixel.},
   keywords = {Convolutional neural networks (CNNs),Data models,hyperspectral image compression,Hyperspectral imaging,Image coding,Image reconstruction,Rate-distortion,Standards},
   file = {/Users/aasmundnorsett/Zotero/storage/59MSXT9G/Valsesia and Magli - 2019 - High-Throughput Onboard Hyperspectral Image Compression With Ground-Based CNN Reconstruction.pdf}
@@ -177,8 +156,6 @@
   pages = {329--392},
   publisher = {Elsevier},
   doi = {10.1016/B978-0-12-381420-3.00009-6},
-  url = {https://linkinghub.elsevier.com/retrieve/pii/B9780123814203000096},
-  urldate = {2026-03-03},
   isbn = {978-0-12-381420-3},
   langid = {english},
   file = {/Users/aasmundnorsett/Zotero/storage/N9EJTXIF/Woods - 2012 - Digital Image Compression.pdf}
