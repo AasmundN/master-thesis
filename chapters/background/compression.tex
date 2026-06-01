@@ -148,7 +148,7 @@ The user may select an absolute and a relative error limit, $a_z$ and $r_z$ resp
 	\label{eq:maximum-error}
 \end{equation}
 
-\textbf{TODO}: periodic error limit updating and band-dependant error limits
+The standard also allows error limits to be specified at a per-band basis (band-dependant error limits). When this option is used, the used provides a vector containing the error limits for each of the spectral bands of the image. Alternatively, bands may be grouped in groups with corresponding error limits, a feature named periodic error limit updating. Here, in addition to the error limit vectors, the number of bands in each error limit group must be provided.
 
 Because the codewords used by the entropy coder to produce the compressed bitstream are only defined for positive integers, the signed quantizer indices are mapped to positive integer mapped quantizer indices $\delta_z(t)$. This mapping is reversible and is given by
 

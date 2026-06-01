@@ -25,11 +25,11 @@ Compression performance is greatly dependant on the selected configurations for 
 
 \autoref{tab:psnr-compared} shows how the \acrshort{PSNR} of reconstructed \acrshort{hypso}-2 images drops as the absolute error limit is increased, starting as 226 dB for $a_z=1$. As mentioned, the quality of the reconstructed images is not affected by the weight update scheme. Selecting the correct error limits is a tradeoff between the desired compression ratio and the required quality of reconstructed images. Some work has been done to analyse the effects of lossy compression on hyperspectral images, such as \cite{chen2019compression, garcia2020competitive, garciavilchez2010impact}, but the threshold for acceptable loss varies on the usecases of the images. Finding suitable error limits for use in the \acrshort{hypso} mission requires extensive analysis, and is outside the scope of this work.
 
+As shown by the work by \citeauthor{bakkenHYPSO1CubeSatFirst2023}, images captured by the camera on-board the \acrshort{hypso}-1 satellite contain more noise in the outer spectral bands. Similar characteristics apply to the \acrshort{hypso}-2 camera. This means that outer bands are less interesting from a research perspective. Future work should explore the possibility of using band-dependant error limits to increase compression performance. This is a feature of the issue 2 standard which allows error limits to be specified per-band, allowing greater compression of the outer, less interesting bands of \acrshort{hypso} images. Currently, the hardware accelerator does not support this feature. If the technique provides improved compression performance for the applicable images, hardware support should be added.
+
 \section{Verification Coverage}
 
-Coverage data from randomly generated tests was collected and is presented in \autoref{app:verification-coverage}.
-
-A large number of possible corner cases exists, so it is impossible to do extensive testing.
+Before testing on real hardware, the hardware accelerator was verified in simulation. A large set of combinations of different configurations exist for the implementation. Exhaustive testing, that is checking all possible combinations, is not feasible. For this reason, random test data and configurations is used for verification. This technique was also, successfully, utilized by \citeauthor{vorhaugHyperspectralImageCompression2024}. In order to provide confidence as to the correct functioning of the design, a large set of data should be used. To further improve confidence, coverage data can be collected, counting how the different possible configurations are used over the set of test data, as shown in \autoref{app:verification-coverage}. Although \citeauthor{vorhaugHyperspectralImageCompression2024} did use the same verification approach using random data, he did not collect coverage data. The coverage data gathered in this work provides improved confidence in the correct functioning of, not only the modified design, but also the accelerator as a whole as implemented by \citeauthor{vorhaugHyperspectralImageCompression2024}.
 
 \section{RTL Results}
 
@@ -70,9 +70,7 @@ Packer and reorder buffers do not need work as they have higher top speeds as fo
 
 \section{CCSDS 123.0-B-2 Compliance}
 
-With delayed weight updates we are not compliant...
-
-Minimum x-size is now D+13 due to pipeline depth and size of sample representative and local difference buffers.
+As shown by \autoref{tab:compliance}, the accelerator developed by \citeauthor{vorhaugHyperspectralImageCompression2024} is restricted to a sub-set of the configurations of the issue 2 standard. As discussed in sections \ref{sec:state-of-the-art} and \ref{sec:previous-work}, most other implementations of the open literature also only support sub-sets of the standard. The modified accelerator, using delayed weight updates, still supports the same sub-set of configurations as the original design by \citeauthor{vorhaugHyperspectralImageCompression2024}. However, the use of delayed weight updates means that the accelerator is no longer compliant with the issue 2 standard. This means that compressed images cannot be decompressed using issue 2 compliant software tools, requiring the use of specialized software such as the decompressor developed in this work. A similar trade-off is made by the prequantization approach by \citeauthor{chatziantoniouScalableDataRateNearLossless2022a} and \citeauthor{valsesiaHighThroughputOnboardHyperspectral2019}, as well as the method of skipping weight updates proposed by \citeauthor{barriosRemovingDataDependencies2024}.
 
 \section{On-board Testing}
 
