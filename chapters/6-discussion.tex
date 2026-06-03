@@ -1,6 +1,8 @@
 \chapter{Discussion and Further Work}
 \label{sec:discussion}
 
+This sections discusses the results presented in \autoref{sec:results} and presents suggestions for future work. The performance of the developed decompressor, including the new C++ predictor stage, is evaluated and used to analyse the compression performance of the delayed weight update scheme. The results of the modified hardware design are discussed on compared to other implementations in the open literature. Finally, results from on-board testing and viability of use are discussed.
+
 \section{Verification Model Performance}
 
 As shown by tables \ref{tab:coastline-compress} and \ref{tab:coastline-compress-py}, the new C++ predictor greatly outperforms the old Python predictor in terms of execution time. A factor seven improvement is achieved for the predictor, resulting in an improvement factor between $2$ and $4$ depending on the absolute error limit. As the error limit increases, the execution time of the encoder module increases, taking up a greater percentage of the total execution time. This diminishes the improvement due to the new predictor.
