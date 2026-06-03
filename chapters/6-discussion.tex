@@ -29,19 +29,19 @@ As shown by the work by \citeauthor{bakkenHYPSO1CubeSatFirst2023}, images captur
 
 \section{Verification Coverage}
 
-Before testing on real hardware, the hardware accelerator was verified in simulation. A large set of combinations of different configurations exist for the implementation. Exhaustive testing, that is checking all possible combinations, is not feasible. For this reason, random test data and configurations is used for verification. This technique was also, successfully, utilized by \citeauthor{vorhaugHyperspectralImageCompression2024}. In order to provide confidence as to the correct functioning of the design, a large set of data should be used. To further improve confidence, coverage data can be collected, counting how the different possible configurations are used over the set of test data, as shown in \autoref{app:verification-coverage}. Although \citeauthor{vorhaugHyperspectralImageCompression2024} did use the same verification approach using random data, he did not collect coverage data. The coverage data gathered in this work provides improved confidence in the correct functioning of, not only the modified design, but also the accelerator as a whole as implemented by \citeauthor{vorhaugHyperspectralImageCompression2024}.
+Before testing on real hardware, the hardware accelerator was verified in simulation. A large set of combinations of different configurations exists for the implementation. Exhaustive testing, that is checking all possible combinations, is not feasible. For this reason, random test data and configurations is used for verification. This technique was also, successfully, utilized by \citeauthor{vorhaugHyperspectralImageCompression2024}. In order to provide confidence as to the correct functioning of the design, a large set of data should be used. To further improve confidence, coverage data can be collected, counting how the different possible configurations are used over the set of test data, as shown in \autoref{app:verification-coverage}. Although \citeauthor{vorhaugHyperspectralImageCompression2024} did use the same verification approach using random data, he did not collect coverage data. The coverage data gathered in this work provides improved confidence in the correct functioning of, not only the modified design, but also the accelerator as a whole as implemented by \citeauthor{vorhaugHyperspectralImageCompression2024}.
 
 \section{RTL Results}
 
-Why is it so small?
+Resource utilization estimates from implementations for the two selected \acrshort{FPGA}s show that the modified design is able to keep the low area footprint, as compared to the original design by \citeauthor{vorhaugHyperspectralImageCompression2024}. For the Zynq ZU7EV, \acrshort{LUT} and \acrshort{FF} usage has increased from 5475 to 6349 and 2635 to 3480 respectively. The increase is mostly due to the extra pipeline registers required by the addition of the weight update pipeline and splitting of sample representative calculation. This is also shown by the number of \acrshort{BRAM}s, which is increased from $57.5$ to $79.5$. The other contributing factor is the weight refinement step, which requires the use of two additional adders for each of the weight vector components as shown in \autoref{fig:weights-pipeline-hw}. Interestingly, the number of \acrshort{DSP}s remains the same, in spite of the additional addition operations. Possibly, increased computational performance could be gained by ensuring costly operations are mapped to \acrshort{DSP} blocks. Detailed analysis of this has not been performed in this work.
 
-Band dependant error limits?
+Alleviation of the critical path in the weight update stage successfully increased the maximum achievable clock speed of the design. For the Zynq ZU7EV, the speed is increased from 141 MHz to 202 MHz for the entire compression core. In the original design by \citeauthor{vorhaugHyperspectralImageCompression2024}, the predictor stage was the limiting factor in terms of speed (141 MHz). The updated design is limited by the encoder module, with the predictor reaching a speed of 351 MHz in isolation. As explained in \autoref{sec:results}, the critical path of the predictor, after splitting stage D+9, is again in the final stage of the weight update calculation. This path runs through the weight refinement step, including the mentioned addition operations. Additional gains in speed could likely be gained by shifting the operations of the weight update pipeline to the left. That is, moving the addition of weight refinement to stage 3c, the increment of 1 in stage 3c to stage 3b, and the subtraction operator of stage 3b to stage 3a (\autoref{fig:weights-pipeline-hw}).
 
-Further improvements: hybrid encoder, there exists better performing implementations.
+The estimated power consumption of design, for the Zynq ZU7EV, is 890 mW at a frequency of 202 MHz. This is somewhat higher than that of \citeauthor{vorhaugHyperspectralImageCompression2024} at 741 mW at 141 MHz. The difference is caused by two main factors: increased resource utilization and clock speed. As the number of components of a digital circuit increases, the number of transistors that must switch state at each clock edge is increased. Additionally, the higher clock frequency means that these transistors must switch faster. Both of these factors contribute to increased dynamic power consumption. Static power consumption is also increased as the number of components increases.
 
-Moving around the calculations of the weight update pipeline to further increase throughput.
+The work by \citeauthor{basconesRealTimeFPGAImplementation2022} shows that implementation of a faster hybrid encoder module is possible \cite{basconesRealTimeFPGAImplementation2022}. Their design reaches a clock speed of $\sim 300$ MHz on the XQRKU060 \acrshort{FPGA}, as opposed to 165 MHz reached by the encoder of \citeauthor{vorhaugHyperspectralImageCompression2024}. As shown in this work, the encoder reaches a somewhat higher frequency of 202 MHz on the Zynq ZU7EV. In addition to the predictor and encoder modules, the design comprises two additional modules in its processing pipeline: a reorder buffer and packer module (\autoref{fig:vorhaug-block}). As shown in this work, the \acrshort{BIP} to \acrshort{BIL} reorder buffer is able to match the frequency of 202 MHz. \citeauthor{vorhaugHyperspectralImageCompression2024} shows that the packer module can operate at a high frequency of 600 MHz on the Kintex XCKU040 \acrshort{FPGA}. These results show that future improvements to the design should focus on improving the encoder module.
 
-Packer and reorder buffers do not need work as they have higher top speeds as found by Vorhaug.
+As discussed in section \autoref{sec:previous-work}, the current design does not support run-time configuration. This is one of the key factors in keeping the area footprint low. For use on-board the \acrshort{hypso} missions, future work should aim at introducing run-time configuration for some of the key parameters. Easy selection of error limits would allow researchers to tune the loss in image quality on a per-image basis. Additionally, support for band-dependant error limits should be added. These additions should be made while minimizing the impact on resource utilization.
 
 \section{Place in State-of-the-art}
 
@@ -64,6 +64,33 @@ Packer and reorder buffers do not need work as they have higher top speeds as fo
 		Jia et al.\ \cite{jiaRemovalFeedbackLoop2025}, predictor                                                     & XCZU5EV       & 3995         & 5050        & 7            & 94            & 348~MS/s            \\
 		This work                                                                                                    & XCZU7EV       & 6349         & 3480        & 4            & 79.5          & 202~MS/s            \\
 		This work, predictor                                                                                         & XCZU7EV       & 2807         & 2244        & 4            & 69.5          & 351~MS/s            \\
+		\hline
+	\end{tabular}
+\end{table}
+
+\autoref{tab:throughput-this-work} summarizes achieved hardware resource utilization and throughput of issue 2 accelerators in the open literature, including the results of this work. The predictor of this work reaches a throughput of 351 MS/s, slightly outperforming that of \citeauthor{jiaRemovalFeedbackLoop2025}, whom proposed the delayed weight update scheme. Although not as fast as other implementations, the design by \citeauthor{vorhaugHyperspectralImageCompression2024} is considerable smaller than other implementations. This property is preserved in this work, resulting in both the smallest and fastest predictor of known implementations. Due to the limiting encoder module, the throughput of the entire compression core is not able to match that of \citeauthor{basconesRealTimeFPGAImplementation2022} and \citeauthor{chatziantoniouScalableDataRateNearLossless2022a}. However, future improvements should be able to alleviate this limitation.
+
+In terms of estimated power consumption, with the exception of the accelerator of \citeauthor{vorhaugHyperspectralImageCompression2024}, the design of this work outperforms that of other works at 890 mW (\autoref{tab:power-this-work}). This is largely due to the low resource utilization. However, at the high clock frequency of 351 MHz achieved by the predictor module the power consumption of 1282 mW is beaten by the designs of \citeauthor{basconesRealTimeFPGAImplementation2022} and \citeauthor{chatziantoniouScalableDataRateNearLossless2022a}.
+
+\begin{table}[ht]
+	\caption{Power estimates of implementations in the open literature.}
+	\label{tab:power-this-work}
+	\centering
+	\begin{tabular}{lrrr}
+		\hline
+		\textbf{Implementation}                                                                                      & \textbf{FPGA} & \textbf{Power} & \textbf{Throughput} \\
+		\hline
+		Barrios et al.\ \cite{barriosHardwareImplementationCCSDS2021}                                                & XCKU040       & 2480~mW        & 18~MS/s             \\
+		B\'ascones et al.\ \cite{basconesRealTimeFPGAImplementation2022}                                             & XQRKU060      & 1210~mW        & 285~MS/s            \\
+		Chatziantoniou et al.\ \cite{chatziantoniouScalableDataRateNearLossless2022a} 1 core                         & XCKU040       & 1090~mW        & 285~MS/s            \\
+		Chatziantoniou et al.\ \cite{chatziantoniouScalableDataRateNearLossless2022a} 5 core                         & XCKU040       & 4222~mW        & 1375~MS/s           \\
+		S\'anchez et al.\ \cite{sanchezReducingDataDependencies2022, barriosRemovingDataDependencies2024}, predictor & XCKU040       & -              & 231~MS/s            \\
+		Barrios et al.\ \cite{barriosRemovingDataDependencies2024}, predictor                                        & XCKU040       & -              & 236~MS/s            \\
+		Vorhaug et al.\ \cite{vorhaugHyperspectralImageCompression2024}                                              & XCKU040       & 640~mW         & 110~MS/s            \\
+		Vorhaug et al.\ \cite{vorhaugHyperspectralImageCompression2024}                                              & XCZU7EV       & 741~mW         & 141~MS/s            \\
+		Jia et al.\ \cite{jiaRemovalFeedbackLoop2025}, predictor                                                     & XCZU5EV       & -              & 348~MS/s            \\
+		This work                                                                                                    & XCZU7EV       & 890~mW         & 202~MS/s            \\
+		This work, predictor                                                                                         & XCZU7EV       & 1282mW         & 351~MS/s            \\
 		\hline
 	\end{tabular}
 \end{table}
