@@ -137,8 +137,8 @@
 
 %% CLASS FILE LOADING
 
-% \LoadClass[a4paper,11pt,openright,\paging]{report}
-\LoadClass[a4paper,11pt,openany,\paging]{report}
+\LoadClass[a4paper,11pt,openright,\paging]{report}
+% \LoadClass[a4paper,11pt,openany,\paging]{report}
 
 %% PACKAGE LOADING
 

@@ -1,7 +1,7 @@
 \section{Coding Performance and Image Quality}
 \label{sec:metrics}
 
-Images compressed using lossless compression can be perfectly reconstructed by the decompressor. Near-lossless compression introduces noise in the reconstructed image, due imperfect reconstruction. The error limits of the issue 2 in-loop quantizer can be tuned, adjusting the maximum error $m_z(t)$ of reconstructed samples. As described by \citeauthor{salomonDataCompressionComplete2004} in, compression noise can be characterized using \acrfull{PSNR}, giving an indication as to the quality to the reconstructed image compared to the original \cite{salomonDataCompressionComplete2004}. For a single spectral band $z$, the \acrshort{PSNR} is given by
+Images compressed using lossless compression can be perfectly reconstructed by the decompressor. Near-lossless compression introduces noise in the reconstructed image, due to imperfect reconstruction. The error limits of the issue 2 in-loop quantizer can be tuned, adjusting the maximum error $m_z(t)$ of reconstructed samples. As described by \citeauthor{salomonDataCompressionComplete2004}, compression noise can be characterized using \acrfull{PSNR}, giving an indication as to the quality to the reconstructed image compared to the original \cite{salomonDataCompressionComplete2004}. For a single spectral band $z$, the \acrshort{PSNR} is given by
 
 \begin{equation}
 	\mathrm{PSNR}_z = 10 \cdot \text{log}_{10} \left( \frac{\mathrm{MAX}^2_I}{\mathrm{MSE_z}} \right),

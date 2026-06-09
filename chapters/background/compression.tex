@@ -3,7 +3,7 @@
 
 The \acrfull{CCSDS} is a multi-institutional working group developing algorithms and standards for increased cooperation amongst space actors. A portion of their work has been concerned with the effective encoding of hyperspectral and multispectral images. Standard CCSDS 123.0-B-1, hereby referred to as issue 1, describes a lossless compression algorithm tailored for high throughput \acrshort{FPGA} implementations. Issue 1 has been implemented and used successfully by several missions, the \acrshort{hypso} project being one of them \cite{fjeldtvedtEfficientRealTimeFPGA2018, bakkenHYPSO1CubeSatFirst2023}. In 2019, Issue 1 was followed by standard CCSDS 123.0-B-2, referred to as Issue 2. The following sections are based on the description of issue 2 presented in \fullcite{theconsultativecommitteeforspacedatasystemsLowComplexityLosslessNearLossless2019}.
 
-Issue 1 formalizes the \acrfull{FL} algorithm presented by \citeauthor{KlimeshFL}, which uses an adaptive filtering prediction technique to achieve lossless compression at low computational complexity \cite{KlimeshFL, LosslessMultispectralHyperspectral2022}. To meet the needs of limited satellite downlink capabilities, lossy compression techniques have seen increasing use \cite{LosslessMultispectralHyperspectral2022}. For this reason, issue 2 introduces a new near-lossless feature based on the \acrfull{FLEX} algorithm presented by \citeauthor{KeymeulenFLEX} \cite{KeymeulenFLEX}. Near-lossless compression, as opposed to lossy compression, provides the user with fine-tuned control over the per-pixel loss through tunable error limit parameters.
+Issue 1 formalizes the \acrfull{FL} algorithm presented by \citeauthor{KlimeshFL}, which uses an adaptive filtering prediction technique to achieve lossless compression at relatively low computational complexity \cite{KlimeshFL, LosslessMultispectralHyperspectral2022}. To meet the needs of limited satellite downlink capabilities, lossy compression techniques have seen increasing use \cite{LosslessMultispectralHyperspectral2022}. For this reason, issue 2 introduces a new near-lossless feature based on the \acrfull{FLEX} algorithm presented by \citeauthor{KeymeulenFLEX} \cite{KeymeulenFLEX}. Near-lossless compression, as opposed to lossy compression, provides the user with fine-tuned control over the per-pixel loss through tunable error limit parameters.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -13,11 +13,11 @@ Issue 1 formalizes the \acrfull{FL} algorithm presented by \citeauthor{KlimeshFL
 	\label{fig:DPCM}
 \end{figure}
 
-The issue 1 and issue 2 compressors use a form of \acrfull{DPCM}, presented in \autoref{fig:DPCM}. A feedback loop, with optional quantization, predicts the value of the current input sample based on previously processed samples. The difference between the sample and the prediction, called the prediction residual, is encoded in the final bitstream. This exploits the correlation between neighbouring samples inherent in image data to reduce the entropy of the data passed to the encoder, allowing a more efficient encoding. Samples are processed in a single pass using simple operations. This reduces memory requirements and makes the algorithm suitable for hardware implementations. For the rest of this document, the prediction feedback loop will be referred to as the predictor.
+The issue 1 and issue 2 compressors use a form of \acrfull{DPCM}, presented in \autoref{fig:DPCM}. A feedback loop, with optional quantization, predicts the value of the current input sample based on previously processed samples. The difference between the sample and the prediction, called the prediction residual, is encoded in the final bitstream. This exploits the correlation between neighbouring samples inherent in image data to produce accurate predictions. Thus, high sample correlation reduces the entropy of the prediction residuals passed to the encoder, allowing a more efficient encoding. Samples are processed in a single pass using simple operations. This reduces memory requirements and makes the algorithm suitable for hardware implementations. For the rest of this document, the prediction feedback loop will be referred to as the predictor.
 
 Predictor outputs are passed to an entropy coder which losslessly encodes prediction residuals in the final bitstream. Entropy coders, which will be covered in greater detail later in this document, encode samples with a varying number of bits based on the frequency of their occurrence in the image. A novel feature of issue 2 is the inclusion of a hybrid encoder, in addition to the sample-adaptive and block-adaptive encoders of issue 1. This performs better at the low encoding bitrates achievable in the near-lossless mode. After encoding, a header containing image metadata and compressor configuration parameters is prepended to the compressed bitstream (image body). This is required by the decompressor in order to correctly reconstruct the original image.
 
-The predictor uses an adaptive linear filter method based on the work presented by \citeauthor{gershoAdaptiveFilteringBinary1984} \cite{gershoAdaptiveFilteringBinary1984, LosslessMultispectralHyperspectral2022}. Observed quantities $x_k$, analogous to the quantized prediction residuals of \autoref{fig:DPCM}, which are statistically dependant on the process $d_k$, analogous to the image samples, produce estimates $z_k$ of the desired samples $d_k$. A linear preprocessor $\phi$ takes previously observed quantities $x_k$ and transforms them to a vector $\mathbf{u}_k$ given by
+The predictor uses an adaptive linear filter method based on the work presented by \citeauthor{gershoAdaptiveFilteringBinary1984} \cite{gershoAdaptiveFilteringBinary1984, LosslessMultispectralHyperspectral2022}. Observed quantities $x_k$, analogous to the quantized prediction residuals of \autoref{fig:DPCM}, which are statistically dependant on the process $d_k$, analogous to the image samples, produce estimates $z_k$ of the desired samples $d_k$. A linear preprocessor $\phi$ takes previously observed quantities of $x_k$ and transforms them to a vector $\mathbf{u}_k$ given by
 
 \begin{equation}
 	\mathbf{u}_k = \Phi(x_k, x_{k-1}, \ldots).
@@ -267,7 +267,7 @@ Here $\mathbf{W}_z(t)$ is the weight vector, which for reduced prediction mode i
 
 where $\omega^{(i)}_z(t)$ is the weight corresponding to the $i$th prediction band. As with the local difference vector, three additional weights are used during full prediction mode.
 
-Weights may be initialized using two methods: default and custom initiaization. Custom initialization allows the user to the provide per-band initial weight values. This may result in better compression performance when the image sensor characteristics or other image metrics are know. For default initiaization the weights are initialized as
+Weights may be initialized using two methods: default and custom initiaization. Custom initialization allows the user to provide per-band initial weight values. This may result in better compression performance when the image sensor characteristics or other image metrics are know. For default initiaization the weights are initialized as
 
 \begin{equation}
 	\omega_z^{(1)}(1) = \frac{7}{8} 2^{\Omega}, \qquad
@@ -333,7 +333,7 @@ The predicted central local difference $\hat{d}_z(t)$ in combination with the lo
 			2^{\Omega+2} s_{\max} + 2^{\Omega+1}
 			\right\}
 		\end{aligned}
-	\right).
+	\right),
 	\label{eq:high-resolution-predicted-sample}
 \end{equation}
 

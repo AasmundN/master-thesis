@@ -1,7 +1,7 @@
 \chapter{Results}
 \label{sec:results}
 
-The following sections present results from analysis of the verification model, compression performance of the delayed weight update scheme, and performance of the modified hardware design. The \acrshort{hypso}-2 coastline image set is presented in \autoref{app:coastline-images}, consisting of ten images. The images have dimensions $N_z=120$, $N_y=598$ and $N_x=1092$, for a total of $78.36$ million samples, taken at a frame rate of $8$ frames per second. Images from the AVIRIS Yellowstone set have dimensions of $N_z=224$, $N_y=512$, and varying size in the $x$ dimension of $N_x \in \{614, 677, 680\}$, for roughly $77$ million samples.
+The following sections present results from analysis of the verification model, compression performance of the delayed weight update scheme, and performance of the modified hardware design. The \acrshort{hypso}-2 coastline image set is presented in \autoref{app:coastline-images}, consisting of ten images. The images have dimensions $N_z=120$, $N_y=598$ and $N_x=1092$, for a total of $78.36$ million samples, taken at a frame rate of $8$ frames per second. Images from the AVIRIS Yellowstone set (eleven images) have dimensions of $N_z=224$, $N_y=512$, and varying size in the $x$ dimension of $N_x \in \{614, 677, 680\}$, for roughly $77$ million samples.
 
 \section{Verification Model}
 
@@ -31,9 +31,7 @@ Execution time of the C++ predictor remains more or less constant at $\sim300$ s
 
 During compression, execution time for loading and saving data to and from the disk is negligible. For the decompressor, saving data takes $\sim70$ seconds. This is because all image samples must be iterated over and stored to file in the correct sample store order (\acrshort{BIL}, \acrshort{BIP}, \acrshort{BSQ}), as dictated by the header configuration. The compressor can store the compressed bitstream directly to file without modifications.
 
-\autoref{tab:coastline-compress-py} shows execution times for compression using the old predictor module written in Python. The predictor has a runtime of $\sim2100$ seconds, over seven times slower than that of the C++ predictor. Saving output data also takes significantly longer. This is because the module stores additional, intermediate results, a feature that is made optional in the C++ predictor.
-
-\begin{table}[ht]
+\begin{table}[hb!]
 	\caption{Performance of compression using verification model with C++ predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs.}
 	\label{tab:coastline-compress}
 	\begin{center}
@@ -55,6 +53,8 @@ During compression, execution time for loading and saving data to and from the d
 		\end{tabular}
 	\end{center}
 \end{table}
+
+\autoref{tab:coastline-compress-py} shows execution times for compression using the old predictor module written in Python. The predictor has a runtime of $\sim2100$ seconds, over seven times slower than that of the C++ predictor. Saving output data also takes significantly longer. This is because the module stores additional, intermediate results, a feature that is made optional in the C++ predictor.
 
 \begin{table}[ht]
 	\caption{Performance of decompression using verification model with C++ predictor and delayed weight updates averaged over ten HYPSO-2 images for a set of PAEs.}
@@ -104,7 +104,7 @@ During compression, execution time for loading and saving data to and from the d
 
 \section{Compression Performance}
 
-The compression performance with and without delayed weight updates is averaged over the \acrshort{hypso}-2 coastline and AVIRIS Yellowstone image sets for a set of \acrshort{PAE}s. Tests are performed using the verification model for compression with delayed weight updates, and the \acrshort{CNES} compression tool for issue 2 standard compliant tests. Results are presented in figures \ref{fig:compression-performance-hypso} and \ref{fig:compression-performance-aviris}, and are given as bits per sample and compression ratio. As expected, compression performance improves as the absolute error limit increases. Images from the AVIRIS Yellowstone set achieve significantly higher compression performance than \acrshort{hypso}-2, reaching the sub-1 bits per sample threshold at $a_z=15$. This shows that image samples of of AVIRIS image sensor display higher correlation than those of the \acrshort{hypso}-2 image sensor, and thus are better suited for predictive compression such as the issue 2 algorithm.
+The compression performance with and without delayed weight updates is averaged over the \acrshort{hypso}-2 coastline and AVIRIS Yellowstone image sets for a set of \acrshort{PAE}s. Tests are performed using the verification model for compression with delayed weight updates, and the \acrshort{CNES} compression tool for issue 2 standard compliant tests. Results are presented in figures \ref{fig:compression-performance-hypso} and \ref{fig:compression-performance-aviris}, and are given as bits per sample and compression ratio. As expected, compression performance improves as the absolute error limit increases. Images from the AVIRIS Yellowstone set achieve significantly higher compression performance than \acrshort{hypso}-2, reaching the sub-1 bits per sample threshold at $a_z=15$. This shows that images of the AVIRIS sensor are better suited for predictive compression using the issue 2 algorithm.
 
 \begin{table}[ht]
 	\caption{Reduction in compression ratio using the delayed weight update scheme for a set of absolute errors.}
@@ -124,7 +124,7 @@ The compression performance with and without delayed weight updates is averaged 
 	\end{center}
 \end{table}
 
-\autoref{tab:coastline-reduction} summarizes the reduction in compression performance due to delayed weight updates for the two image sets. Reduction increases slightly for higher \acrshort{PAE}s, and is overall higher for the AVIRIS Yellowstone images. Higher correlation between image samples can mean that the compression is more sensitive to the quality of the weight vectors, resulting in a higher compression penalty. \acrshort{hypso}-2 coastline images show a reduction of less than $1\%$ for the selected \acrshort{PAE}s. These results show that the applicable image sensor is a key factor for deciding the plausability of using the delayed weight update scheme.
+\autoref{tab:coastline-reduction} summarizes the reduction in compression performance due to delayed weight updates for the two image sets. Reduction increases slightly for higher \acrshort{PAE}s, and is overall higher for the AVIRIS Yellowstone images. \acrshort{hypso}-2 coastline images show a reduction of less than $1\%$ for the selected \acrshort{PAE}s. These results show that the applicable image sensor is a key factor for deciding the plausability of using the delayed weight update scheme.
 
 \begin{figure}[ht]
 	\begin{center}
@@ -165,7 +165,7 @@ The compression performance with and without delayed weight updates is averaged 
 As opposed to \citeauthor{jiaRemovalFeedbackLoop2025}, this work keeps weights constant across the first samples of each line, rather than each band (\autoref{eq:delayed-weight-updates-modified}). The penalty on compression performance of this modification is evaluated using the verification model. Results are summarized in \autoref{tab:band-line}, and show an insignificant reduction in performance for \acrshort{hypso}-2 coastline images.
 
 \begin{table}[ht]
-	\caption{Keeping weights at the start of every line compared with keeping weights only at the start of every band.}
+	\caption{Compression ratios for keeping weights at the start of every line compared with keeping weights only at the start of every band averaged over ten \acrshort{hypso}-2 images.}
 	\label{tab:band-line}
 	\begin{center}
 		\begin{tabular}{lrr}
